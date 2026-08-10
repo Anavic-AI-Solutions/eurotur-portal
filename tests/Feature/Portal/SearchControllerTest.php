@@ -92,4 +92,22 @@ class SearchControllerTest extends TestCase
 
         $response->assertOk();
     }
+
+    public function test_it_finds_the_expense_report_panel_by_its_indexed_keywords(): void
+    {
+        $this->makeItem(
+            'Rendición de gastos — panel guiado',
+            'adm',
+            'Cuentas a pagar',
+            'rendición de gastos, rendicion de gastos, rendicion, gastos, viáticos, viaticos, comprobantes, reintegro, tesorería',
+        );
+
+        foreach (['rendicion de gastos', 'viaticos', 'comprobantes', 'reintegro'] as $needle) {
+            $response = $this->getJson(route('portal.search', ['q' => $needle]));
+
+            $response->assertOk();
+            $response->assertJsonCount(1);
+            $response->assertJsonPath('0.label', 'Rendición de gastos — panel guiado');
+        }
+    }
 }

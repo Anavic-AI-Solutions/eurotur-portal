@@ -112,7 +112,13 @@ class SectorLinksSeeder extends Seeder
                 ['title' => 'Cuentas a pagar', 'items' => [
                     $t('Solicitud pago Comex — form en página'),
                     $l('DDJJ Reintegro IVA (Factura T)', 'https://drive.google.com/drive/folders/1_czEemImOk5cn2I2td4L6FelKAKCrfOW'),
-                    $l('Formulario rendición de gastos', 'https://drive.google.com/drive/u/0/folders/1rRgOCZ8QBBin6Qgjmnxb-cGbwJhm_5I_'),
+                    [
+                        't' => 'Rendición de gastos — panel guiado',
+                        'h' => '/adm/rendicion-gastos',
+                        'badge' => 'En prueba — Cuentas a pagar',
+                        'keywords' => 'rendición de gastos, rendicion de gastos, rendicion, gastos, viáticos, viaticos, comprobantes, reintegro, tesorería',
+                    ],
+                    $l('Rendición de gastos — plantilla Excel (respaldo)', 'https://drive.google.com/drive/u/0/folders/1rRgOCZ8QBBin6Qgjmnxb-cGbwJhm_5I_'),
                     $l('Affidavit Eurotur LLC', 'https://docs.google.com/document/d/1k6qnapxbrIn0AURjEyQZKYNjRi2w8ggh/edit'),
                 ]],
                 ['title' => 'Balances (clave)', 'items' => [
@@ -122,6 +128,7 @@ class SectorLinksSeeder extends Seeder
                 ['title' => 'Instructivos', 'items' => [
                     $l('Cierre de módulo mensual', 'https://drive.google.com/drive/folders/1mWxtqI1mgSq6gx2b7IHbsA4BNek9zZSD'),
                     $l('Pre-Balance de Módulos — cómo se usa', '/documentos/prebalance-modulos.docx'),
+                    $l('Rendición de gastos — manual de uso', '/documentos/rendicion-gastos-manual.docx'),
                 ]],
                 ['title' => 'Contabilidad · Cierre mensual', 'items' => [
                     [

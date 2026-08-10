@@ -79,6 +79,13 @@ class FrenteSeeder extends Seeder
                         'cls' => 'cero',
                         'desc' => 'Anticipos, rendición de gastos y honorarios. Requiere documentar el proceso completo.',
                     ],
+                    [
+                        'n' => 'Panel de Rendición de Gastos',
+                        'badge' => 'En prueba',
+                        'cls' => 'test',
+                        'desc' => 'Panel guiado que reemplaza la carga manual del Excel oficial de rendición de gastos: se completa paso a paso y descarga el mismo Excel ya completo, con fórmulas y validaciones intactas, listo para Tesorería. Cubre ARS y moneda extranjera, hasta 60 comprobantes.',
+                        'docHref' => '/adm/rendicion-gastos',
+                    ],
                 ],
             ],
             [

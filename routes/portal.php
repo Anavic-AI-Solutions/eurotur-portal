@@ -15,6 +15,7 @@ Route::inertia('institucional', 'portal/institucional')->name('portal.institucio
 Route::get('rrhh', [SectorPageController::class, 'rrhh'])->name('portal.rrhh');
 Route::get('adm', [SectorPageController::class, 'adm'])->name('portal.adm');
 Route::inertia('adm/prebalance', 'portal/adm-prebalance')->name('portal.adm.prebalance');
+Route::inertia('adm/rendicion-gastos', 'portal/adm-rendicion-gastos')->name('portal.adm.rendicion');
 Route::get('contrataciones', [SectorPageController::class, 'contrataciones'])->name('portal.contrataciones');
 Route::get('operaciones', [SectorPageController::class, 'operaciones'])->name('portal.operaciones');
 Route::get('producto', [SectorPageController::class, 'producto'])->name('portal.producto');
