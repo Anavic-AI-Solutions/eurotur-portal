@@ -156,7 +156,7 @@ export const ADM_DATA: SectorIndexData = {
     title: 'Administración',
     num: '03',
     intro: 'Documentación legal, impositiva, bancaria, seguros y cuentas a pagar de Eurotur S.A. y Travel Designers S.A.',
-    maint: 'Quintana, Elsa · Agüero, Leonela · Flores, María B. · act. 06·2026',
+    maint: 'Quintana, Elsa · Agüero, Leonela · Flores, María B. · act. 07·2026',
     groups: [
         {
             title: 'Aspectos legales',
@@ -283,6 +283,24 @@ export const ADM_DATA: SectorIndexData = {
                 L(
                     'Cierre de módulo mensual',
                     'https://drive.google.com/drive/folders/1mWxtqI1mgSq6gx2b7IHbsA4BNek9zZSD',
+                ),
+                L(
+                    'Pre-Balance de Módulos — cómo se usa',
+                    '/documentos/prebalance-modulos.docx',
+                ),
+            ],
+        },
+        {
+            title: 'Contabilidad · Cierre mensual',
+            items: [
+                {
+                    t: 'Pre-Balance de Módulos — herramienta',
+                    h: '/adm/prebalance',
+                    badge: 'En prueba — Contabilidad',
+                },
+                L(
+                    'Pre-Balance de Módulos — documentación',
+                    '/documentos/prebalance-modulos.docx',
                 ),
             ],
         },
@@ -907,5 +925,9 @@ export const RESPONSABLES_DATA: SectorIndexData = {
         },
         { title: 'IT', items: [T('Fuentes, Yenedier')] },
         { title: 'Cotización Dólar', items: [T('Fuentes, Yenedier')] },
+        {
+            title: 'Contabilidad · Pre-Balance',
+            items: [T('Quintana, Elsa')],
+        },
     ],
 };

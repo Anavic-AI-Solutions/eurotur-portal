@@ -967,7 +967,7 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                             maxWidth: '780px',
                         }}
                     >
-                        Cuatro frentes avanzando en paralelo, todavía sin
+                        Cinco frentes avanzando en paralelo, todavía sin
                         criterio ni documentación común. Este panel existe para
                         verlos juntos y no duplicar esfuerzo.
                     </span>

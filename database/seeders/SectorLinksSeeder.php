@@ -24,6 +24,8 @@ class SectorLinksSeeder extends Seeder
                     $sectorGroup->items()->create([
                         'label' => $item['t'],
                         'url' => $item['h'] ?? null,
+                        'badge' => $item['badge'] ?? null,
+                        'keywords' => $item['keywords'] ?? null,
                         'sort_order' => $itemIndex,
                     ]);
                 }
@@ -32,7 +34,7 @@ class SectorLinksSeeder extends Seeder
     }
 
     /**
-     * @return array<string, array<int, array{title: string, items: array<int, array{t: string, h?: string}>}>>
+     * @return array<string, array<int, array{title: string, items: array<int, array{t: string, h?: string, badge?: string, keywords?: string}>}>>
      */
     private function sectors(): array
     {
@@ -119,6 +121,16 @@ class SectorLinksSeeder extends Seeder
                 ]],
                 ['title' => 'Instructivos', 'items' => [
                     $l('Cierre de módulo mensual', 'https://drive.google.com/drive/folders/1mWxtqI1mgSq6gx2b7IHbsA4BNek9zZSD'),
+                    $l('Pre-Balance de Módulos — cómo se usa', '/documentos/prebalance-modulos.docx'),
+                ]],
+                ['title' => 'Contabilidad · Cierre mensual', 'items' => [
+                    [
+                        't' => 'Pre-Balance de Módulos — herramienta',
+                        'h' => '/adm/prebalance',
+                        'badge' => 'En prueba — Contabilidad',
+                        'keywords' => 'prebalance, pre-balance, balance de módulos, cierre contable, Tango, sumas y saldos',
+                    ],
+                    $l('Pre-Balance de Módulos — documentación', '/documentos/prebalance-modulos.docx'),
                 ]],
             ],
 
@@ -316,6 +328,7 @@ class SectorLinksSeeder extends Seeder
                 ['title' => 'Comercial', 'items' => [$t('Zanone · Meyoyan · Carrizo · Lezcano · Clement · Bonserio')]],
                 ['title' => 'IT', 'items' => [$t('Fuentes, Yenedier')]],
                 ['title' => 'Cotización Dólar', 'items' => [$t('Fuentes, Yenedier')]],
+                ['title' => 'Contabilidad · Pre-Balance', 'items' => [$t('Quintana, Elsa')]],
             ],
         ];
     }

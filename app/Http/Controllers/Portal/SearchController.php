@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class SearchController extends Controller
 {
     /**
-     * Search sector links/documents by title, across all sectors.
+     * Search sector links/documents by title or keywords, across all sectors.
      *
      * Matches case- and accent-insensitively (e.g. "recepcion" finds "recepción")
      * on PostgreSQL via the `unaccent` extension; falls back to a case-insensitive
@@ -31,8 +31,14 @@ class SearchController extends Controller
         $items = SectorItem::query()
             ->when(
                 DB::connection()->getDriverName() === 'pgsql',
-                fn ($builder) => $builder->whereRaw('unaccent(lower(label)) like unaccent(lower(?))', [$needle]),
-                fn ($builder) => $builder->whereRaw('lower(label) like lower(?)', [$needle]),
+                fn ($builder) => $builder->whereRaw(
+                    "unaccent(lower(label)) like unaccent(lower(?)) or unaccent(lower(coalesce(keywords, ''))) like unaccent(lower(?))",
+                    [$needle, $needle],
+                ),
+                fn ($builder) => $builder->whereRaw(
+                    "lower(label) like lower(?) or lower(coalesce(keywords, '')) like lower(?)",
+                    [$needle, $needle],
+                ),
             )
             ->with('group')
             ->orderBy('label')

@@ -7,7 +7,12 @@ import InputError from '@/components/input-error';
 const RED = '#E30613';
 const LINK_UNDERLINE = '1px solid #c4c4c4';
 
-export type SectorItem = { id?: number; t: string; h?: string | null };
+export type SectorItem = {
+    id?: number;
+    t: string;
+    h?: string | null;
+    badge?: string | null;
+};
 export type SectorGroup = { id?: number; title: string; items: SectorItem[] };
 
 export type SectorIndexData = {
@@ -321,7 +326,14 @@ function SectorItemRow({
     }
 
     return (
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+        <div
+            style={{
+                display: 'flex',
+                alignItems: 'baseline',
+                flexWrap: 'wrap',
+                gap: '8px',
+            }}
+        >
             {item.h ? (
                 <a
                     href={item.h}
@@ -367,6 +379,22 @@ function SectorItemRow({
                 >
                     {item.t}
                 </div>
+            )}
+            {item.badge && (
+                <span
+                    style={{
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: '9px',
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        color: RED,
+                        border: `1px solid ${RED}`,
+                        padding: '2px 5px',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {item.badge}
+                </span>
             )}
             {editing && item.id && (
                 <div style={{ display: 'flex', gap: '6px' }}>

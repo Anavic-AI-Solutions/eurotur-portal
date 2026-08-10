@@ -10,10 +10,15 @@ class SearchControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function makeItem(string $label, string $sector = 'rrhh', string $groupTitle = 'Empleado'): void
+    private function makeItem(string $label, string $sector = 'rrhh', string $groupTitle = 'Empleado', ?string $keywords = null): void
     {
         $group = SectorGroup::create(['sector' => $sector, 'title' => $groupTitle, 'sort_order' => 0]);
-        $group->items()->create(['label' => $label, 'url' => 'https://example.com', 'sort_order' => 0]);
+        $group->items()->create([
+            'label' => $label,
+            'url' => 'https://example.com',
+            'keywords' => $keywords,
+            'sort_order' => 0,
+        ]);
     }
 
     public function test_it_finds_items_by_partial_label_case_insensitively(): void
@@ -47,6 +52,36 @@ class SearchControllerTest extends TestCase
 
         $response->assertOk();
         $response->assertJsonCount(0);
+    }
+
+    public function test_it_finds_items_by_keywords_when_the_label_does_not_match(): void
+    {
+        $this->makeItem(
+            'Pre-Balance de Módulos — herramienta',
+            'adm',
+            'Contabilidad · Cierre mensual',
+            'prebalance, pre-balance, balance de módulos, cierre contable, Tango, sumas y saldos',
+        );
+
+        foreach (['prebalance', 'tango', 'sumas y saldos', 'cierre contable'] as $needle) {
+            $response = $this->getJson(route('portal.search', ['q' => $needle]));
+
+            $response->assertOk();
+            $response->assertJsonCount(1);
+            $response->assertJsonPath('0.label', 'Pre-Balance de Módulos — herramienta');
+        }
+    }
+
+    public function test_it_still_matches_items_without_keywords(): void
+    {
+        $this->makeItem('Manual de conductores');
+        $this->makeItem('Pre-Balance de Módulos — herramienta', 'adm', 'Contabilidad · Cierre mensual', 'tango');
+
+        $response = $this->getJson(route('portal.search', ['q' => 'manual']));
+
+        $response->assertOk();
+        $response->assertJsonCount(1);
+        $response->assertJsonPath('0.label', 'Manual de conductores');
     }
 
     public function test_search_does_not_require_authentication(): void

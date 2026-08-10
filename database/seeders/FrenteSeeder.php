@@ -135,6 +135,19 @@ class FrenteSeeder extends Seeder
                     ],
                 ],
             ],
+            [
+                'area' => 'Contabilidad · Cierre mensual',
+                'owner' => 'E. Quintana · N. Basualdo',
+                'items' => [
+                    [
+                        'n' => 'Pre-Balance de Módulos (Tango)',
+                        'badge' => 'En prueba',
+                        'cls' => 'test',
+                        'desc' => 'Se le arrastran los 4 reportes de Tango y devuelve el Excel armado con 15 controles: pegado de listados, fórmulas EXTRAE, saldo neto debe menos haber, tablas dinámicas por cuenta, validación de que cada módulo dé cero, BUSCARV contra el plan de cuentas y detección de cuentas nuevas.',
+                        'docHref' => '/documentos/prebalance-modulos.docx',
+                    ],
+                ],
+            ],
         ];
     }
 }

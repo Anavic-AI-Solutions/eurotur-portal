@@ -33,6 +33,7 @@ class PortalTest extends TestCase
             'rrhh' => ['portal.rrhh'],
             'institucional' => ['portal.institucional'],
             'adm' => ['portal.adm'],
+            'adm.prebalance' => ['portal.adm.prebalance'],
             'contrataciones' => ['portal.contrataciones'],
             'operaciones' => ['portal.operaciones'],
             'producto' => ['portal.producto'],

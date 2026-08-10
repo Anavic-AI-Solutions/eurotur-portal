@@ -13,12 +13,14 @@ use Illuminate\Support\Facades\Storage;
  * @property int $sector_group_id
  * @property string $label
  * @property string|null $url
+ * @property string|null $badge
+ * @property string|null $keywords
  * @property string|null $file_path
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['sector_group_id', 'label', 'url', 'file_path', 'sort_order'])]
+#[Fillable(['sector_group_id', 'label', 'url', 'badge', 'keywords', 'file_path', 'sort_order'])]
 class SectorItem extends Model
 {
     /**

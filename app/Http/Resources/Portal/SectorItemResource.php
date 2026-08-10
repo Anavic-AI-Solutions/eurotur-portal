@@ -22,6 +22,7 @@ class SectorItemResource extends JsonResource
             'id' => $this->resource->id,
             't' => $this->resource->label,
             'h' => $this->resource->resolvedUrl(),
+            'badge' => $this->resource->badge,
         ];
     }
 }
