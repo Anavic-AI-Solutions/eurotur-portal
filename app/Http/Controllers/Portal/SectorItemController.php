@@ -25,6 +25,7 @@ class SectorItemController extends Controller
             'label' => $request->validated('label'),
             'url' => $request->validated('url'),
             'file_path' => $this->storeFile($request),
+            'keywords' => $request->validated('keywords'),
             'sort_order' => $nextSortOrder,
         ]);
 
@@ -41,6 +42,7 @@ class SectorItemController extends Controller
         $attributes = [
             'label' => $request->validated('label'),
             'sort_order' => $request->validated('sort_order', $item->sort_order),
+            'keywords' => $request->validated('keywords', $item->keywords),
         ];
 
         if ($request->hasFile('file')) {

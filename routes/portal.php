@@ -5,7 +5,10 @@ use App\Http\Controllers\Portal\ExchangeRateController;
 use App\Http\Controllers\Portal\FrenteController;
 use App\Http\Controllers\Portal\IniciativaController;
 use App\Http\Controllers\Portal\InnovacionController;
+use App\Http\Controllers\Portal\SearchAdminController;
 use App\Http\Controllers\Portal\SearchController;
+use App\Http\Controllers\Portal\SearchStaticEntryController;
+use App\Http\Controllers\Portal\SearchSynonymTermController;
 use App\Http\Controllers\Portal\SectorGroupController;
 use App\Http\Controllers\Portal\SectorItemController;
 use App\Http\Controllers\Portal\SectorPageController;
@@ -30,6 +33,7 @@ Route::inertia('mesa', 'portal/mesa')->name('portal.mesa');
 Route::get('responsables', [SectorPageController::class, 'responsables'])->name('portal.responsables');
 Route::get('innovacion', InnovacionController::class)->name('portal.innovacion');
 Route::get('tipo-de-cambio', ExchangeRateController::class)->name('portal.exchange-rate');
+Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');
 
 Route::middleware('auth')->group(function () {
     Route::post('{sector}/groups', [SectorGroupController::class, 'store'])->name('portal.groups.store');
@@ -51,4 +55,11 @@ Route::middleware('auth')->group(function () {
     Route::post('tipo-de-cambio/bna', [BnaDailyRateController::class, 'store'])->name('portal.bna-rates.store');
     Route::put('bna-rates/{rate}', [BnaDailyRateController::class, 'update'])->name('portal.bna-rates.update');
     Route::delete('bna-rates/{rate}', [BnaDailyRateController::class, 'destroy'])->name('portal.bna-rates.destroy');
+
+    Route::post('search-static-entries', [SearchStaticEntryController::class, 'store'])->name('portal.search-static-entries.store');
+    Route::put('search-static-entries/{entry}', [SearchStaticEntryController::class, 'update'])->name('portal.search-static-entries.update');
+    Route::delete('search-static-entries/{entry}', [SearchStaticEntryController::class, 'destroy'])->name('portal.search-static-entries.destroy');
+
+    Route::post('search-synonym-terms', [SearchSynonymTermController::class, 'store'])->name('portal.search-synonym-terms.store');
+    Route::delete('search-synonym-terms/{term}', [SearchSynonymTermController::class, 'destroy'])->name('portal.search-synonym-terms.destroy');
 });

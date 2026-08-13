@@ -13,6 +13,7 @@ import {
     responsables,
     rrhh,
     sales,
+    searchAdmin,
     traveldesigners,
 } from '@/routes/portal';
 import type { RouteDefinition } from '@/wayfinder';
@@ -32,7 +33,8 @@ export type SectorId =
     | 'mesa'
     | 'responsables'
     | 'innovacion'
-    | 'exchange-rate';
+    | 'exchange-rate'
+    | 'search-admin';
 
 export type ActiveView = 'home' | SectorId;
 
@@ -165,5 +167,13 @@ export const SECTORS: Sector[] = [
         shortLabel: 'Tipo de Cambio',
         place: 'iata · bna',
         href: exchangeRate(),
+    },
+    {
+        id: 'search-admin',
+        num: '16',
+        navLabel: 'Buscador',
+        shortLabel: 'Buscador',
+        place: 'keywords · tesauro',
+        href: searchAdmin(),
     },
 ];

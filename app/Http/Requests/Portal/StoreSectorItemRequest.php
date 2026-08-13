@@ -26,6 +26,7 @@ class StoreSectorItemRequest extends FormRequest
             'label' => ['required', 'string', 'max:255'],
             'url' => ['nullable', 'url', 'max:2048', 'prohibits:file'],
             'file' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif', 'prohibits:url'],
+            'keywords' => ['nullable', 'string'],
         ];
     }
 }

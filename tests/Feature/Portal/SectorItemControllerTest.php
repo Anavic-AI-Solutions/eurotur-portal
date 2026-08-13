@@ -101,6 +101,42 @@ class SectorItemControllerTest extends TestCase
         $this->assertSame('Actualizado', $item->refresh()->label);
     }
 
+    public function test_authenticated_user_can_update_an_items_keywords(): void
+    {
+        $user = User::factory()->create();
+        $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
+        $item = $group->items()->create(['label' => 'Original', 'url' => 'https://example.com', 'sort_order' => 0]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('portal.items.update', $item), [
+                'label' => 'Original',
+                'keywords' => 'factura, comprobante',
+            ]);
+
+        $response->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertSame('factura, comprobante', $item->refresh()->keywords);
+    }
+
+    public function test_updating_an_item_without_keywords_in_the_request_leaves_them_unchanged(): void
+    {
+        $user = User::factory()->create();
+        $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
+        $item = $group->items()->create([
+            'label' => 'Original',
+            'url' => 'https://example.com',
+            'keywords' => 'factura',
+            'sort_order' => 0,
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->put(route('portal.items.update', $item), ['label' => 'Actualizado']);
+
+        $response->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertSame('factura', $item->refresh()->keywords);
+    }
+
     public function test_authenticated_user_can_delete_an_item(): void
     {
         $user = User::factory()->create();

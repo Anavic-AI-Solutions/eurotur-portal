@@ -4,8 +4,9 @@ namespace App\Http\Requests\Portal;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateSectorItemRequest extends FormRequest
+class UpdateSearchStaticEntryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,11 +24,11 @@ class UpdateSectorItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'label' => ['required', 'string', 'max:255'],
-            'url' => ['nullable', 'url', 'max:2048', 'prohibits:file'],
-            'file' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg,gif', 'prohibits:url'],
-            'sort_order' => ['sometimes', 'integer', 'min:0'],
+            'title' => ['required', 'string', 'max:255'],
+            'url' => ['required', 'string', 'max:2048', Rule::unique('search_static_entries', 'url')->ignore($this->route('entry'))],
             'keywords' => ['nullable', 'string'],
+            'sector_label' => ['nullable', 'string', 'max:255'],
+            'sector_href' => ['nullable', 'string', 'max:2048'],
         ];
     }
 }
