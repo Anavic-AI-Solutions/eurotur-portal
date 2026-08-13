@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SectorLinksSeeder::class);
         $this->call(FrenteSeeder::class);
         $this->call(BnaDailyRateSeeder::class);
+        $this->call(PortalSearchDictionarySeeder::class);
     }
 }

@@ -377,12 +377,12 @@ function Sidebar({
 }
 
 type SearchResult = {
-    id: number;
+    id: string;
     label: string;
     url: string;
-    groupTitle: string;
-    sectorLabel: string;
-    sectorHref: string;
+    groupTitle: string | null;
+    sectorLabel: string | null;
+    sectorHref: string | null;
 };
 
 function GlobalSearch() {
@@ -565,7 +565,9 @@ function GlobalSearch() {
                                         marginTop: '2px',
                                     }}
                                 >
-                                    {result.sectorLabel} · {result.groupTitle}
+                                    {[result.sectorLabel, result.groupTitle]
+                                        .filter(Boolean)
+                                        .join(' · ')}
                                 </div>
                             </a>
                         ))}

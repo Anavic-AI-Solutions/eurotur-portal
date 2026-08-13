@@ -34,7 +34,7 @@ class SearchResultResource extends JsonResource
         $sector = $this->resource->group->sector;
 
         return [
-            'id' => $this->resource->id,
+            'id' => 'item-'.$this->resource->id,
             'label' => $this->resource->label,
             'url' => $this->resource->resolvedUrl(),
             'groupTitle' => $this->resource->group->title,
