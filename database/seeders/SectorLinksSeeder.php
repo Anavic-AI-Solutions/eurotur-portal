@@ -120,6 +120,11 @@ class SectorLinksSeeder extends Seeder
                     ],
                     $l('Rendición de gastos — plantilla Excel (respaldo)', 'https://drive.google.com/drive/u/0/folders/1rRgOCZ8QBBin6Qgjmnxb-cGbwJhm_5I_'),
                     $l('Affidavit Eurotur LLC', 'https://docs.google.com/document/d/1k6qnapxbrIn0AURjEyQZKYNjRi2w8ggh/edit'),
+                    [
+                        't' => 'Tipo de Cambio — IATA, BNA e histórico',
+                        'h' => '/tipo-de-cambio',
+                        'keywords' => 'dolar cotizacion tipo de cambio iata bna aereo billete',
+                    ],
                 ]],
                 ['title' => 'Balances (clave)', 'items' => [
                     $l('Eurotur S.A.', 'https://drive.google.com/drive/folders/1nWVLn72ImqaS-hw--z9tnKsDdj0ST2_o'),

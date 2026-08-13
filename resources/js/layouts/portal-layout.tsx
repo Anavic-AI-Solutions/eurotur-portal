@@ -1,9 +1,9 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { SECTORS } from '@/lib/portal-sectors';
 import type { ActiveView } from '@/lib/portal-sectors';
-import { home } from '@/routes';
+import { home, logout } from '@/routes';
 import { search } from '@/routes/portal';
 
 const RED = '#E30613';
@@ -32,7 +32,7 @@ export default function PortalLayout({
     children: ReactNode;
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const { dolarOficialVenta } = usePage().props;
+    const { dolarOficialVenta, iataRate } = usePage().props;
 
     return (
         <>
@@ -52,6 +52,7 @@ export default function PortalLayout({
             <style>{`
                 .eurotur-portal ::selection { background: ${RED}; color: #fff; }
                 .eurotur-portal .nav-item:hover { background: ${RED}; color: #fff; transform: translateX(5px); }
+                .eurotur-portal .logout-btn:hover { background: ${RED}; color: #fff; transform: translateX(5px); }
                 .eurotur-portal .quick-card:hover { background: ${RED}; color: #fff; transform: translateY(-5px); }
                 .eurotur-portal .tile { background-image: linear-gradient(rgba(0,0,0,.42),rgba(0,0,0,.42)),var(--tile-photo); background-size: cover; background-position: center; }
                 .eurotur-portal .tile:hover { background-image: linear-gradient(rgba(227,6,19,.55),rgba(227,6,19,.55)),var(--tile-photo); color: #fff; transform: translateY(-5px); }
@@ -133,7 +134,10 @@ export default function PortalLayout({
                         flexDirection: 'column',
                     }}
                 >
-                    <Header dolarOficialVenta={dolarOficialVenta} />
+                    <Header
+                        dolarOficialVenta={dolarOficialVenta}
+                        iataRate={iataRate}
+                    />
 
                     {STRIPE_ACCENT && (
                         <div
@@ -340,6 +344,34 @@ function Sidebar({
             >
                 bue · fte · ush · sla
             </div>
+
+            <Form {...logout.form()} style={{ marginTop: '14px' }}>
+                {({ processing }) => (
+                    <button
+                        type="submit"
+                        disabled={processing}
+                        className="logout-btn"
+                        style={{
+                            all: 'unset',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: '9px',
+                            padding: '5px 4px',
+                            width: '100%',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 600,
+                            fontSize: '12.5px',
+                            letterSpacing: '-0.01em',
+                            color: '#000',
+                            transition:
+                                'color .12s, background .12s, transform .12s',
+                        }}
+                    >
+                        Salir
+                    </button>
+                )}
+            </Form>
         </aside>
     );
 }
@@ -543,7 +575,13 @@ function GlobalSearch() {
     );
 }
 
-function Header({ dolarOficialVenta }: { dolarOficialVenta: number | null }) {
+function Header({
+    dolarOficialVenta,
+    iataRate,
+}: {
+    dolarOficialVenta: number | null;
+    iataRate: { rate: number; updatedAt: string | null; stale: boolean } | null;
+}) {
     return (
         <header
             id="portal-header"
@@ -560,6 +598,32 @@ function Header({ dolarOficialVenta }: { dolarOficialVenta: number | null }) {
                 <GlobalSearch />
             </div>
             <div style={{ display: 'flex', gap: '34px', textAlign: 'right' }}>
+                <div>
+                    <div
+                        style={{
+                            fontFamily: "'Space Mono', monospace",
+                            fontSize: '9px',
+                            letterSpacing: '0.14em',
+                            textTransform: 'uppercase',
+                            color: '#999',
+                        }}
+                    >
+                        dólar iata
+                    </div>
+                    <div
+                        style={{
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 900,
+                            fontSize: '22px',
+                            lineHeight: 1,
+                        }}
+                    >
+                        {iataRate !== null
+                            ? `$${formatArs(iataRate.rate)}`
+                            : '—'}
+                        <span style={{ color: RED }}>.</span>
+                    </div>
+                </div>
                 <div>
                     <div
                         style={{

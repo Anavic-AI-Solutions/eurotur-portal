@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Portal\BnaDailyRateController;
+use App\Http\Controllers\Portal\ExchangeRateController;
 use App\Http\Controllers\Portal\FrenteController;
 use App\Http\Controllers\Portal\IniciativaController;
 use App\Http\Controllers\Portal\InnovacionController;
@@ -27,6 +29,7 @@ Route::get('it', [SectorPageController::class, 'it'])->name('portal.it');
 Route::inertia('mesa', 'portal/mesa')->name('portal.mesa');
 Route::get('responsables', [SectorPageController::class, 'responsables'])->name('portal.responsables');
 Route::get('innovacion', InnovacionController::class)->name('portal.innovacion');
+Route::get('tipo-de-cambio', ExchangeRateController::class)->name('portal.exchange-rate');
 
 Route::middleware('auth')->group(function () {
     Route::post('{sector}/groups', [SectorGroupController::class, 'store'])->name('portal.groups.store');
@@ -44,4 +47,8 @@ Route::middleware('auth')->group(function () {
     Route::post('frentes/{frente}/iniciativas', [IniciativaController::class, 'store'])->name('portal.iniciativas.store');
     Route::put('iniciativas/{iniciativa}', [IniciativaController::class, 'update'])->name('portal.iniciativas.update');
     Route::delete('iniciativas/{iniciativa}', [IniciativaController::class, 'destroy'])->name('portal.iniciativas.destroy');
+
+    Route::post('tipo-de-cambio/bna', [BnaDailyRateController::class, 'store'])->name('portal.bna-rates.store');
+    Route::put('bna-rates/{rate}', [BnaDailyRateController::class, 'update'])->name('portal.bna-rates.update');
+    Route::delete('bna-rates/{rate}', [BnaDailyRateController::class, 'destroy'])->name('portal.bna-rates.destroy');
 });

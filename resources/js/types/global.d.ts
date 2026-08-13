@@ -14,6 +14,11 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             dolarOficialVenta: number | null;
+            iataRate: {
+                rate: number;
+                updatedAt: string | null;
+                stale: boolean;
+            } | null;
             [key: string]: unknown;
         };
     }

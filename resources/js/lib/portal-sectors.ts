@@ -2,6 +2,7 @@ import {
     adm,
     contrataciones,
     customercare,
+    exchangeRate,
     innovacion,
     institucional,
     it,
@@ -30,7 +31,8 @@ export type SectorId =
     | 'it'
     | 'mesa'
     | 'responsables'
-    | 'innovacion';
+    | 'innovacion'
+    | 'exchange-rate';
 
 export type ActiveView = 'home' | SectorId;
 
@@ -155,5 +157,13 @@ export const SECTORS: Sector[] = [
         shortLabel: 'Innovación',
         place: 'ia · scripts',
         href: innovacion(),
+    },
+    {
+        id: 'exchange-rate',
+        num: '15',
+        navLabel: 'Tipo de Cambio',
+        shortLabel: 'Tipo de Cambio',
+        place: 'iata · bna',
+        href: exchangeRate(),
     },
 ];

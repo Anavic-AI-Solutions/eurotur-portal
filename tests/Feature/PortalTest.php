@@ -18,8 +18,9 @@ class PortalTest extends TestCase
         // Avoid real network calls to dolarapi.com (HandleInertiaRequests::share())
         // and euroturbot-monitor (InnovacionController) from every page visit.
         Http::fake([
-            'dolarapi.com/*' => Http::response(['venta' => 1510]),
+            'dolarapi.com/*' => Http::response(['venta' => 1510, 'compra' => 1460]),
             'euroturbot-monitor:8000/*' => Http::response(['state' => 'idle', 'stats' => null]),
+            'sudameria.com/*' => Http::response(null, 403),
         ]);
     }
 
@@ -46,6 +47,7 @@ class PortalTest extends TestCase
             'mesa' => ['portal.mesa'],
             'responsables' => ['portal.responsables'],
             'innovacion' => ['portal.innovacion'],
+            'exchange-rate' => ['portal.exchange-rate'],
         ];
     }
 

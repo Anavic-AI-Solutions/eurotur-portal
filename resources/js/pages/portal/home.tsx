@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { ImageSlot } from '@/components/portal/image-slot';
 import { SECTORS } from '@/lib/portal-sectors';
+import { exchangeRate } from '@/routes/portal';
 
 const RED = '#E30613';
 const SHOW_CLIMA = true;
@@ -11,6 +12,7 @@ type QuickAccess = {
     title: string;
     href: string;
     icon: ReactNode;
+    internal?: boolean;
 };
 
 const QUICK_ACCESS: QuickAccess[] = [
@@ -78,8 +80,9 @@ const QUICK_ACCESS: QuickAccess[] = [
     },
     {
         num: '04',
-        title: 'Cotización Dólar',
-        href: 'https://www.bna.com.ar/Personas',
+        title: 'Tipo de Cambio',
+        href: exchangeRate().url,
+        internal: true,
         icon: (
             <svg
                 width="40"
@@ -264,7 +267,7 @@ export default function Home() {
                 <div>
                     <SectionHeading
                         label="accesos rápidos"
-                        hint="↗ abre en otra pestaña"
+                        hint="↗ la mayoría abre en otra pestaña"
                     />
                     <div
                         style={{
@@ -274,65 +277,85 @@ export default function Home() {
                             borderLeft: '1px solid #000',
                         }}
                     >
-                        {QUICK_ACCESS.map((q) => (
-                            <a
-                                key={q.num}
-                                href={q.href}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="quick-card"
-                                style={{
-                                    position: 'relative',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    minHeight: '170px',
-                                    padding: '18px',
-                                    textDecoration: 'none',
-                                    color: '#000',
-                                    borderRight: '1px solid #000',
-                                    borderBottom: '1px solid #000',
-                                    transition:
-                                        'background .12s,color .12s,transform .14s',
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        position: 'absolute',
-                                        top: '16px',
-                                        right: '16px',
-                                        fontFamily: "'Space Mono', monospace",
-                                        fontSize: '13px',
-                                    }}
-                                >
-                                    ↗
-                                </span>
-                                {q.icon}
-                                <div>
-                                    <div
+                        {QUICK_ACCESS.map((q) => {
+                            const cardStyle: React.CSSProperties = {
+                                position: 'relative',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'space-between',
+                                minHeight: '170px',
+                                padding: '18px',
+                                textDecoration: 'none',
+                                color: '#000',
+                                borderRight: '1px solid #000',
+                                borderBottom: '1px solid #000',
+                                transition:
+                                    'background .12s,color .12s,transform .14s',
+                            };
+                            const content = (
+                                <>
+                                    <span
                                         style={{
+                                            position: 'absolute',
+                                            top: '16px',
+                                            right: '16px',
                                             fontFamily:
                                                 "'Space Mono', monospace",
-                                            fontSize: '10px',
-                                            letterSpacing: '0.08em',
+                                            fontSize: '13px',
                                         }}
                                     >
-                                        {q.num}
+                                        {q.internal ? '→' : '↗'}
+                                    </span>
+                                    {q.icon}
+                                    <div>
+                                        <div
+                                            style={{
+                                                fontFamily:
+                                                    "'Space Mono', monospace",
+                                                fontSize: '10px',
+                                                letterSpacing: '0.08em',
+                                            }}
+                                        >
+                                            {q.num}
+                                        </div>
+                                        <div
+                                            style={{
+                                                fontFamily:
+                                                    "'Archivo', sans-serif",
+                                                fontWeight: 800,
+                                                fontSize: '17px',
+                                                letterSpacing: '-0.01em',
+                                                marginTop: '2px',
+                                            }}
+                                        >
+                                            {q.title}
+                                        </div>
                                     </div>
-                                    <div
-                                        style={{
-                                            fontFamily: "'Archivo', sans-serif",
-                                            fontWeight: 800,
-                                            fontSize: '17px',
-                                            letterSpacing: '-0.01em',
-                                            marginTop: '2px',
-                                        }}
-                                    >
-                                        {q.title}
-                                    </div>
-                                </div>
-                            </a>
-                        ))}
+                                </>
+                            );
+
+                            return q.internal ? (
+                                <Link
+                                    key={q.num}
+                                    href={q.href}
+                                    className="quick-card"
+                                    style={cardStyle}
+                                >
+                                    {content}
+                                </Link>
+                            ) : (
+                                <a
+                                    key={q.num}
+                                    href={q.href}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="quick-card"
+                                    style={cardStyle}
+                                >
+                                    {content}
+                                </a>
+                            );
+                        })}
                     </div>
                 </div>
 
