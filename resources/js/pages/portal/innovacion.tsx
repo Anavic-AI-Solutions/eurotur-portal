@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import FrenteController from '@/actions/App/Http/Controllers/Portal/FrenteController';
 import IniciativaController from '@/actions/App/Http/Controllers/Portal/IniciativaController';
@@ -130,6 +130,8 @@ const smallButtonStyle: React.CSSProperties = {
 type Props = BotMonitorProps & { frentes: Frente[] };
 
 export default function Innovacion({ frentes, summary, stats }: Props) {
+    const { auth } = usePage().props;
+    const isAuthenticated = Boolean(auth.user);
     const [layout, setLayout] = useState<'a' | 'b'>('a');
     const [editing, setEditing] = useState(false);
     const [openFrentes, setOpenFrentes] = useState<Record<string, boolean>>({});
@@ -366,7 +368,7 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                                 mosaico
                             </button>
                         </div>
-                        {layout === 'a' && (
+                        {layout === 'a' && isAuthenticated && (
                             <button
                                 type="button"
                                 onClick={() => setEditing((v) => !v)}

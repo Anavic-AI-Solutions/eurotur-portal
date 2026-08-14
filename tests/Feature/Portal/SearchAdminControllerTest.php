@@ -5,6 +5,7 @@ namespace Tests\Feature\Portal;
 use App\Models\SearchStaticEntry;
 use App\Models\SearchSynonymTerm;
 use App\Models\SectorGroup;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +15,7 @@ class SearchAdminControllerTest extends TestCase
 
     public function test_it_renders_the_search_admin_page_with_the_three_datasets(): void
     {
+        $user = User::factory()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $group->items()->create([
             'label' => 'Manual de conductores',
@@ -25,7 +27,7 @@ class SearchAdminControllerTest extends TestCase
         SearchSynonymTerm::create(['group_number' => 1, 'term' => 'factura']);
         SearchSynonymTerm::create(['group_number' => 1, 'term' => 'comprobante']);
 
-        $response = $this->get(route('portal.search-admin'));
+        $response = $this->actingAs($user)->get(route('portal.search-admin'));
 
         $response->assertOk();
         $response->assertInertia(fn ($page) => $page
@@ -40,10 +42,10 @@ class SearchAdminControllerTest extends TestCase
         );
     }
 
-    public function test_search_admin_does_not_require_authentication(): void
+    public function test_guest_is_redirected_to_login(): void
     {
         $response = $this->get(route('portal.search-admin'));
 
-        $response->assertOk();
+        $response->assertRedirect(route('login'));
     }
 }

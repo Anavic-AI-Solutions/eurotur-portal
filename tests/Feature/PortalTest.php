@@ -48,7 +48,6 @@ class PortalTest extends TestCase
             'responsables' => ['portal.responsables'],
             'innovacion' => ['portal.innovacion'],
             'exchange-rate' => ['portal.exchange-rate'],
-            'search-admin' => ['portal.search-admin'],
         ];
     }
 

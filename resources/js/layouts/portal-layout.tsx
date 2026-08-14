@@ -208,6 +208,12 @@ function Sidebar({
     menuOpen: boolean;
     onToggleMenu: () => void;
 }) {
+    const { auth } = usePage().props;
+    const isAuthenticated = Boolean(auth.user);
+    const visibleSectors = SECTORS.filter(
+        (sector) => sector.id !== 'search-admin' || isAuthenticated,
+    );
+
     return (
         <aside
             id="portal-aside"
@@ -299,7 +305,7 @@ function Sidebar({
                     flex: 1,
                 }}
             >
-                {SECTORS.map((sector) => (
+                {visibleSectors.map((sector) => (
                     <Link
                         key={sector.id}
                         href={sector.href}
@@ -345,33 +351,35 @@ function Sidebar({
                 bue · fte · ush · sla
             </div>
 
-            <Form {...logout.form()} style={{ marginTop: '14px' }}>
-                {({ processing }) => (
-                    <button
-                        type="submit"
-                        disabled={processing}
-                        className="logout-btn"
-                        style={{
-                            all: 'unset',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'baseline',
-                            gap: '9px',
-                            padding: '5px 4px',
-                            width: '100%',
-                            fontFamily: "'Archivo', sans-serif",
-                            fontWeight: 600,
-                            fontSize: '12.5px',
-                            letterSpacing: '-0.01em',
-                            color: '#000',
-                            transition:
-                                'color .12s, background .12s, transform .12s',
-                        }}
-                    >
-                        Salir
-                    </button>
-                )}
-            </Form>
+            {isAuthenticated && (
+                <Form {...logout.form()} style={{ marginTop: '14px' }}>
+                    {({ processing }) => (
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="logout-btn"
+                            style={{
+                                all: 'unset',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'baseline',
+                                gap: '9px',
+                                padding: '5px 4px',
+                                width: '100%',
+                                fontFamily: "'Archivo', sans-serif",
+                                fontWeight: 600,
+                                fontSize: '12.5px',
+                                letterSpacing: '-0.01em',
+                                color: '#000',
+                                transition:
+                                    'color .12s, background .12s, transform .12s',
+                            }}
+                        >
+                            Salir
+                        </button>
+                    )}
+                </Form>
+            )}
         </aside>
     );
 }

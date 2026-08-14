@@ -33,9 +33,10 @@ Route::inertia('mesa', 'portal/mesa')->name('portal.mesa');
 Route::get('responsables', [SectorPageController::class, 'responsables'])->name('portal.responsables');
 Route::get('innovacion', InnovacionController::class)->name('portal.innovacion');
 Route::get('tipo-de-cambio', ExchangeRateController::class)->name('portal.exchange-rate');
-Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');
 
 Route::middleware('auth')->group(function () {
+    Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');
+
     Route::post('{sector}/groups', [SectorGroupController::class, 'store'])->name('portal.groups.store');
     Route::put('groups/{group}', [SectorGroupController::class, 'update'])->name('portal.groups.update');
     Route::delete('groups/{group}', [SectorGroupController::class, 'destroy'])->name('portal.groups.destroy');

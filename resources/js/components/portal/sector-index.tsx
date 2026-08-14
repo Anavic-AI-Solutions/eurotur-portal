@@ -1,4 +1,4 @@
-import { Form } from '@inertiajs/react';
+import { Form, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import SectorGroupController from '@/actions/App/Http/Controllers/Portal/SectorGroupController';
 import SectorItemController from '@/actions/App/Http/Controllers/Portal/SectorItemController';
@@ -54,6 +54,8 @@ export function SectorIndex({
     data: SectorIndexData;
     sector: string;
 }) {
+    const { auth } = usePage().props;
+    const isAuthenticated = Boolean(auth.user);
     const [editing, setEditing] = useState(false);
 
     return (
@@ -124,18 +126,20 @@ export function SectorIndex({
                     >
                         {data.num}
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => setEditing((v) => !v)}
-                        style={{
-                            ...smallButtonStyle,
-                            background: editing ? RED : 'transparent',
-                            color: editing ? '#fff' : '#000',
-                            borderColor: editing ? RED : '#000',
-                        }}
-                    >
-                        {editing ? 'Listo ✕' : 'Editar ✎'}
-                    </button>
+                    {isAuthenticated && (
+                        <button
+                            type="button"
+                            onClick={() => setEditing((v) => !v)}
+                            style={{
+                                ...smallButtonStyle,
+                                background: editing ? RED : 'transparent',
+                                color: editing ? '#fff' : '#000',
+                                borderColor: editing ? RED : '#000',
+                            }}
+                        >
+                            {editing ? 'Listo ✕' : 'Editar ✎'}
+                        </button>
+                    )}
                 </div>
             </div>
 
