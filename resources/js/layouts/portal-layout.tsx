@@ -1,10 +1,10 @@
-import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { SECTORS } from '@/lib/portal-sectors';
 import type { ActiveView } from '@/lib/portal-sectors';
 import { home, logout } from '@/routes';
-import { search } from '@/routes/portal';
+import { search, searchResults } from '@/routes/portal';
 
 const RED = '#E30613';
 const STRIPE_ACCENT = true;
@@ -59,6 +59,8 @@ export default function PortalLayout({
                 .eurotur-portal .doc-link:hover { color: ${RED}; border-color: ${RED}; transform: translateX(3px); }
                 .eurotur-portal .search-result:hover { background: ${RED}; color: #fff; }
                 .eurotur-portal .search-result:hover div { color: #fff !important; }
+                .eurotur-portal .search-result-active { background: ${RED}; color: #fff; }
+                .eurotur-portal .search-result-active div { color: #fff !important; }
                 .eurotur-portal .qrated-cta:hover { background: #b3050f; transform: translateY(-3px); }
                 .eurotur-portal .qrated-cat { color: #000; }
                 .eurotur-portal .qrated-cat-num { color: #999; }
@@ -398,7 +400,9 @@ function GlobalSearch() {
     const [results, setResults] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
     const requestId = useRef(0);
+    const resultRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
     useEffect(() => {
         const trimmed = query.trim();
@@ -407,6 +411,7 @@ function GlobalSearch() {
         const timeout = setTimeout(() => {
             if (trimmed.length < 2) {
                 setResults([]);
+                setActiveIndex(-1);
                 setLoading(false);
 
                 return;
@@ -421,6 +426,7 @@ function GlobalSearch() {
                 .then((data: SearchResult[]) => {
                     if (id === requestId.current) {
                         setResults(data);
+                        setActiveIndex(-1);
                         setLoading(false);
                     }
                 })
@@ -433,6 +439,12 @@ function GlobalSearch() {
 
         return () => clearTimeout(timeout);
     }, [query]);
+
+    useEffect(() => {
+        if (activeIndex >= 0 && resultRefs.current[activeIndex]) {
+            resultRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+        }
+    }, [activeIndex]);
 
     const showDropdown = open && query.trim().length >= 2;
 
@@ -487,6 +499,40 @@ function GlobalSearch() {
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => setOpen(true)}
                     onBlur={() => setTimeout(() => setOpen(false), 150)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'ArrowDown') {
+                            if (!showDropdown || results.length === 0) return;
+                            e.preventDefault();
+                            setActiveIndex((i) =>
+                                i < results.length - 1 ? i + 1 : 0,
+                            );
+                        } else if (e.key === 'ArrowUp') {
+                            if (!showDropdown || results.length === 0) return;
+                            e.preventDefault();
+                            setActiveIndex((i) =>
+                                i > 0 ? i - 1 : results.length - 1,
+                            );
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            if (activeIndex >= 0) {
+                                window.open(results[activeIndex].url, '_blank');
+                                setOpen(false);
+                                setActiveIndex(-1);
+                            } else {
+                                const trimmed = query.trim();
+                                if (trimmed.length >= 2) {
+                                    router.visit(
+                                        searchResults.url({
+                                            query: { q: trimmed },
+                                        }),
+                                    );
+                                }
+                            }
+                        } else if (e.key === 'Escape') {
+                            setOpen(false);
+                            setActiveIndex(-1);
+                        }
+                    }}
                     placeholder="Buscar documentos, formularios, sectores…"
                     style={{
                         all: 'unset',
@@ -538,15 +584,18 @@ function GlobalSearch() {
                         </div>
                     )}
                     {!loading &&
-                        results.map((result) => (
+                        results.map((result, i) => (
                             <a
                                 key={result.id}
+                                ref={(el) => {
+                                    resultRefs.current[i] = el;
+                                }}
                                 href={result.url}
                                 target="_blank"
                                 rel="noreferrer"
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => setOpen(false)}
-                                className="search-result"
+                                className={`search-result${i === activeIndex ? ' search-result-active' : ''}`}
                                 style={{
                                     display: 'block',
                                     textDecoration: 'none',
