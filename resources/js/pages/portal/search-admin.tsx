@@ -193,7 +193,7 @@ function ItemKeywordsSection({
     return (
         <div>
             <SectionHeading
-                label="keywords por ítem"
+                label="Keywords por ítem"
                 hint={`${items.length} ítems`}
             />
             <input
@@ -328,7 +328,7 @@ function StaticEntriesSection({
     return (
         <div>
             <SectionHeading
-                label="páginas y accesos indexados"
+                label="Páginas y accesos indexados"
                 hint={`${entries.length} entradas`}
             />
             <table
@@ -586,7 +586,7 @@ function ThesaurusSection({
     return (
         <div>
             <SectionHeading
-                label="tesauro de sinónimos"
+                label="Tesauro de sinónimos"
                 hint={`${groups.length} grupos`}
             />
             <div

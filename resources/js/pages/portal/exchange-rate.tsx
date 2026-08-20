@@ -208,7 +208,7 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                             letterSpacing: '-0.01em',
                         }}
                     >
-                        histórico bna billetes
+                        Histórico BNA billetes
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div

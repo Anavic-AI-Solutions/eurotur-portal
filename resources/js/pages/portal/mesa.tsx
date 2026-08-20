@@ -310,7 +310,7 @@ export default function Mesa() {
                             letterSpacing: '-0.01em',
                         }}
                     >
-                        guías paso a paso
+                        Guías paso a paso
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div

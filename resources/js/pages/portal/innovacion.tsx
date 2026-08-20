@@ -327,7 +327,7 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                             letterSpacing: '-0.01em',
                         }}
                     >
-                        automatizaciones
+                        Automatizaciones
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div
@@ -993,7 +993,7 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                             letterSpacing: '-0.01em',
                         }}
                     >
-                        instructivos ia
+                        Instructivos IA
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div
