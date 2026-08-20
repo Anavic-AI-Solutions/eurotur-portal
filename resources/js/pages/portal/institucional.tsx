@@ -98,7 +98,12 @@ export default function Institucional() {
                         marginBottom: '34px',
                     }}
                 >
-                    <ImageSlot placeholder="Imagen a sangre — Glaciar Perito Moreno / Patagonia (blanco y negro)" />
+                    <ImageSlot
+                        src="/img/portal/institucional/ushuaia-02.jpg"
+                        alt="Patagonia — paisaje de montañas"
+                        placeholder="Imagen a sangre — Glaciar Perito Moreno / Patagonia (blanco y negro)"
+                        grayscale
+                    />
                 </div>
 
                 <div
@@ -255,7 +260,12 @@ export default function Institucional() {
                             </p>
                         </div>
                         <div style={{ position: 'relative', height: '150px' }}>
-                            <ImageSlot placeholder="Ushuaia — blanco y negro" />
+                            <ImageSlot
+                                src="/img/portal/institucional/ushuaia-01.jpg"
+                                alt="Ushuaia — Beagle Channel, Tierra del Fuego"
+                                placeholder="Ushuaia — blanco y negro"
+                                grayscale
+                            />
                         </div>
                     </div>
                 </div>
@@ -271,14 +281,14 @@ export default function Institucional() {
                             marginBottom: '20px',
                         }}
                     >
-                        valores
+                        Valores
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div
                         style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(5,1fr)',
-                            gap: 0,
+                            gap: '24px',
                         }}
                     >
                         {VALORES.map((v) => (

@@ -2,23 +2,41 @@ export function ImageSlot({
     src,
     alt,
     placeholder,
+    grayscale,
+    contain,
 }: {
     src?: string;
     alt?: string;
     placeholder: string;
+    grayscale?: boolean;
+    contain?: boolean;
 }) {
     if (src) {
         return (
             <img
                 src={src}
                 alt={alt ?? placeholder}
-                style={{
-                    position: 'absolute',
-                    inset: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                }}
+                style={
+                    contain
+                        ? {
+                              display: 'block',
+                              width: '100%',
+                              height: 'auto',
+                              ...(grayscale
+                                  ? { filter: 'grayscale(100%)' }
+                                  : {}),
+                          }
+                        : {
+                              position: 'absolute',
+                              inset: 0,
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              ...(grayscale
+                                  ? { filter: 'grayscale(100%)' }
+                                  : {}),
+                          }
+                }
             />
         );
     }

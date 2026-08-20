@@ -9,6 +9,7 @@ type Category = {
     title: string;
     desc: string;
     placeholder: string;
+    image: string;
     href: string;
 };
 
@@ -18,6 +19,7 @@ const CATEGORIES: Category[] = [
         title: 'Creatividad & Contenido',
         desc: 'Piezas, campañas y material creativo.',
         placeholder: 'Creatividad y Contenido',
+        image: '/img/portal/qrated/creatividad.jpg',
         href: 'https://drive.google.com/drive/folders/1clUYwl9z9tG0RRhI-A5zgZZ0tBN7Xa8L',
     },
     {
@@ -25,6 +27,7 @@ const CATEGORIES: Category[] = [
         title: 'Herramientas',
         desc: 'Recursos y utilidades del equipo.',
         placeholder: 'Herramientas',
+        image: '/img/portal/qrated/herramientas.jpg',
         href: 'https://drive.google.com/drive/folders/1h9pS_VFwaJtqItldu1P7_Hjft027Tmx2',
     },
     {
@@ -32,6 +35,7 @@ const CATEGORIES: Category[] = [
         title: 'Proveedores Especiales',
         desc: 'Curaduría premium · MICE y lujo.',
         placeholder: 'Proveedores Especiales',
+        image: '/img/portal/qrated/proveedores.jpg',
         href: 'https://drive.google.com/drive/folders/1SIoqHSXdA4XTZEmHP4gBYy8QKgIC25Yq',
     },
 ];
@@ -187,7 +191,7 @@ export default function Qrated() {
                             letterSpacing: '-0.01em',
                         }}
                     >
-                        categorías
+                        Categorías
                         <span style={{ color: RED }}>—</span>
                     </div>
                     <div
@@ -236,7 +240,12 @@ export default function Qrated() {
                                     borderBottom: '1px solid #000',
                                 }}
                             >
-                                <ImageSlot placeholder={cat.placeholder} />
+                                <ImageSlot
+                                    src={cat.image}
+                                    alt={cat.title}
+                                    placeholder={cat.placeholder}
+                                    grayscale
+                                />
                             </div>
                             <div style={{ padding: '14px 16px 18px' }}>
                                 <div

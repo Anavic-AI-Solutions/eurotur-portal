@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { ImageSlot } from '@/components/portal/image-slot';
 import { SECTORS } from '@/lib/portal-sectors';
-import { exchangeRate } from '@/routes/portal';
+import { exchangeRate, mesa } from '@/routes/portal';
 
 const RED = '#E30613';
 const SHOW_CLIMA = true;
@@ -111,7 +111,8 @@ const QUICK_ACCESS: QuickAccess[] = [
     {
         num: '05',
         title: 'Mesa de Información',
-        href: 'https://sites.google.com/eurotur.tur.ar/portal-eurotur/',
+        href: mesa().url,
+        internal: true,
         icon: (
             <svg
                 width="40"
@@ -250,23 +251,22 @@ export default function Home() {
                     <div
                         style={{
                             position: 'relative',
-                            height: '280px',
-                            borderTop: '3px solid #000',
-                            borderBottom: '1px solid #000',
                             marginTop: '26px',
+                            overflow: 'hidden',
                         }}
                     >
                         <ImageSlot
                             src="/img/portal/portada.jpg"
                             alt="Portada Eurotur"
                             placeholder="Imagen de portada — arquitectura / Patagonia (blanco y negro, a sangre)"
+                            contain
                         />
                     </div>
                 </div>
 
                 <div>
                     <SectionHeading
-                        label="accesos rápidos"
+                        label="Accesos rápidos"
                         hint="↗ la mayoría abre en otra pestaña"
                     />
                     <div
@@ -361,7 +361,7 @@ export default function Home() {
 
                 <div>
                     <SectionHeading
-                        label="sectores"
+                        label="Sectores"
                         hint="→ tocá para entrar"
                     />
                     <div
@@ -469,7 +469,7 @@ export default function Home() {
                                     letterSpacing: '-0.01em',
                                 }}
                             >
-                                clima
+                                Clima
                                 <span style={{ color: RED }}>—</span>
                             </div>
                             <div
