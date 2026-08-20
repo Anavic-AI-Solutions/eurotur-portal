@@ -1,0 +1,17 @@
+FROM php:8.3-fpm
+
+RUN apt-get update && apt-get install -y \
+    git curl unzip libpq-dev libzip-dev libpng-dev libonig-dev \
+    libxml2-dev libicu-dev libsqlite3-dev \
+    nodejs npm \
+    && docker-php-ext-install \
+       pdo pdo_sqlite pdo_pgsql mbstring zip gd bcmath intl opcache pcntl exif
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN echo '[global]' > /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo 'daemonize = no' >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo '[www]' >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo 'listen = 0.0.0.0:8060' >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
+WORKDIR /var/www/eurotur-portal
