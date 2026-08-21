@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import type { CSSProperties } from 'react';
 import { useCallback, useMemo, useState } from 'react';
+import ReceiptOcrController from '@/actions/App/Http/Controllers/Portal/ReceiptOcrController';
 import {
     COMPANY_CODES,
     FORMAS_PAGO,
@@ -83,6 +84,161 @@ async function procesarImagen(file: File) {
     const { procesarComprobante } = await import('@/lib/rendicion/images');
 
     return procesarComprobante(file);
+}
+
+/* ------------------------------------------------------------------- OCR */
+
+type OcrMensaje = {
+    codigo: string;
+    nivel: 'info' | 'advertencia' | 'error';
+    texto: string;
+    campos: string[];
+};
+
+type OcrResultado = {
+    tipo_documento: string;
+    legibilidad: string;
+    moneda_tipo: 'ARS' | 'EXTRANJERA' | null;
+    fecha: string | null;
+    proveedor: string | null;
+    cuit: string | null;
+    letra_factura: string | null;
+    talonario: string | null;
+    numero_comprobante: string | null;
+    importe_neto: number | null;
+    importe_total: number | null;
+    iva_27: number | null;
+    iva_21: number | null;
+    iva_105: number | null;
+    percepcion_iva: number | null;
+    percepcion_iibb_caba: number | null;
+    percepcion_iibb_sc: number | null;
+    percepcion_iibb_tdf: number | null;
+    moneda_iso: string | null;
+    importe_original: number | null;
+    confidence: number;
+    raw_text: string;
+    estado_lectura: 'ALTA' | 'MEDIA' | 'BAJA' | 'SIN_LECTURA';
+    campos_faltantes: string[];
+    mensajes: OcrMensaje[];
+};
+
+function getXsrfToken(): string {
+    const match = document.cookie.match(/(?:^|; )XSRF-TOKEN=([^;]*)/);
+
+    return match ? decodeURIComponent(match[1]) : '';
+}
+
+async function dataUrlToBlob(dataUrl: string): Promise<Blob> {
+    return (await fetch(dataUrl)).blob();
+}
+
+/** Convierte un número/string en el string con el que trabaja `Gasto` (sin ceros de más ni "0" para valores nulos/cero). */
+function numeroAGasto(valor: number | null): string {
+    if (valor === null || valor === 0) {
+        return '';
+    }
+
+    return String(valor);
+}
+
+/**
+ * Best-effort: manda la imagen ya comprimida al endpoint de OCR y devuelve
+ * el patch a aplicar sobre el `Gasto`, más los mensajes para mostrar. Nunca
+ * lanza — cualquier falla se resuelve como "no se pudo leer, completá a mano".
+ */
+async function leerComprobante(
+    comprobanteImage: NonNullable<Gasto['comprobante_image']>,
+    monedaTipo: RendicionTipo,
+): Promise<{ patch: Partial<Gasto>; resultado: OcrResultado | null }> {
+    try {
+        const blob = await dataUrlToBlob(comprobanteImage.dataUrl);
+        const formData = new FormData();
+        formData.append('image', blob, 'comprobante.jpg');
+
+        const response = await fetch(ReceiptOcrController().url, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'X-XSRF-TOKEN': getXsrfToken(),
+            },
+            body: formData,
+            credentials: 'same-origin',
+        });
+
+        if (!response.ok) {
+            return { patch: {}, resultado: null };
+        }
+
+        const resultado = (await response.json()) as OcrResultado;
+
+        if (resultado.confidence === 0) {
+            return { patch: {}, resultado };
+        }
+
+        const patch: Partial<Gasto> = {
+            fecha: resultado.fecha ?? undefined,
+            proveedor: resultado.proveedor ?? undefined,
+        };
+
+        if (monedaTipo === 'ARS') {
+            Object.assign(patch, {
+                cuit: resultado.cuit ?? undefined,
+                letra_factura: resultado.letra_factura ?? undefined,
+                talonario: resultado.talonario ?? undefined,
+                numero_comprobante: resultado.numero_comprobante ?? undefined,
+                importe_neto:
+                    resultado.importe_neto !== null
+                        ? numeroAGasto(resultado.importe_neto)
+                        : undefined,
+                iva_27:
+                    resultado.iva_27 !== null
+                        ? numeroAGasto(resultado.iva_27)
+                        : undefined,
+                iva_21:
+                    resultado.iva_21 !== null
+                        ? numeroAGasto(resultado.iva_21)
+                        : undefined,
+                iva_105:
+                    resultado.iva_105 !== null
+                        ? numeroAGasto(resultado.iva_105)
+                        : undefined,
+                percepcion_iva:
+                    resultado.percepcion_iva !== null
+                        ? numeroAGasto(resultado.percepcion_iva)
+                        : undefined,
+                percepcion_iibb_caba:
+                    resultado.percepcion_iibb_caba !== null
+                        ? numeroAGasto(resultado.percepcion_iibb_caba)
+                        : undefined,
+                percepcion_iibb_sc:
+                    resultado.percepcion_iibb_sc !== null
+                        ? numeroAGasto(resultado.percepcion_iibb_sc)
+                        : undefined,
+                percepcion_iibb_tdf:
+                    resultado.percepcion_iibb_tdf !== null
+                        ? numeroAGasto(resultado.percepcion_iibb_tdf)
+                        : undefined,
+            });
+        } else {
+            Object.assign(patch, {
+                moneda_iso: resultado.moneda_iso ?? undefined,
+                importe_original:
+                    resultado.importe_original !== null
+                        ? numeroAGasto(resultado.importe_original)
+                        : undefined,
+            });
+        }
+
+        // Quitar claves undefined: no queremos pisar lo que la persona ya tipeó con "nada".
+        const patchLimpio = Object.fromEntries(
+            Object.entries(patch).filter(([, v]) => v !== undefined),
+        ) as Partial<Gasto>;
+
+        return { patch: patchLimpio, resultado };
+    } catch {
+        return { patch: {}, resultado: null };
+    }
 }
 
 async function generar(
@@ -250,6 +406,19 @@ export default function AdmRendicionGastos() {
     return (
         <>
             <Head title="Rendición de Gastos" />
+
+            <style>{`
+                @keyframes ocr-spin { to { transform: rotate(360deg); } }
+                .ocr-spinner {
+                    display: inline-block;
+                    width: 11px;
+                    height: 11px;
+                    border: 2px solid #ccc;
+                    border-top-color: #000;
+                    border-radius: 50%;
+                    animation: ocr-spin 0.7s linear infinite;
+                }
+            `}</style>
 
             <section>
                 <Encabezado />
@@ -1458,6 +1627,11 @@ function ComprobanteInput({
     gasto: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
 }) {
+    const [ocrStatus, setOcrStatus] = useState<
+        'idle' | 'leyendo' | 'ok' | 'sin-lectura' | 'error'
+    >('idle');
+    const [ocrMensajes, setOcrMensajes] = useState<OcrMensaje[]>([]);
+
     return (
         <Campo
             label="Adjuntar comprobante (foto o escaneo)"
@@ -1476,9 +1650,150 @@ function ComprobanteInput({
                     const comprobante_image = await procesarImagen(file);
                     onUpdate({ comprobante_image });
                     e.target.value = '';
+
+                    setOcrStatus('leyendo');
+                    setOcrMensajes([]);
+
+                    const { patch, resultado } = await leerComprobante(
+                        comprobante_image,
+                        g.monedaTipo,
+                    );
+
+                    if (resultado === null) {
+                        setOcrStatus('error');
+
+                        return;
+                    }
+
+                    if (Object.keys(patch).length > 0) {
+                        onUpdate(patch);
+                    }
+
+                    setOcrMensajes(resultado.mensajes);
+                    setOcrStatus(
+                        resultado.estado_lectura === 'SIN_LECTURA'
+                            ? 'sin-lectura'
+                            : 'ok',
+                    );
                 }}
                 style={inputStyle}
             />
+            {ocrStatus === 'leyendo' && (
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginTop: '10px',
+                        padding: '10px 14px',
+                        border: '1px solid #000',
+                        background: '#f6f5f2',
+                    }}
+                >
+                    <span className="ocr-spinner" aria-hidden="true" />
+                    <span
+                        style={{
+                            ...mono,
+                            fontSize: '11px',
+                            color: '#000',
+                            fontWeight: 700,
+                        }}
+                    >
+                        Leyendo comprobante con IA…
+                    </span>
+                </div>
+            )}
+            {ocrStatus === 'ok' && (
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginTop: '10px',
+                        padding: '10px 14px',
+                        border: `1px solid #1e7a2e`,
+                        background: '#eaf7ec',
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 900,
+                            fontSize: '15px',
+                            color: '#1e7a2e',
+                            lineHeight: 1,
+                        }}
+                    >
+                        ✓
+                    </span>
+                    <span
+                        style={{
+                            ...mono,
+                            fontSize: '11px',
+                            color: '#1e7a2e',
+                            fontWeight: 700,
+                        }}
+                    >
+                        Listo — datos leídos automáticamente. Revisá y corregí
+                        si hace falta.
+                    </span>
+                </div>
+            )}
+            {(ocrStatus === 'sin-lectura' || ocrStatus === 'error') && (
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginTop: '10px',
+                        padding: '10px 14px',
+                        border: '1px solid #999',
+                        background: '#f6f5f2',
+                    }}
+                >
+                    <span
+                        style={{
+                            fontFamily: "'Archivo', sans-serif",
+                            fontWeight: 900,
+                            fontSize: '15px',
+                            color: '#666',
+                            lineHeight: 1,
+                        }}
+                    >
+                        !
+                    </span>
+                    <span style={{ ...mono, fontSize: '11px', color: '#666' }}>
+                        No se pudo leer el comprobante automáticamente —
+                        completá los datos a mano.
+                    </span>
+                </div>
+            )}
+            {ocrMensajes.length > 0 && (
+                <ul
+                    style={{
+                        margin: '6px 0 0',
+                        paddingLeft: '18px',
+                        fontSize: '11.5px',
+                        color: '#886',
+                    }}
+                >
+                    {ocrMensajes.map((m) => (
+                        <li
+                            key={m.codigo}
+                            style={{
+                                color:
+                                    m.nivel === 'error'
+                                        ? RED
+                                        : m.nivel === 'advertencia'
+                                          ? '#9a6a00'
+                                          : '#666',
+                            }}
+                        >
+                            {m.texto}
+                        </li>
+                    ))}
+                </ul>
+            )}
             {g.comprobante_image && (
                 <div
                     style={{
@@ -1499,7 +1814,11 @@ function ComprobanteInput({
                     />
                     <button
                         type="button"
-                        onClick={() => onUpdate({ comprobante_image: null })}
+                        onClick={() => {
+                            onUpdate({ comprobante_image: null });
+                            setOcrStatus('idle');
+                            setOcrMensajes([]);
+                        }}
                         style={botonStyle}
                     >
                         Quitar

@@ -5,6 +5,7 @@ use App\Http\Controllers\Portal\ExchangeRateController;
 use App\Http\Controllers\Portal\FrenteController;
 use App\Http\Controllers\Portal\IniciativaController;
 use App\Http\Controllers\Portal\InnovacionController;
+use App\Http\Controllers\Portal\ReceiptOcrController;
 use App\Http\Controllers\Portal\SearchAdminController;
 use App\Http\Controllers\Portal\SearchController;
 use App\Http\Controllers\Portal\SearchResultsController;
@@ -35,6 +36,14 @@ Route::inertia('mesa', 'portal/mesa')->name('portal.mesa');
 Route::get('responsables', [SectorPageController::class, 'responsables'])->name('portal.responsables');
 Route::get('innovacion', InnovacionController::class)->name('portal.innovacion');
 Route::get('tipo-de-cambio', ExchangeRateController::class)->name('portal.exchange-rate');
+
+// Pública (sin auth) igual que la página del wizard: la rendición de gastos
+// la usa cualquier empleado, no solo quienes tienen cuenta en el portal. El
+// throttle es la única protección contra abuso de un endpoint que le pega a
+// un servicio de IA con costo real.
+Route::post('rendicion-gastos/ocr', ReceiptOcrController::class)
+    ->middleware('throttle:30,1')
+    ->name('portal.rendicion-gastos.ocr');
 
 Route::middleware('auth')->group(function () {
     Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');

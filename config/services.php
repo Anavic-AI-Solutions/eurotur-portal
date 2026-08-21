@@ -40,4 +40,10 @@ return [
         'api_key' => env('BOT_MONITOR_API_KEY'),
     ],
 
+    'receipt_ocr' => [
+        'url' => env('RECEIPT_OCR_URL', 'http://ocr-comprobantes:8000'),
+        'api_key' => env('RECEIPT_OCR_API_KEY'),
+        'timeout' => 120,
+    ],
+
 ];
