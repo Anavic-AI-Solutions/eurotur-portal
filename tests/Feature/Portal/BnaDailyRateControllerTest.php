@@ -24,7 +24,7 @@ class BnaDailyRateControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_a_rate(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -46,7 +46,7 @@ class BnaDailyRateControllerTest extends TestCase
 
     public function test_date_must_be_unique(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         BnaDailyRate::create(['date' => '2026-08-11', 'cash_sell' => 1530]);
 
         $response = $this
@@ -62,7 +62,7 @@ class BnaDailyRateControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_a_rate(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $rate = BnaDailyRate::create(['date' => '2026-08-11', 'cash_sell' => 1530]);
 
         $response = $this
@@ -78,7 +78,7 @@ class BnaDailyRateControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_a_rate(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $rate = BnaDailyRate::create(['date' => '2026-08-11', 'cash_sell' => 1530]);
 
         $response = $this

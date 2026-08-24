@@ -12,8 +12,12 @@ declare module '@inertiajs/core' {
         sharedPageProps: {
             name: string;
             auth: Auth;
+            canEdit: boolean;
             sidebarOpen: boolean;
-            dolarOficialVenta: number | null;
+            dolarOficial: {
+                venta: number;
+                fecha: string | null;
+            } | null;
             iataRate: {
                 rate: number;
                 updatedAt: string | null;

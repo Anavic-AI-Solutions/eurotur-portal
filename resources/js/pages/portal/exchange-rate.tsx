@@ -4,6 +4,13 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import BnaDailyRateController from '@/actions/App/Http/Controllers/Portal/BnaDailyRateController';
 import InputError from '@/components/input-error';
+import {
+    formatDay,
+    formatTimestamp,
+    isRateStale,
+    lastBusinessDay,
+} from '@/lib/exchange-rates';
+import type { ExchangeRate } from '@/lib/exchange-rates';
 
 const RED = '#E30613';
 
@@ -12,6 +19,38 @@ function formatArs(value: number): string {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+}
+
+function formatCsvCell(value: string | number | null): string {
+    if (value === null) {
+        return '';
+    }
+
+    return `"${String(value).replaceAll('"', '""')}"`;
+}
+
+function exportHistoryCsv(rows: HistoryRow[]): void {
+    const header = ['Fecha', 'Compra', 'Venta', 'Nota'];
+    const lines = rows.map((row) =>
+        [
+            formatCsvCell(row.dateLabel),
+            formatCsvCell(row.cashBuy),
+            formatCsvCell(row.cashSell),
+            formatCsvCell(row.note),
+        ].join(';'),
+    );
+
+    const blob = new Blob([[header.join(';'), ...lines].join('\n')], {
+        type: 'text/csv;charset=utf-8;',
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `historico-bna-${formatDay(new Date())}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
 }
 
 type HistoryRow = {
@@ -24,7 +63,7 @@ type HistoryRow = {
 };
 
 type Props = {
-    bnaSell: number | null;
+    bna: ExchangeRate | null;
     history: HistoryRow[];
 };
 
@@ -54,16 +93,20 @@ const smallButtonStyle: React.CSSProperties = {
 function RateBlock({
     label,
     source,
+    sourceHref,
     value,
     stale,
     updatedAt,
 }: {
     label: string;
     source: string;
+    sourceHref?: string;
     value: number | null;
     stale?: boolean;
     updatedAt?: string | null;
 }) {
+    const date = updatedAt ? formatTimestamp(updatedAt) : '';
+
     return (
         <div
             style={{
@@ -107,10 +150,20 @@ function RateBlock({
                 }}
             >
                 <span>
-                    fuente: {source}
-                    {updatedAt
-                        ? ` · actualizado ${new Date(updatedAt).toLocaleString('es-AR')}`
-                        : ''}
+                    fuente:{' '}
+                    {sourceHref ? (
+                        <a
+                            href={sourceHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ color: 'inherit', textDecoration: 'underline' }}
+                        >
+                            {source}
+                        </a>
+                    ) : (
+                        source
+                    )}
+                    {date ? ` · actualizado ${date}` : ''}
                 </span>
                 {stale && (
                     <span
@@ -120,19 +173,54 @@ function RateBlock({
                             padding: '2px 6px',
                         }}
                     >
-                        en caché
+                        desactualizado
                     </span>
                 )}
             </div>
+            {stale && (
+                <div
+                    style={{
+                        marginTop: '10px',
+                        border: `2px solid ${RED}`,
+                        padding: '8px 10px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontWeight: 700,
+                        fontSize: '12px',
+                        color: RED,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                    }}
+                >
+                    ⚠ dato del{' '}
+                    {date ? formatDay(new Date(updatedAt as string)) : '—'} — la
+                    fuente no actualizó desde hace más de un día hábil
+                </div>
+            )}
         </div>
     );
 }
 
-export default function ExchangeRate({ bnaSell, history }: Props) {
-    const { auth, iataRate } = usePage().props;
-    const isAuthenticated = Boolean(auth.user);
+export default function ExchangeRate({ bna, history }: Props) {
+    const { auth, canEdit: canEditProp, iataRate } = usePage().props;
+    const canEdit = Boolean(auth.user) && canEditProp;
     const [adding, setAdding] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
+    const [filter, setFilter] = useState('');
+
+    const needle = filter.trim().toLowerCase();
+    const visibleHistory =
+        needle === ''
+            ? history
+            : history.filter((row) =>
+                  [row.dateLabel, row.note ?? '']
+                      .join(' ')
+                      .toLowerCase()
+                      .includes(needle),
+              );
+
+    const bnaDate = bna?.fecha ? new Date(bna.fecha) : lastBusinessDay();
+    const bnaLabel = `BNA — ${formatDay(bnaDate)}`;
+    const bnaStale = isRateStale(bna?.fecha ?? null);
 
     return (
         <>
@@ -179,14 +267,21 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                     <RateBlock
                         label="IATA — Dólar Aéreo"
                         source="sudameria.com"
+                        sourceHref="https://sudameria.com/"
                         value={iataRate?.rate ?? null}
-                        stale={iataRate?.stale}
+                        stale={
+                            iataRate?.stale ||
+                            isRateStale(iataRate?.updatedAt ?? null)
+                        }
                         updatedAt={iataRate?.updatedAt}
                     />
                     <RateBlock
-                        label="BNA — hoy"
+                        label={bnaLabel}
                         source="dolarapi.com · venta"
-                        value={bnaSell}
+                        sourceHref="https://dolarapi.com/v1/dolares/oficial"
+                        value={bna?.venta ?? null}
+                        stale={bnaStale}
+                        updatedAt={bna?.fecha}
                     />
                 </div>
 
@@ -224,6 +319,39 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                     </div>
                 </div>
 
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '20px',
+                        marginTop: '18px',
+                    }}
+                >
+                    <input
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
+                        placeholder="Filtrar histórico (fecha o nota)…"
+                        style={{
+                            flex: 1,
+                            maxWidth: '320px',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontSize: '13px',
+                            border: 'none',
+                            borderBottom: '2px solid #000',
+                            borderRadius: 0,
+                            padding: '6px 0',
+                        }}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => exportHistoryCsv(history)}
+                        style={smallButtonStyle}
+                    >
+                        Exportar CSV ↓
+                    </button>
+                </div>
+
                 <table
                     style={{
                         width: '100%',
@@ -256,7 +384,7 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                         </tr>
                     </thead>
                     <tbody>
-                        {history.map((row) =>
+                        {visibleHistory.map((row) =>
                             editingId === row.id ? (
                                 <tr key={row.id}>
                                     <td colSpan={5} style={{ padding: '10px' }}>
@@ -303,7 +431,7 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                                             whiteSpace: 'nowrap',
                                         }}
                                     >
-                                        {isAuthenticated && (
+                                        {canEdit && (
                                             <span
                                                 style={{
                                                     display: 'flex',
@@ -362,7 +490,7 @@ export default function ExchangeRate({ bnaSell, history }: Props) {
                     </tbody>
                 </table>
 
-                {isAuthenticated && (
+                {canEdit && (
                     <div style={{ paddingTop: '14px' }}>
                         {adding ? (
                             <RateForm onDone={() => setAdding(false)} />

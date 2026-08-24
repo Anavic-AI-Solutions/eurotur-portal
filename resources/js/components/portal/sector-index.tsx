@@ -54,8 +54,7 @@ export function SectorIndex({
     data: SectorIndexData;
     sector: string;
 }) {
-    const { auth } = usePage().props;
-    const isAuthenticated = Boolean(auth.user);
+    const { canEdit } = usePage().props;
     const [editing, setEditing] = useState(false);
 
     return (
@@ -126,7 +125,7 @@ export function SectorIndex({
                     >
                         {data.num}
                     </div>
-                    {isAuthenticated && (
+                    {canEdit && (
                         <button
                             type="button"
                             onClick={() => setEditing((v) => !v)}
@@ -310,6 +309,41 @@ function SectorGroupColumn({
     );
 }
 
+function RequiredField({
+    name,
+    placeholder,
+    defaultValue,
+}: {
+    name: string;
+    placeholder: string;
+    defaultValue?: string;
+}) {
+    const [invalid, setInvalid] = useState(false);
+
+    return (
+        <div>
+            <input
+                name={name}
+                placeholder={placeholder}
+                defaultValue={defaultValue}
+                required
+                aria-invalid={invalid || undefined}
+                onInvalid={() => setInvalid(true)}
+                onInput={(e) => {
+                    if (e.currentTarget.value) {
+                        setInvalid(false);
+                    }
+                }}
+                style={{
+                    ...labelFieldStyle,
+                    borderColor: invalid ? RED : undefined,
+                }}
+            />
+            {invalid && <InputError message="Completa este campo" />}
+        </div>
+    );
+}
+
 function SectorItemRow({
     item,
     editing,
@@ -401,7 +435,15 @@ function SectorItemRow({
                 </span>
             )}
             {editing && item.id && (
-                <div style={{ display: 'flex', gap: '6px' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        gap: '6px',
+                        flex: '0 0 auto',
+                        whiteSpace: 'nowrap',
+                        marginLeft: 'auto',
+                    }}
+                >
                     <button
                         type="button"
                         onClick={() => setEditingItem(true)}
@@ -454,11 +496,9 @@ function AddGroupForm({ sector }: { sector: string }) {
             {({ processing, errors }) => (
                 <>
                     <div style={{ flex: 1, maxWidth: '280px' }}>
-                        <input
+                        <RequiredField
                             name="title"
                             placeholder="Nuevo grupo…"
-                            required
-                            style={labelFieldStyle}
                         />
                         <InputError message={errors.title} />
                     </div>
@@ -494,12 +534,7 @@ function AddItemForm({
         >
             {({ processing, errors }) => (
                 <>
-                    <input
-                        name="label"
-                        placeholder="Texto del link"
-                        required
-                        style={labelFieldStyle}
-                    />
+                    <RequiredField name="label" placeholder="Texto del link" />
                     <InputError message={errors.label} />
 
                     <div
@@ -597,11 +632,10 @@ function EditItemForm({
         >
             {({ processing, errors }) => (
                 <>
-                    <input
+                    <RequiredField
                         name="label"
+                        placeholder="Texto del link"
                         defaultValue={item.t}
-                        required
-                        style={labelFieldStyle}
                     />
                     <InputError message={errors.label} />
 

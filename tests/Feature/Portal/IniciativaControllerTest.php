@@ -31,7 +31,7 @@ class IniciativaControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_an_iniciativa(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
 
         $response = $this
@@ -58,7 +58,7 @@ class IniciativaControllerTest extends TestCase
     {
         Storage::fake('public');
 
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
 
         $response = $this
@@ -80,7 +80,7 @@ class IniciativaControllerTest extends TestCase
 
     public function test_cls_must_be_a_known_value(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
 
         $response = $this
@@ -99,7 +99,7 @@ class IniciativaControllerTest extends TestCase
     {
         Storage::fake('public');
 
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
 
         $response = $this
@@ -118,7 +118,7 @@ class IniciativaControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_an_iniciativa(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
         $iniciativa = $frente->iniciativas()->create([
             'n' => 'Original', 'badge' => 'Producción', 'cls' => 'prod', 'desc' => 'Desc', 'sort_order' => 0,
@@ -141,7 +141,7 @@ class IniciativaControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_an_iniciativa(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Frente', 'sort_order' => 0]);
         $iniciativa = $frente->iniciativas()->create([
             'n' => 'Original', 'badge' => 'Producción', 'cls' => 'prod', 'desc' => 'Desc', 'sort_order' => 0,

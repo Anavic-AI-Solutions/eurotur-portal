@@ -23,7 +23,7 @@ class SectorGroupControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_a_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -41,7 +41,7 @@ class SectorGroupControllerTest extends TestCase
 
     public function test_group_creation_requires_a_valid_sector(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -54,7 +54,7 @@ class SectorGroupControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_a_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Original', 'sort_order' => 0]);
 
         $response = $this
@@ -67,7 +67,7 @@ class SectorGroupControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_a_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Original', 'sort_order' => 0]);
 
         $response = $this

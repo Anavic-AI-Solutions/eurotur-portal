@@ -130,8 +130,7 @@ const smallButtonStyle: React.CSSProperties = {
 type Props = BotMonitorProps & { frentes: Frente[] };
 
 export default function Innovacion({ frentes, summary, stats }: Props) {
-    const { auth } = usePage().props;
-    const isAuthenticated = Boolean(auth.user);
+    const { canEdit } = usePage().props;
     const [layout, setLayout] = useState<'a' | 'b'>('a');
     const [editing, setEditing] = useState(false);
     const [openFrentes, setOpenFrentes] = useState<Record<string, boolean>>({});
@@ -143,8 +142,14 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
 
     const allItems = frentes.flatMap((f) => f.items);
     const innovStats = [
-        { k: String(frentes.length), l: 'frentes activos' },
-        { k: String(allItems.length), l: 'iniciativas' },
+        {
+            k: String(frentes.length),
+            l: frentes.length === 1 ? 'frente activo' : 'frentes activos',
+        },
+        {
+            k: String(allItems.length),
+            l: allItems.length === 1 ? 'iniciativa' : 'iniciativas',
+        },
         {
             k: String(allItems.filter((i) => i.badge === 'Producción').length),
             l: 'en producción',
@@ -368,7 +373,7 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                                 mosaico
                             </button>
                         </div>
-                        {layout === 'a' && isAuthenticated && (
+                        {layout === 'a' && canEdit && (
                             <button
                                 type="button"
                                 onClick={() => setEditing((v) => !v)}
@@ -393,7 +398,15 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                             return (
                                 <div
                                     key={f.id}
-                                    style={{ borderBottom: '1px solid #000' }}
+                                    style={{
+                                        borderBottom: '1px solid #000',
+                                        background:
+                                            frenteIndex % 2 === 0
+                                                ? '#fff'
+                                                : '#faf7f7',
+                                        padding: '0 10px',
+                                        marginBottom: '8px',
+                                    }}
                                 >
                                     <div
                                         style={{
@@ -464,7 +477,9 @@ export default function Innovacion({ frentes, summary, stats }: Props) {
                                                         color: '#666',
                                                     }}
                                                 >
-                                                    {f.items.length} iniciativas
+                                                    {f.items.length === 1
+                                                        ? '1 iniciativa'
+                                                        : `${f.items.length} iniciativas`}
                                                 </span>
                                                 <span
                                                     style={{

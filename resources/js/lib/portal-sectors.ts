@@ -7,6 +7,7 @@ import {
     institucional,
     it,
     mesa,
+    meetingRoom,
     operaciones,
     producto,
     qrated,
@@ -34,7 +35,8 @@ export type SectorId =
     | 'responsables'
     | 'innovacion'
     | 'exchange-rate'
-    | 'search-admin';
+    | 'search-admin'
+    | 'meeting-room';
 
 export type ActiveView = 'home' | SectorId;
 
@@ -175,5 +177,13 @@ export const SECTORS: Sector[] = [
         shortLabel: 'Buscador',
         place: 'keywords · tesauro',
         href: searchAdmin(),
+    },
+    {
+        id: 'meeting-room',
+        num: '17',
+        navLabel: 'Sala de Reuniones',
+        shortLabel: 'Sala de Reuniones',
+        place: 'reservas · calendar',
+        href: meetingRoom(),
     },
 ];

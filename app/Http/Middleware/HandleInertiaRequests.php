@@ -43,8 +43,9 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'canEdit' => $request->user()?->canEditPortal() ?? false,
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'dolarOficialVenta' => app(DolarOficialService::class)->ventaOficial(),
+            'dolarOficial' => app(DolarOficialService::class)->oficial(),
             'iataRate' => app(IataRateService::class)->rate(),
         ];
     }

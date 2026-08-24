@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\CarbonInterface;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
@@ -41,7 +42,11 @@ class IataRateService
         $fresh = Cache::get(self::FRESH_CACHE_KEY);
 
         if ($fresh !== null) {
-            return $fresh;
+            return [
+                'rate' => $fresh['rate'],
+                'updatedAt' => $fresh['updatedAt'],
+                'stale' => $this->isStale($fresh['updatedAt']),
+            ];
         }
 
         $scraped = $this->scrape();
@@ -61,6 +66,38 @@ class IataRateService
         }
 
         return null;
+    }
+
+    /**
+     * A rate is stale when the source's own "Actualizado" timestamp is older
+     * than the previous business day: weekends are tolerated (a Friday value
+     * is still the current one on Monday), but two business days of silence
+     * means the source stopped publishing and the value must be flagged.
+     */
+    private function isStale(?string $updatedAt): bool
+    {
+        if ($updatedAt === null) {
+            return false;
+        }
+
+        try {
+            $updated = Carbon::parse($updatedAt);
+        } catch (\Exception) {
+            return false;
+        }
+
+        return $updated->lt($this->previousBusinessDayStart());
+    }
+
+    private function previousBusinessDayStart(): CarbonInterface
+    {
+        $day = today()->subDay();
+
+        while ($day->isWeekend()) {
+            $day = $day->subDay();
+        }
+
+        return $day->startOfDay();
     }
 
     /**
@@ -134,10 +171,12 @@ class IataRateService
                 return null;
             }
 
+            $updatedAt = $this->extractUpdatedAt($article->getAttribute('title'));
+
             return [
                 'rate' => $rate,
-                'updatedAt' => $this->extractUpdatedAt($article->getAttribute('title')),
-                'stale' => false,
+                'updatedAt' => $updatedAt,
+                'stale' => $this->isStale($updatedAt),
             ];
         }
 
@@ -160,12 +199,12 @@ class IataRateService
 
     private function extractUpdatedAt(string $title): ?string
     {
-        if (preg_match('/Actualizado:\s*(.+)$/u', trim($title), $matches) !== 1) {
+        if (preg_match('/Actualizado:\s*(\d{1,2}\/\d{1,2}\/\d{4}),?\s*(\d{2}:\d{2}:\d{2})/u', trim($title), $matches) !== 1) {
             return null;
         }
 
         try {
-            return Carbon::createFromFormat('d/m/Y H:i:s', trim($matches[1]))->toIso8601String();
+            return Carbon::createFromFormat('d/m/Y H:i:s', $matches[1].' '.$matches[2])->toIso8601String();
         } catch (\Exception) {
             return null;
         }

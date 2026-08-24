@@ -15,7 +15,7 @@ class SearchAdminControllerTest extends TestCase
 
     public function test_it_renders_the_search_admin_page_with_the_three_datasets(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $group->items()->create([
             'label' => 'Manual de conductores',

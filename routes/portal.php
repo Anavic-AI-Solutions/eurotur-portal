@@ -5,6 +5,7 @@ use App\Http\Controllers\Portal\ExchangeRateController;
 use App\Http\Controllers\Portal\FrenteController;
 use App\Http\Controllers\Portal\IniciativaController;
 use App\Http\Controllers\Portal\InnovacionController;
+use App\Http\Controllers\Portal\MeetingRoomController;
 use App\Http\Controllers\Portal\ReceiptOcrController;
 use App\Http\Controllers\Portal\SearchAdminController;
 use App\Http\Controllers\Portal\SearchController;
@@ -33,6 +34,7 @@ Route::get('sales', [SectorPageController::class, 'sales'])->name('portal.sales'
 Route::get('traveldesigners', [SectorPageController::class, 'traveldesigners'])->name('portal.traveldesigners');
 Route::get('it', [SectorPageController::class, 'it'])->name('portal.it');
 Route::inertia('mesa', 'portal/mesa')->name('portal.mesa');
+Route::get('sala-de-reuniones', MeetingRoomController::class)->name('portal.meeting-room');
 Route::get('responsables', [SectorPageController::class, 'responsables'])->name('portal.responsables');
 Route::get('innovacion', InnovacionController::class)->name('portal.innovacion');
 Route::get('tipo-de-cambio', ExchangeRateController::class)->name('portal.exchange-rate');
@@ -45,7 +47,7 @@ Route::post('rendicion-gastos/ocr', ReceiptOcrController::class)
     ->middleware('throttle:30,1')
     ->name('portal.rendicion-gastos.ocr');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:editar-portal'])->group(function () {
     Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');
 
     Route::post('{sector}/groups', [SectorGroupController::class, 'store'])->name('portal.groups.store');

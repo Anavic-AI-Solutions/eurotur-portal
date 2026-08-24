@@ -29,7 +29,7 @@ class SectorItemControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_an_item_with_url(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
 
         $response = $this
@@ -52,7 +52,7 @@ class SectorItemControllerTest extends TestCase
     {
         Storage::fake('public');
 
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
 
         $response = $this
@@ -73,7 +73,7 @@ class SectorItemControllerTest extends TestCase
     {
         Storage::fake('public');
 
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
 
         $response = $this
@@ -89,7 +89,7 @@ class SectorItemControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_an_item(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $item = $group->items()->create(['label' => 'Original', 'url' => 'https://example.com', 'sort_order' => 0]);
 
@@ -103,7 +103,7 @@ class SectorItemControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_an_items_keywords(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $item = $group->items()->create(['label' => 'Original', 'url' => 'https://example.com', 'sort_order' => 0]);
 
@@ -120,7 +120,7 @@ class SectorItemControllerTest extends TestCase
 
     public function test_updating_an_item_without_keywords_in_the_request_leaves_them_unchanged(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $item = $group->items()->create([
             'label' => 'Original',
@@ -139,7 +139,7 @@ class SectorItemControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_an_item(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $item = $group->items()->create(['label' => 'Original', 'url' => 'https://example.com', 'sort_order' => 0]);
 
@@ -155,7 +155,7 @@ class SectorItemControllerTest extends TestCase
     {
         Storage::fake('public');
 
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
         $path = UploadedFile::fake()->create('documento.pdf')->store('sector-links', 'public');
         $item = $group->items()->create(['label' => 'Documento', 'file_path' => $path, 'sort_order' => 0]);

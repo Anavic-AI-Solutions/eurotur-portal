@@ -24,7 +24,7 @@ class SearchSynonymTermControllerTest extends TestCase
 
     public function test_authenticated_user_can_add_a_term_to_an_existing_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         SearchSynonymTerm::create(['group_number' => 1, 'term' => 'factura']);
 
         $response = $this
@@ -40,7 +40,7 @@ class SearchSynonymTermControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_a_new_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -55,7 +55,7 @@ class SearchSynonymTermControllerTest extends TestCase
 
     public function test_term_must_be_unique_within_its_group(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         SearchSynonymTerm::create(['group_number' => 1, 'term' => 'factura']);
 
         $response = $this
@@ -71,7 +71,7 @@ class SearchSynonymTermControllerTest extends TestCase
 
     public function test_the_same_term_can_exist_in_different_groups(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         SearchSynonymTerm::create(['group_number' => 1, 'term' => 'pago']);
 
         $response = $this
@@ -87,7 +87,7 @@ class SearchSynonymTermControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_a_term(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $term = SearchSynonymTerm::create(['group_number' => 1, 'term' => 'factura']);
 
         $response = $this

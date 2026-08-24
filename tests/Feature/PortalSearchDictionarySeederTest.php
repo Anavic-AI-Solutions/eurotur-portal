@@ -23,13 +23,21 @@ class PortalSearchDictionarySeederTest extends TestCase
 
         $this->seed(PortalSearchDictionarySeeder::class);
 
-        $this->assertGreaterThan(100, SectorItem::whereNotNull('keywords')->count());
-        $this->assertGreaterThan(20, SearchStaticEntry::count());
-        $this->assertSame(111, SearchSynonymTerm::query()->distinct('group_number')->count('group_number'));
+        // Starter dictionary (docs/Keywords/portal_diccionario.json): 64
+        // entries with keywords + 22 synonym groups. The full relevamiento
+        // (180 entries / 111 groups) can re-imported later by replacing the
+        // JSON and keeping this seeder as-is.
+        $this->assertGreaterThan(40, SectorItem::whereNotNull('keywords')->count());
+        $this->assertGreaterThan(3, SearchStaticEntry::count());
+        $this->assertGreaterThan(20, SearchSynonymTerm::query()->distinct('group_number')->count('group_number'));
 
         $mesa = SearchStaticEntry::where('url', '/mesa')->first();
         $this->assertNotNull($mesa);
         $this->assertNotEmpty($mesa->keywords);
+
+        $sala = SearchStaticEntry::where('url', '/sala-de-reuniones')->first();
+        $this->assertNotNull($sala);
+        $this->assertStringContainsString('reserva', $sala->keywords);
 
         $exchangeRate = SectorItem::where('url', '/tipo-de-cambio')->first();
         $this->assertNotNull($exchangeRate);

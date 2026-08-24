@@ -646,15 +646,18 @@ export default function Mesa() {
                     <div
                         style={{
                             position: 'relative',
-                            minHeight: '300px',
-                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
                             background: '#111',
                             borderLeft: '1px solid #333',
+                            padding: '18px',
                         }}
                     >
                         <ImageSlot
                             src="/img/mesa-vpn.webp"
                             placeholder="Captura: VPN estancada al 45%"
+                            contain
                         />
                     </div>
                 </div>
@@ -993,16 +996,18 @@ export default function Mesa() {
                         </p>
                         <div
                             style={{
-                                position: 'relative',
-                                height: '180px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
                                 background: '#111',
-                                overflow: 'hidden',
+                                padding: '16px',
                                 marginTop: '22px',
                             }}
                         >
                             <ImageSlot
                                 src="/img/mesa-pantallas.webp"
                                 placeholder="Captura: configuración de pantallas"
+                                contain
                             />
                         </div>
                     </div>

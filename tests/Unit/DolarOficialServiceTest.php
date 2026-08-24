@@ -35,7 +35,28 @@ class DolarOficialServiceTest extends TestCase
 
         $rates = app(DolarOficialService::class)->rates();
 
-        $this->assertSame(['compra' => 1460.0, 'venta' => 1510.0], $rates);
+        $this->assertSame(['compra' => 1460.0, 'venta' => 1510.0, 'fecha' => null], $rates);
+    }
+
+    public function test_it_exposes_the_source_update_timestamp(): void
+    {
+        Http::fake([
+            'dolarapi.com/*' => Http::response(['venta' => 1510, 'compra' => 1460, 'fechaActualizacion' => '2026-08-14T10:00:02.000Z']),
+        ]);
+
+        $oficial = app(DolarOficialService::class)->oficial();
+
+        $this->assertSame(1510.0, $oficial['venta']);
+        $this->assertSame('2026-08-14T10:00:02.000Z', $oficial['fecha']);
+    }
+
+    public function test_oficial_is_null_when_the_api_fails(): void
+    {
+        Http::fake([
+            'dolarapi.com/*' => Http::response(null, 500),
+        ]);
+
+        $this->assertNull(app(DolarOficialService::class)->oficial());
     }
 
     public function test_it_caches_the_result_so_the_api_is_called_only_once(): void

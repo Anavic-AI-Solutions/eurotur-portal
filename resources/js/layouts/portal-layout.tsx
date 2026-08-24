@@ -1,6 +1,7 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { formatDay, isRateStale, lastBusinessDay } from '@/lib/exchange-rates';
 import { SECTORS } from '@/lib/portal-sectors';
 import type { ActiveView } from '@/lib/portal-sectors';
 import { home, logout } from '@/routes';
@@ -9,10 +10,6 @@ import { search, searchResults } from '@/routes/portal';
 const RED = '#E30613';
 const STRIPE_ACCENT = true;
 
-function formatArs(value: number): string {
-    return Math.round(value).toLocaleString('es-AR');
-}
-
 function formatToday(): string {
     const now = new Date();
     const dd = String(now.getDate()).padStart(2, '0');
@@ -20,6 +17,10 @@ function formatToday(): string {
     const yy = String(now.getFullYear() % 100).padStart(2, '0');
 
     return `${dd}·${mm}·${yy}`;
+}
+
+function formatArs(value: number): string {
+    return Math.round(value).toLocaleString('es-AR');
 }
 
 export default function PortalLayout({
@@ -32,7 +33,7 @@ export default function PortalLayout({
     children: ReactNode;
 }) {
     const [menuOpen, setMenuOpen] = useState(false);
-    const { dolarOficialVenta, iataRate } = usePage().props;
+    const { dolarOficial, iataRate } = usePage().props;
 
     return (
         <>
@@ -136,10 +137,7 @@ export default function PortalLayout({
                         flexDirection: 'column',
                     }}
                 >
-                    <Header
-                        dolarOficialVenta={dolarOficialVenta}
-                        iataRate={iataRate}
-                    />
+                    <Header dolarOficial={dolarOficial} iataRate={iataRate} />
 
                     {STRIPE_ACCENT && (
                         <div
@@ -210,10 +208,10 @@ function Sidebar({
     menuOpen: boolean;
     onToggleMenu: () => void;
 }) {
-    const { auth } = usePage().props;
+    const { auth, canEdit } = usePage().props;
     const isAuthenticated = Boolean(auth.user);
     const visibleSectors = SECTORS.filter(
-        (sector) => sector.id !== 'search-admin' || isAuthenticated,
+        (sector) => sector.id !== 'search-admin' || canEdit,
     );
 
     return (
@@ -442,7 +440,9 @@ function GlobalSearch() {
 
     useEffect(() => {
         if (activeIndex >= 0 && resultRefs.current[activeIndex]) {
-            resultRefs.current[activeIndex]?.scrollIntoView({ block: 'nearest' });
+            resultRefs.current[activeIndex]?.scrollIntoView({
+                block: 'nearest',
+            });
         }
     }, [activeIndex]);
 
@@ -501,25 +501,33 @@ function GlobalSearch() {
                     onBlur={() => setTimeout(() => setOpen(false), 150)}
                     onKeyDown={(e) => {
                         if (e.key === 'ArrowDown') {
-                            if (!showDropdown || results.length === 0) return;
+                            if (!showDropdown || results.length === 0) {
+                                return;
+                            }
+
                             e.preventDefault();
                             setActiveIndex((i) =>
                                 i < results.length - 1 ? i + 1 : 0,
                             );
                         } else if (e.key === 'ArrowUp') {
-                            if (!showDropdown || results.length === 0) return;
+                            if (!showDropdown || results.length === 0) {
+                                return;
+                            }
+
                             e.preventDefault();
                             setActiveIndex((i) =>
                                 i > 0 ? i - 1 : results.length - 1,
                             );
                         } else if (e.key === 'Enter') {
                             e.preventDefault();
+
                             if (activeIndex >= 0) {
                                 window.open(results[activeIndex].url, '_blank');
                                 setOpen(false);
                                 setActiveIndex(-1);
                             } else {
                                 const trimmed = query.trim();
+
                                 if (trimmed.length >= 2) {
                                     router.visit(
                                         searchResults.url({
@@ -595,7 +603,7 @@ function GlobalSearch() {
                                 rel="noreferrer"
                                 onMouseDown={(e) => e.preventDefault()}
                                 onClick={() => setOpen(false)}
-                                className={`search-result${i === activeIndex ? ' search-result-active' : ''}`}
+                                className={`search-result${i === activeIndex ? 'search-result-active' : ''}`}
                                 style={{
                                     display: 'block',
                                     textDecoration: 'none',
@@ -635,12 +643,22 @@ function GlobalSearch() {
 }
 
 function Header({
-    dolarOficialVenta,
+    dolarOficial,
     iataRate,
 }: {
-    dolarOficialVenta: number | null;
+    dolarOficial: {
+        venta: number;
+        fecha: string | null;
+    } | null;
     iataRate: { rate: number; updatedAt: string | null; stale: boolean } | null;
 }) {
+    const iataStale =
+        iataRate?.stale || isRateStale(iataRate?.updatedAt ?? null);
+    const bnaStale = isRateStale(dolarOficial?.fecha ?? null);
+    const bnaDate = dolarOficial?.fecha
+        ? formatDay(new Date(dolarOficial.fecha))
+        : formatDay(lastBusinessDay());
+
     return (
         <header
             id="portal-header"
@@ -664,10 +682,24 @@ function Header({
                             fontSize: '9px',
                             letterSpacing: '0.14em',
                             textTransform: 'uppercase',
-                            color: '#999',
+                            color: iataStale ? RED : '#999',
+                            display: 'flex',
+                            gap: '6px',
+                            justifyContent: 'flex-end',
                         }}
                     >
                         dólar iata
+                        {iataStale && (
+                            <span
+                                style={{
+                                    background: RED,
+                                    color: '#fff',
+                                    padding: '1px 5px',
+                                }}
+                            >
+                                desact.
+                            </span>
+                        )}
                     </div>
                     <div
                         style={{
@@ -682,6 +714,20 @@ function Header({
                             : '—'}
                         <span style={{ color: RED }}>.</span>
                     </div>
+                    <div
+                        style={{
+                            fontFamily: "'Space Mono', monospace",
+                            fontSize: '9px',
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            color: '#999',
+                            marginTop: '4px',
+                        }}
+                    >
+                        {iataRate?.updatedAt
+                            ? formatDay(new Date(iataRate.updatedAt))
+                            : '—'}
+                    </div>
                 </div>
                 <div>
                     <div
@@ -690,10 +736,24 @@ function Header({
                             fontSize: '9px',
                             letterSpacing: '0.14em',
                             textTransform: 'uppercase',
-                            color: '#999',
+                            color: bnaStale ? RED : '#999',
+                            display: 'flex',
+                            gap: '6px',
+                            justifyContent: 'flex-end',
                         }}
                     >
                         dólar bna
+                        {bnaStale && (
+                            <span
+                                style={{
+                                    background: RED,
+                                    color: '#fff',
+                                    padding: '1px 5px',
+                                }}
+                            >
+                                desact.
+                            </span>
+                        )}
                     </div>
                     <div
                         style={{
@@ -703,10 +763,22 @@ function Header({
                             lineHeight: 1,
                         }}
                     >
-                        {dolarOficialVenta !== null
-                            ? `$${formatArs(dolarOficialVenta)}`
+                        {dolarOficial !== null
+                            ? `$${formatArs(dolarOficial.venta)}`
                             : '—'}
                         <span style={{ color: RED }}>.</span>
+                    </div>
+                    <div
+                        style={{
+                            fontFamily: "'Space Mono', monospace",
+                            fontSize: '9px',
+                            letterSpacing: '0.1em',
+                            textTransform: 'uppercase',
+                            color: '#999',
+                            marginTop: '4px',
+                        }}
+                    >
+                        {bnaDate}
                     </div>
                 </div>
                 <div>
@@ -737,6 +809,25 @@ function Header({
     );
 }
 
+const PORTAL_PHONE = 'tel:+541140000000';
+
+const SOCIAL_LINKS: { label: string; href: string }[] = [
+    { label: 'facebook', href: 'https://www.facebook.com/Eurotur.Incoming' },
+    {
+        label: 'instagram',
+        href: 'https://www.instagram.com/eurotur.incoming/',
+    },
+    {
+        label: 'linkedin',
+        href: 'https://www.linkedin.com/company/euroturincoming',
+    },
+    { label: 'youtube', href: 'https://www.youtube.com/c/Euroturincoming' },
+    {
+        label: 'flickr',
+        href: 'https://www.flickr.com/photos/182100254@N02/',
+    },
+];
+
 function Footer() {
     return (
         <footer
@@ -762,7 +853,13 @@ function Footer() {
             >
                 <span>
                     <span style={{ color: '#999' }}>phone</span>
-                    &nbsp;&nbsp;(011) 4000-0000
+                    &nbsp;&nbsp;
+                    <a
+                        href={PORTAL_PHONE}
+                        style={{ color: 'inherit', textDecoration: 'none' }}
+                    >
+                        (011) 4000-0000
+                    </a>
                 </span>
                 <span>
                     <span style={{ color: '#999' }}>email</span>
@@ -777,6 +874,36 @@ function Footer() {
                 <span style={{ color: '#999' }}>
                     Av. Montes de Oca 2238, CABA
                 </span>
+            </div>
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '16px',
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: '#999',
+                }}
+            >
+                <span>redes —</span>
+                {SOCIAL_LINKS.map((social) => (
+                    <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                            color: 'inherit',
+                            textDecoration: 'none',
+                            borderBottom: '1px dotted #999',
+                            transition: 'color .12s',
+                        }}
+                    >
+                        {social.label}
+                    </a>
+                ))}
             </div>
             <img
                 src="/eurotur-logo.png"

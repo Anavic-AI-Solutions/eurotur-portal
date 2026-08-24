@@ -23,7 +23,7 @@ class FrenteControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_a_frente(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -42,7 +42,7 @@ class FrenteControllerTest extends TestCase
 
     public function test_new_frente_gets_the_next_sort_order(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         Frente::create(['area' => 'Existente', 'sort_order' => 3]);
 
         $this->actingAs($user)->post(route('portal.frentes.store'), [
@@ -57,7 +57,7 @@ class FrenteControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_a_frente(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Original', 'sort_order' => 0]);
 
         $response = $this
@@ -70,7 +70,7 @@ class FrenteControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_a_frente(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $frente = Frente::create(['area' => 'Original', 'sort_order' => 0]);
 
         $response = $this

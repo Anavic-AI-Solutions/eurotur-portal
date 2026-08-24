@@ -103,29 +103,55 @@ function StatValue({
     );
 }
 
+function panelButtonStyle(variant: 'start' | 'stop', disabled: boolean) {
+    return {
+        fontFamily: "'Space Mono', monospace",
+        fontSize: '10px',
+        fontWeight: 700,
+        letterSpacing: '0.06em',
+        textTransform: 'uppercase',
+        padding: '7px 12px',
+        border: variant === 'start' ? '1px solid #000' : `1px solid ${RED}`,
+        background: variant === 'start' ? '#000' : '#fff',
+        color: variant === 'start' ? '#fff' : RED,
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.35 : 1,
+    };
+}
+
 function PanelButton({
     children,
     variant,
+    running,
+    mode,
 }: {
     children: string;
     variant: 'start' | 'stop';
+    running: boolean;
+    mode: string | null;
 }) {
+    const disabled = variant === 'start' ? running : !running;
+
     return (
         <button
             type="button"
-            style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '10px',
-                fontWeight: 700,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                padding: '7px 12px',
-                border:
-                    variant === 'start' ? '1px solid #000' : `1px solid ${RED}`,
-                background: variant === 'start' ? '#000' : '#fff',
-                color: variant === 'start' ? '#fff' : RED,
-                cursor: 'pointer',
+            disabled={disabled}
+            onClick={() => {
+                const action = variant === 'start' ? 'Iniciar' : 'Detener';
+                const scope = mode ? ` (${mode})` : '';
+                const confirmed = window.confirm(
+                    `¿${action} la corrida del bot${scope}?`,
+                );
+
+                if (!confirmed) {
+                    return;
+                }
+
+                // No wired to the bot API yet: log for the operator and leave
+                // the monitor read-only.
+                console.info(`action=${action} mode=${mode ?? 'unknown'}`);
             }}
+            style={panelButtonStyle(variant, disabled)}
         >
             {children}
         </button>
@@ -140,6 +166,23 @@ export function BotMonitor({ summary, stats }: BotMonitorProps) {
     usePoll(15000, { only: ['stats', 'summary'] });
 
     const pipeline = stats?.stats ?? null;
+    const running = Boolean(pipeline?.running || stats?.thread_alive);
+
+    const vouchers = summary?.vouchers;
+    const vouchersTotal =
+        vouchers !== undefined
+            ? vouchers.ok + vouchers.failed + vouchers.skipped
+            : 0;
+    const vouchersPct =
+        vouchers !== undefined && vouchersTotal > 0
+            ? ((vouchers.ok / vouchersTotal) * 100).toFixed(1)
+            : null;
+
+    const cheques = summary?.cheques;
+    const chequesTotal =
+        cheques !== undefined
+            ? cheques.ok + cheques.failed + cheques.pending
+            : 0;
 
     return (
         <div
@@ -160,37 +203,107 @@ export function BotMonitor({ summary, stats }: BotMonitorProps) {
                     <div
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(3,1fr)',
-                            gap: '10px',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: '18px',
                             marginTop: '6px',
+                            borderTop: '2px solid #000',
                         }}
                     >
-                        <StatValue
-                            label="vouchers ok"
-                            value={summary.vouchers.ok}
-                        />
-                        <StatValue
-                            label="vouchers fallidos"
-                            value={summary.vouchers.failed}
-                            highlight={summary.vouchers.failed > 0}
-                        />
-                        <StatValue
-                            label="vouchers total"
-                            value={summary.vouchers.total}
-                        />
-                        <StatValue
-                            label="cheques ok"
-                            value={summary.cheques.ok}
-                        />
-                        <StatValue
-                            label="cheques fallidos"
-                            value={summary.cheques.failed}
-                            highlight={summary.cheques.failed > 0}
-                        />
-                        <StatValue
-                            label="cheques total"
-                            value={summary.cheques.total}
-                        />
+                        <div
+                            style={{
+                                paddingTop: '10px',
+                                borderRight: '1px dotted #cfcfcf',
+                            }}
+                        >
+                            <Label>vouchers</Label>
+                            <div
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(3,1fr)',
+                                    gap: '10px',
+                                    marginTop: '6px',
+                                }}
+                            >
+                                <StatValue
+                                    label="ok"
+                                    value={vouchers?.ok ?? 0}
+                                />
+                                <StatValue
+                                    label="fallidos"
+                                    value={vouchers?.failed ?? 0}
+                                    highlight={(vouchers?.failed ?? 0) > 0}
+                                />
+                                <StatValue
+                                    label="pendientes"
+                                    value={vouchers?.pending ?? 0}
+                                />
+                                <StatValue
+                                    label="omitidos"
+                                    value={vouchers?.skipped ?? 0}
+                                />
+                                <StatValue
+                                    label="total"
+                                    value={vouchers?.total ?? vouchersTotal}
+                                />
+                                <StatValue
+                                    label="éxito"
+                                    value={
+                                        vouchersPct !== null
+                                            ? `${vouchersPct}%`
+                                            : '—'
+                                    }
+                                    highlight={
+                                        vouchersPct !== null &&
+                                        Number(vouchersPct) < 95
+                                    }
+                                />
+                            </div>
+                        </div>
+                        <div style={{ paddingTop: '10px' }}>
+                            <Label>cheques</Label>
+                            <div
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(3,1fr)',
+                                    gap: '10px',
+                                    marginTop: '6px',
+                                }}
+                            >
+                                <StatValue
+                                    label="ok"
+                                    value={cheques?.ok ?? 0}
+                                />
+                                <StatValue
+                                    label="fallidos"
+                                    value={cheques?.failed ?? 0}
+                                    highlight={(cheques?.failed ?? 0) > 0}
+                                />
+                                <StatValue
+                                    label="pendientes"
+                                    value={cheques?.pending ?? 0}
+                                />
+                                <StatValue
+                                    label="total"
+                                    value={cheques?.total ?? chequesTotal}
+                                />
+                                <StatValue
+                                    label="progreso"
+                                    value={
+                                        pipeline !== null
+                                            ? `${pipeline.progress_pct.toFixed(0)}%`
+                                            : '—'
+                                    }
+                                />
+                                <StatValue
+                                    label="transcurrido"
+                                    value={
+                                        pipeline !== null
+                                            ? `${Math.floor(pipeline.elapsed_seconds / 60)}m`
+                                            : '—'
+                                    }
+                                />
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
@@ -206,8 +319,20 @@ export function BotMonitor({ summary, stats }: BotMonitorProps) {
                 >
                     <Label>corrida activa</Label>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                        <PanelButton variant="start">Iniciar</PanelButton>
-                        <PanelButton variant="stop">Detener</PanelButton>
+                        <PanelButton
+                            variant="start"
+                            running={running}
+                            mode={stats?.mode ?? null}
+                        >
+                            Iniciar
+                        </PanelButton>
+                        <PanelButton
+                            variant="stop"
+                            running={running}
+                            mode={stats?.mode ?? null}
+                        >
+                            Detener
+                        </PanelButton>
                     </div>
                 </div>
 

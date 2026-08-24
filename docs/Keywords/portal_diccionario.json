@@ -1,0 +1,1185 @@
+{
+    "sectores": [
+        {
+            "ruta": "/",
+            "nombre": "Inicio"
+        },
+        {
+            "ruta": "/institucional",
+            "nombre": "Institucional"
+        },
+        {
+            "ruta": "/rrhh",
+            "nombre": "Recursos Humanos"
+        },
+        {
+            "ruta": "/adm",
+            "nombre": "Administración"
+        },
+        {
+            "ruta": "/contrataciones",
+            "nombre": "Contrataciones"
+        },
+        {
+            "ruta": "/operaciones",
+            "nombre": "Operaciones"
+        },
+        {
+            "ruta": "/producto",
+            "nombre": "Producto"
+        },
+        {
+            "ruta": "/customercare",
+            "nombre": "Customer Care"
+        },
+        {
+            "ruta": "/qrated",
+            "nombre": "Qrated"
+        },
+        {
+            "ruta": "/sales",
+            "nombre": "Sales"
+        },
+        {
+            "ruta": "/traveldesigners",
+            "nombre": "Travel Designers"
+        },
+        {
+            "ruta": "/it",
+            "nombre": "IT"
+        },
+        {
+            "ruta": "/mesa",
+            "nombre": "Mesa de Información"
+        },
+        {
+            "ruta": "/responsables",
+            "nombre": "Responsables del Portal"
+        },
+        {
+            "ruta": "/innovacion",
+            "nombre": "Innovación"
+        },
+        {
+            "ruta": "/tipo-de-cambio",
+            "nombre": "Tipo de Cambio"
+        },
+        {
+            "ruta": "/sala-de-reuniones",
+            "nombre": "Sala de Reuniones"
+        }
+    ],
+    "entradas": [
+        {
+            "id": "EU-001",
+            "titulo": "Formulario de altas de personal",
+            "url": "https://drive.google.com/drive/u/0/folders/1qCarwAsJhCp3noSeNa9UJOZktMASLZAl",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "alta",
+                "ingreso",
+                "empleado",
+                "nuevo",
+                "personal",
+                "contratacion",
+                "formulario"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-002",
+            "titulo": "Carta vacaciones Eurotur",
+            "url": "https://drive.google.com/drive/u/0/folders/1ESdsqm5G3rIaFKVWpRSXuvKel6hwAOpR",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "carta",
+                "vacaciones",
+                "licencia",
+                "ausencia",
+                "pedido",
+                "dias",
+                "eurotur"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-003",
+            "titulo": "Carta vacaciones Travel Designers",
+            "url": "https://drive.google.com/drive/u/0/folders/1ESdsqm5G3rIaFKVWpRSXuvKel6hwAOpR",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "carta",
+                "vacaciones",
+                "licencia",
+                "ausencia",
+                "travel designers",
+                "pedido"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-004",
+            "titulo": "Email, grupos y teléfonos",
+            "url": "https://docs.google.com/spreadsheets/d/1o5Gsm8oSGapcLPGLmHGpmAZwyK9_49VFLQ_e6tqz_5o/edit",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "email",
+                "grupos",
+                "telefonos",
+                "mail",
+                "contacto",
+                "directorio"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-005",
+            "titulo": "DDJJ de Domicilio Eurotur",
+            "url": "https://drive.google.com/drive/u/1/folders/1rAVXN-F3tORsSqACPT3lWrZXr0eq906o",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "ddjj",
+                "domicilio",
+                "declaracion",
+                "jurada",
+                "fiscal"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-006",
+            "titulo": "Política de personal",
+            "url": "https://drive.google.com/drive/u/0/folders/1egYGkgq1Yc5XPMZwLZc952K5Vi8hHdMi",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "politica",
+                "personal",
+                "normas",
+                "reglamento",
+                "rrhh",
+                "empleados"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-007",
+            "titulo": "Rendición de gastos de internet",
+            "url": "https://docs.google.com/forms/d/e/1FAIpQLSdNjkgDveNTy3jp8dx1y43mrpgRH688NRSuoqve4Cha2143HQ/viewform",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "rendicion",
+                "gastos",
+                "internet",
+                "wifi",
+                "reintegro",
+                "viaticos"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-008",
+            "titulo": "Feriados nacionales 2026",
+            "url": "https://www.argentina.gob.ar/jefatura/feriados-nacionales-2026",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "feriados",
+                "asueto",
+                "no laborable",
+                "feriado",
+                "nacional",
+                "2026"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-009",
+            "titulo": "Actividad oficinas BUE-FTE-USH 2026",
+            "url": "https://drive.google.com/drive/u/0/folders/1Ewpl-6o3RkYQh9rMSZE-Ern2SYQw6o6E",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "actividad",
+                "oficinas",
+                "bue",
+                "fte",
+                "ush",
+                "calendario",
+                "2026"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-010",
+            "titulo": "Organigrama Eurotur",
+            "url": "https://drive.google.com/drive/u/0/folders/1YBH-WESU1sBqR1v6VjPDlpH0fwtTAfcV",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "organigrama",
+                "estructura",
+                "areas",
+                "equipos",
+                "jerarquia"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-011",
+            "titulo": "Modelo de recibo (Excel)",
+            "url": "https://docs.google.com/spreadsheets/d/1RLN0FVoN9zeE7CF7pCheeOdPcPNtZMjC/edit",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "recibo",
+                "sueldo",
+                "haberes",
+                "liquidacion",
+                "salario",
+                "modelo"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-012",
+            "titulo": "Escalas CCT 547/08",
+            "url": "https://drive.google.com/drive/u/0/folders/18rxmKZW6Wo4IJn-waptDWnzWVsEbx1EO",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "escala",
+                "cct",
+                "convenio",
+                "sueldo",
+                "categorias",
+                "547"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-013",
+            "titulo": "Paritaria FAECYS-FAEVYT",
+            "url": "https://drive.google.com/drive/u/0/folders/18rxmKZW6Wo4IJn-waptDWnzWVsEbx1EO",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "paritaria",
+                "salario",
+                "aumento",
+                "faecys",
+                "faevy",
+                "gremio"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-014",
+            "titulo": "Datos ART",
+            "url": "https://drive.google.com/drive/folders/1M0bvz0j36Zvbc2bJrKK_XwlxJ-coJF0z",
+            "sector": "Recursos Humanos",
+            "keywords": [
+                "art",
+                "aseguradora",
+                "riesgos",
+                "trabajo",
+                "seguro"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-015",
+            "titulo": "Constancia CUIT Eurotur S.A.",
+            "url": "https://drive.google.com/drive/folders/1eeFcxPvagetiTzxtFxunibo9Kbdth1hz",
+            "sector": "Administración",
+            "keywords": [
+                "cuit",
+                "constancia",
+                "impuestos",
+                "afip",
+                "tributario"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-016",
+            "titulo": "Ingresos brutos",
+            "url": "https://drive.google.com/drive/folders/1RRVZ0g8Q6TPaHUEN-EMCqnobP9G_XbFD",
+            "sector": "Administración",
+            "keywords": [
+                "ingresos",
+                "brutos",
+                "impuesto",
+                "arba",
+                "provincia"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-017",
+            "titulo": "Certificados MiPyme",
+            "url": "https://drive.google.com/drive/u/0/folders/1LzoEK6buqxEMiW9IlBjnr3NyVh53qz1_",
+            "sector": "Administración",
+            "keywords": [
+                "mipyme",
+                "certificado",
+                "pyme",
+                "beneficios",
+                "fiscal"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-018",
+            "titulo": "Datos bancarios",
+            "url": "https://drive.google.com/drive/folders/16HCS0kUKafBfQVhMceKNiAY4VPn2WMuk",
+            "sector": "Administración",
+            "keywords": [
+                "banco",
+                "bancario",
+                "cuenta",
+                "cbu",
+                "transferencia"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-019",
+            "titulo": "Transferencia al exterior",
+            "url": "https://docs.google.com/spreadsheets/d/1UCcDtwFNdxMfA5JZtipjStmyiXTCzmqk/edit",
+            "sector": "Administración",
+            "keywords": [
+                "transferencia",
+                "exterior",
+                "dolar",
+                "divisas",
+                "giro"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-020",
+            "titulo": "Pólizas de seguros",
+            "url": "https://drive.google.com/drive/folders/14UM1ur_nE_9ctehuYVNlzhmjXuLVFAdD",
+            "sector": "Administración",
+            "keywords": [
+                "seguro",
+                "poliza",
+                "cobertura",
+                "aseguradora"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-021",
+            "titulo": "DDJJ Reintegro IVA (Factura T)",
+            "url": "https://drive.google.com/drive/folders/1_czEemImOk5cn2I2td4L6FelKAKCrfOW",
+            "sector": "Administración",
+            "keywords": [
+                "reintegro",
+                "iva",
+                "factura",
+                "ddjj"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-022",
+            "titulo": "Formulario rendición de gastos",
+            "url": "https://drive.google.com/drive/u/0/folders/1rRgOCZ8QBBin6Qgjmnxb-cGbwJhm_5I_",
+            "sector": "Administración",
+            "keywords": [
+                "rendicion",
+                "gastos",
+                "viaticos",
+                "formulario",
+                "caja",
+                "reintegro"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-023",
+            "titulo": "Affidavit Eurotur LLC",
+            "url": "https://docs.google.com/document/d/1k6qnapxbrIn0AURjEyQZKYNjRi2w8ggh/edit",
+            "sector": "Administración",
+            "keywords": [
+                "affidavit",
+                "llc",
+                "eurotur",
+                "documento"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-024",
+            "titulo": "Pre-Balance de Módulos",
+            "url": "/adm/prebalance",
+            "sector": "Administración",
+            "keywords": [
+                "prebalance",
+                "pre balance",
+                "balance",
+                "cierre",
+                "contabilidad",
+                "modulos"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-025",
+            "titulo": "Rendición de gastos (herramienta)",
+            "url": "/adm/rendicion-gastos",
+            "sector": "Administración",
+            "keywords": [
+                "rendicion",
+                "gastos",
+                "herramienta",
+                "reintegro"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-026",
+            "titulo": "Alta de proveedor — Servicios / Hoteles",
+            "url": "https://forms.gle/TbejmP67EnMZMuus9",
+            "sector": "Contrataciones",
+            "keywords": [
+                "alta",
+                "proveedor",
+                "servicios",
+                "hoteles",
+                "formulario"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-027",
+            "titulo": "Alta de proveedor — Transportista",
+            "url": "https://forms.gle/61BbkyprUocRgLAh8",
+            "sector": "Contrataciones",
+            "keywords": [
+                "alta",
+                "proveedor",
+                "transportista",
+                "formulario"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-028",
+            "titulo": "Alta de proveedor — Guías",
+            "url": "https://forms.gle/yVsXMkYER3g7bmdx5",
+            "sector": "Contrataciones",
+            "keywords": [
+                "alta",
+                "proveedor",
+                "guia",
+                "formulario"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-029",
+            "titulo": "Hoteles recomendados",
+            "url": "https://docs.google.com/spreadsheets/d/1kwqVIy2-rw2zR9h7JUkDaIlPHU6b0w9ZcwNX5Du_gQQ/edit",
+            "sector": "Contrataciones",
+            "keywords": [
+                "hoteles",
+                "recomendados",
+                "alojamiento",
+                "tarifas"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-030",
+            "titulo": "Comparativos de hoteles",
+            "url": "https://drive.google.com/drive/folders/1y2y-fAsmKVlgPtTGgXMV3urxDQU7R6Hy",
+            "sector": "Contrataciones",
+            "keywords": [
+                "comparativo",
+                "hoteles",
+                "comparacion",
+                "tarifas"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-031",
+            "titulo": "Hoteles vinculados a Hyperguest",
+            "url": "https://docs.google.com/spreadsheets/d/19g-8wGzvnwT45l_Ga3SEJyBMazhSlryf5uClOzpHKgY/edit",
+            "sector": "Contrataciones",
+            "keywords": [
+                "hyperguest",
+                "hoteles",
+                "vinculados",
+                "sistema"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-032",
+            "titulo": "Bases de vehículos",
+            "url": "https://docs.google.com/spreadsheets/d/1zI0Y06ekIEJJ5-UoxLzAYDEh3QhMqN6iD1xKal9GXhM/edit",
+            "sector": "Contrataciones",
+            "keywords": [
+                "vehiculos",
+                "base",
+                "flota",
+                "autos",
+                "vans"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-033",
+            "titulo": "Transportistas (BUE·FTE·USH·SLA)",
+            "url": "https://drive.google.com/drive/folders/1di7_cCAdfVbU3SE3gI-t8WuEgDq7IfsM",
+            "sector": "Contrataciones",
+            "keywords": [
+                "transportistas",
+                "vehiculos",
+                "bue",
+                "fte",
+                "ush",
+                "sla"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-034",
+            "titulo": "Instrucciones & procedimientos",
+            "url": "https://drive.google.com/drive/u/0/folders/1SFypymYk36FFEls5jtPui-RV63vlcmav",
+            "sector": "Operaciones",
+            "keywords": [
+                "instrucciones",
+                "procedimientos",
+                "operaciones",
+                "instructivo"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-035",
+            "titulo": "FITs",
+            "url": "https://drive.google.com/drive/u/0/folders/1GaWceN_6C8KdHxcXZbdQLWEE4NIla8bi",
+            "sector": "Operaciones",
+            "keywords": [
+                "fit",
+                "individual",
+                "independiente",
+                "viajero",
+                "operacion"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-036",
+            "titulo": "Grupos — detalle",
+            "url": "https://drive.google.com/drive/u/0/folders/1r1brPFqLV9imltVtzXZNrVZi5u09YMcY",
+            "sector": "Operaciones",
+            "keywords": [
+                "grupos",
+                "operacion",
+                "detalle",
+                "cotizacion",
+                "parametros"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-037",
+            "titulo": "Guías (instructivos BUE)",
+            "url": "https://drive.google.com/drive/u/0/folders/1l86WWld2cLW4YPcO8VQGD8qmNzJ934Gj",
+            "sector": "Operaciones",
+            "keywords": [
+                "guia",
+                "guias",
+                "instructivo",
+                "buenos aires"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-038",
+            "titulo": "Transporte (instructivos BUE)",
+            "url": "https://drive.google.com/drive/u/0/folders/141CZ5N2bao7LXWNG4rSxG4pd6lEO2pyI",
+            "sector": "Operaciones",
+            "keywords": [
+                "transporte",
+                "traslado",
+                "vehiculo",
+                "instructivo"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-039",
+            "titulo": "Guías Ushuaia",
+            "url": "https://drive.google.com/drive/u/0/folders/1sUJFCPqkXgYa3eKYiXOBZ44Inn0G9ef9",
+            "sector": "Operaciones",
+            "keywords": [
+                "guia",
+                "ushuaia",
+                "sucursal",
+                "instructivo"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-040",
+            "titulo": "Restaurantes (uso interno) Ushuaia",
+            "url": "https://sites.google.com/eurotur.tur.ar/restaurantesushuaia",
+            "sector": "Operaciones",
+            "keywords": [
+                "restaurante",
+                "ushuaia",
+                "comidas",
+                "interno"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-041",
+            "titulo": "Políticas de menores",
+            "url": "https://drive.google.com/drive/u/0/folders/1HwIbaVKHd4L_GrjnopcKAMv7k4hJUgpG",
+            "sector": "Producto",
+            "keywords": [
+                "menores",
+                "politica",
+                "ninos",
+                "viaje"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-042",
+            "titulo": "Fichas técnicas Tango",
+            "url": "https://drive.google.com/drive/u/0/folders/1_TRFlwGeN_p1rwYhIUVflPkjPYxPTI8k",
+            "sector": "Producto",
+            "keywords": [
+                "tango",
+                "ficha",
+                "tecnica",
+                "producto",
+                "show"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-043",
+            "titulo": "Ficha hoteles",
+            "url": "https://drive.google.com/drive/u/0/folders/1qqZ4KWzg_mwqO0oXpYIgstbBZjSvlbGe",
+            "sector": "Producto",
+            "keywords": [
+                "ficha",
+                "hoteles",
+                "producto",
+                "descripcion"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-044",
+            "titulo": "Horario de excursiones",
+            "url": "https://drive.google.com/drive/u/0/folders/18Im6qWJZwrZlbQBHXOot8zQ0U1lqE8fB",
+            "sector": "Producto",
+            "keywords": [
+                "horario",
+                "excursiones",
+                "salidas",
+                "tour"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-045",
+            "titulo": "Nota a los pasajeros — Español",
+            "url": "https://drive.google.com/drive/folders/1IHCup3ssmm2GkEVeRVTwach-jzQD4t49",
+            "sector": "Customer Care",
+            "keywords": [
+                "nota",
+                "pasajeros",
+                "español",
+                "idioma",
+                "comunicacion"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-046",
+            "titulo": "Emisión de documentación en TP",
+            "url": "https://drive.google.com/drive/folders/1k-DepkqG3gBHehkYCYlkYz0fEZpMhErp",
+            "sector": "Customer Care",
+            "keywords": [
+                "emision",
+                "documentacion",
+                "tourplan",
+                "tp",
+                "pasajero"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-047",
+            "titulo": "Ticketera",
+            "url": "https://docs.google.com/forms/d/e/1FAIpQLSeyq0O-jjq9FRdLqdL8NeOuDogy0VrRfvspfBXU7-3_AO64rA/viewform",
+            "sector": "IT",
+            "keywords": [
+                "ticketera",
+                "ticket",
+                "soporte",
+                "pedido",
+                "incidente",
+                "asistencia"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-048",
+            "titulo": "Ciberataques",
+            "url": "https://docs.google.com/presentation/d/1YK6CTvN4Fowmuvt0ai7XAU73NM-7zhMb/edit",
+            "sector": "IT",
+            "keywords": [
+                "ciberataque",
+                "seguridad",
+                "phishing",
+                "virus",
+                "prevencion"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-049",
+            "titulo": "Tango / Delta (Axoft)",
+            "url": "https://ayudas.axoft.com/21ar/documentos/operacion/",
+            "sector": "IT",
+            "keywords": [
+                "tango",
+                "delta",
+                "axoft",
+                "contable",
+                "facturacion",
+                "sistema"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-050",
+            "titulo": "Tourplan",
+            "url": "https://drive.google.com/drive/folders/1y7JY1XX1Cu1ydwA-E_LY1vYjoI9IFmpt",
+            "sector": "IT",
+            "keywords": [
+                "tourplan",
+                "tp",
+                "reserva",
+                "emision",
+                "sistema",
+                "tour plan"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-051",
+            "titulo": "Tourplan — instructivos",
+            "url": "https://drive.google.com/drive/folders/1xK4pC-HiQ3nFXaEPIJ0zwhy2WoWFrJ0s",
+            "sector": "IT",
+            "keywords": [
+                "tourplan",
+                "instructivo",
+                "manual",
+                "ayuda"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-052",
+            "titulo": "Sabre",
+            "url": "https://drive.google.com/drive/folders/1P4X3YKHLt5ZST6YokWcsJgMAOMpEoT9J",
+            "sector": "IT",
+            "keywords": [
+                "sabre",
+                "aereo",
+                "gds",
+                "reserva",
+                "vuelo"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-053",
+            "titulo": "Zoiper",
+            "url": "https://docs.google.com/document/d/1Ai1EvGJ75opFN7n_XjJswqOoUHYDGTTF/edit",
+            "sector": "IT",
+            "keywords": [
+                "zoiper",
+                "voip",
+                "llamada",
+                "telefono",
+                "softphone"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-054",
+            "titulo": "Internos Eurotur",
+            "url": "https://docs.google.com/spreadsheets/d/17_yPlbkFWjTYLPNz7TCRf_pXSp_XIXOy/edit",
+            "sector": "IT",
+            "keywords": [
+                "internos",
+                "telefonos",
+                "anexo",
+                "contacto",
+                "directorio"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-055",
+            "titulo": "Audio notebook para Meet",
+            "url": "https://docs.google.com/document/d/1pasl8bOXJTSpv447ueah1m7KB7Ro-a2v/edit",
+            "sector": "IT",
+            "keywords": [
+                "meet",
+                "audio",
+                "microfono",
+                "reunion",
+                "videollamada"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-056",
+            "titulo": "VPN Forticlient / IPSec",
+            "url": "https://drive.google.com/drive/folders/1IcY-SmWA-ZfhzMernOiXl05mGJCcSNU7",
+            "sector": "IT",
+            "keywords": [
+                "vpn",
+                "forticlient",
+                "ipsec",
+                "acceso remoto",
+                "red"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-057",
+            "titulo": "Guacamole (fuera de Argentina)",
+            "url": "https://remoto.eurotur.tur.ar/",
+            "sector": "IT",
+            "keywords": [
+                "guacamole",
+                "remoto",
+                "acceso",
+                "exterior",
+                "vpn"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-058",
+            "titulo": "Notebook — instructivo",
+            "url": "https://drive.google.com/drive/folders/10lZVU9urVZfJ9aXiSau9H3d-rZn8Kyc4",
+            "sector": "IT",
+            "keywords": [
+                "notebook",
+                "pc",
+                "equipo",
+                "computadora",
+                "instructivo",
+                "laptop"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-059",
+            "titulo": "Manual de conductores/as",
+            "url": "https://drive.google.com/drive/u/0/folders/166lJNjbeaRrE272XPPRCr-ollXUqeVsc",
+            "sector": "Travel Designers",
+            "keywords": [
+                "manual",
+                "conductor",
+                "chofer",
+                "vehiculo",
+                "travel designers"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-060",
+            "titulo": "Manual de convivencia",
+            "url": "https://drive.google.com/drive/u/0/folders/16BCxu_MZyx5WA_3vjJA6dNk2xkpXw3O1",
+            "sector": "Travel Designers",
+            "keywords": [
+                "convivencia",
+                "manual",
+                "normas",
+                "companeros"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-101",
+            "titulo": "Sala de Reuniones",
+            "url": "/sala-de-reuniones",
+            "sector": "Sala de Reuniones",
+            "keywords": [
+                "sala",
+                "reuniones",
+                "reunion",
+                "calendar",
+                "calendario",
+                "reserva",
+                "booking"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-102",
+            "titulo": "Cotización Dólar",
+            "url": "https://www.bna.com.ar/",
+            "sector": "Tipo de Cambio",
+            "keywords": [
+                "dolar",
+                "cotizacion",
+                "cambio",
+                "bna",
+                "iata",
+                "tipo de cambio",
+                "aereo",
+                "venta",
+                "compra"
+            ],
+            "sinonimos": [
+                "divisa",
+                "usd",
+                "billete"
+            ]
+        },
+        {
+            "id": "EU-103",
+            "titulo": "Mesa de Información",
+            "url": "/mesa",
+            "sector": "Mesa de Información",
+            "keywords": [
+                "mesa",
+                "informacion",
+                "ayuda",
+                "faq",
+                "soporte",
+                "tecnico",
+                "vpn",
+                "wifi",
+                "claves",
+                "pantalla",
+                "sonido",
+                "contraseña"
+            ],
+            "sinonimos": []
+        },
+        {
+            "id": "EU-104",
+            "titulo": "Innovación",
+            "url": "/innovacion",
+            "sector": "Innovación",
+            "keywords": [
+                "innovacion",
+                "ia",
+                "inteligencia artificial",
+                "claude",
+                "gemini",
+                "automatizacion",
+                "bot",
+                "scripts",
+                "instructivos"
+            ],
+            "sinonimos": []
+        }
+    ],
+    "tesauro": [
+        {
+            "grupo": 1,
+            "terminos": [
+                "carta",
+                "vacaciones",
+                "licencia"
+            ]
+        },
+        {
+            "grupo": 2,
+            "terminos": [
+                "factura",
+                "comprobante",
+                "facturacion"
+            ]
+        },
+        {
+            "grupo": 3,
+            "terminos": [
+                "sueldo",
+                "recibo",
+                "haberes",
+                "liquidacion"
+            ]
+        },
+        {
+            "grupo": 4,
+            "terminos": [
+                "feriado",
+                "asueto",
+                "no laborable"
+            ]
+        },
+        {
+            "grupo": 5,
+            "terminos": [
+                "seguro",
+                "poliza",
+                "cobertura"
+            ]
+        },
+        {
+            "grupo": 6,
+            "terminos": [
+                "banco",
+                "cuenta",
+                "bancario",
+                "cbu"
+            ]
+        },
+        {
+            "grupo": 7,
+            "terminos": [
+                "proveedor",
+                "alta de proveedor",
+                "formulario proveedor"
+            ]
+        },
+        {
+            "grupo": 8,
+            "terminos": [
+                "hotel",
+                "hoteles",
+                "alojamiento"
+            ]
+        },
+        {
+            "grupo": 9,
+            "terminos": [
+                "guia",
+                "guias",
+                "excursion",
+                "tour"
+            ]
+        },
+        {
+            "grupo": 10,
+            "terminos": [
+                "vehiculo",
+                "auto",
+                "auto",
+                "traslado",
+                "transporte"
+            ]
+        },
+        {
+            "grupo": 11,
+            "terminos": [
+                "vpn",
+                "acceso remoto",
+                "red externa"
+            ]
+        },
+        {
+            "grupo": 12,
+            "terminos": [
+                "wifi",
+                "red",
+                "internet"
+            ]
+        },
+        {
+            "grupo": 13,
+            "terminos": [
+                "meet",
+                "reunion",
+                "videollamada"
+            ]
+        },
+        {
+            "grupo": 14,
+            "terminos": [
+                "email",
+                "correo",
+                "mail",
+                "gmail"
+            ]
+        },
+        {
+            "grupo": 15,
+            "terminos": [
+                "telefono",
+                "interno",
+                "anexo",
+                "zoiper"
+            ]
+        },
+        {
+            "grupo": 16,
+            "terminos": [
+                "pasajero",
+                "pasajeros",
+                "cliente",
+                "turista"
+            ]
+        },
+        {
+            "grupo": 17,
+            "terminos": [
+                "conductor",
+                "chofer",
+                "manejador"
+            ]
+        },
+        {
+            "grupo": 18,
+            "terminos": [
+                "vuelo",
+                "aereo",
+                "avion",
+                "billete aereo"
+            ]
+        },
+        {
+            "grupo": 19,
+            "terminos": [
+                "dolar",
+                "cotizacion",
+                "cambio",
+                "divisa",
+                "usd"
+            ]
+        },
+        {
+            "grupo": 20,
+            "terminos": [
+                "clave",
+                "password",
+                "contraseña",
+                "contrasena"
+            ]
+        },
+        {
+            "grupo": 21,
+            "terminos": [
+                "cronograma",
+                "calendario",
+                "agenda",
+                "fechas"
+            ]
+        },
+        {
+            "grupo": 22,
+            "terminos": [
+                "balance",
+                "prebalance",
+                "cierre",
+                "contabilidad"
+            ]
+        }
+    ]
+}

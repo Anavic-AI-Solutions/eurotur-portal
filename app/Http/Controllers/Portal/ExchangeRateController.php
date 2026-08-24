@@ -20,7 +20,7 @@ class ExchangeRateController extends Controller
         $history = BnaDailyRate::query()->orderByDesc('date')->get();
 
         return Inertia::render('portal/exchange-rate', [
-            'bnaSell' => $official->ventaOficial(),
+            'bna' => $official->oficial(),
             'history' => BnaDailyRateResource::collection($history),
         ]);
     }

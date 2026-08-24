@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import { ImageSlot } from '@/components/portal/image-slot';
 import { SECTORS } from '@/lib/portal-sectors';
@@ -196,6 +196,11 @@ function SectionHeading({ label, hint }: { label: string; hint: string }) {
 }
 
 export default function Home() {
+    const { canEdit } = usePage().props;
+    const visibleSectors = SECTORS.filter(
+        (sector) => sector.id !== 'search-admin' || canEdit,
+    );
+
     return (
         <>
             <Head title="Portal Eurotur" />
@@ -372,7 +377,7 @@ export default function Home() {
                             borderLeft: '1px solid #000',
                         }}
                     >
-                        {SECTORS.map((sector) => (
+                        {visibleSectors.map((sector) => (
                             <Link
                                 key={sector.id}
                                 href={sector.href}
@@ -387,6 +392,7 @@ export default function Home() {
                                     padding: '16px',
                                     textDecoration: 'none',
                                     color: '#fff',
+                                    backgroundColor: '#111',
                                     borderRight: '1px solid #000',
                                     borderBottom: '1px solid #000',
                                     ['--tile-photo' as string]: `url('/img/portal/sectores/${sector.id}.webp')`,

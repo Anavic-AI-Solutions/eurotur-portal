@@ -22,10 +22,28 @@ class DolarOficialService
     }
 
     /**
+     * Fetch the official USD sell price together with the source's own
+     * "fechaActualizacion" timestamp, used to tell the user how old the
+     * quote actually is instead of presenting it as "today".
+     *
+     * @return array{venta: float, fecha: ?string}|null
+     */
+    public function oficial(): ?array
+    {
+        $rates = $this->rates();
+
+        if ($rates === null) {
+            return null;
+        }
+
+        return ['venta' => $rates['venta'], 'fecha' => $rates['fecha']];
+    }
+
+    /**
      * Fetch the official USD buy/sell pair from dolarapi.com, cached to avoid
      * hitting the third-party API on every request.
      *
-     * @return array{compra: float, venta: float}|null
+     * @return array{compra: float, venta: float, fecha: ?string}|null
      */
     public function rates(): ?array
     {
@@ -65,11 +83,16 @@ class DolarOficialService
 
         $compra = $response->json('compra');
         $venta = $response->json('venta');
+        $fecha = $response->json('fechaActualizacion');
 
         if (! is_numeric($compra) || ! is_numeric($venta)) {
             return null;
         }
 
-        return ['compra' => (float) $compra, 'venta' => (float) $venta];
+        return [
+            'compra' => (float) $compra,
+            'venta' => (float) $venta,
+            'fecha' => is_string($fecha) ? $fecha : null,
+        ];
     }
 }

@@ -46,4 +46,9 @@ return [
         'timeout' => 120,
     ],
 
+    'meeting_room' => [
+        'calendar_url' => env('MEETING_ROOM_CALENDAR_URL'),
+        'instructivo_url' => env('MEETING_ROOM_INSTRUCTIVO_URL'),
+    ],
+
 ];

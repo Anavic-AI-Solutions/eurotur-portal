@@ -24,7 +24,7 @@ class SearchStaticEntryControllerTest extends TestCase
 
     public function test_authenticated_user_can_create_an_entry(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
 
         $response = $this
             ->actingAs($user)
@@ -47,7 +47,7 @@ class SearchStaticEntryControllerTest extends TestCase
 
     public function test_url_must_be_unique(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         SearchStaticEntry::create(['title' => 'Mesa', 'url' => '/mesa']);
 
         $response = $this
@@ -63,7 +63,7 @@ class SearchStaticEntryControllerTest extends TestCase
 
     public function test_authenticated_user_can_update_an_entry(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $entry = SearchStaticEntry::create(['title' => 'Mesa', 'url' => '/mesa']);
 
         $response = $this
@@ -81,7 +81,7 @@ class SearchStaticEntryControllerTest extends TestCase
 
     public function test_authenticated_user_can_delete_an_entry(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->admin()->create();
         $entry = SearchStaticEntry::create(['title' => 'Mesa', 'url' => '/mesa']);
 
         $response = $this
