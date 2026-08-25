@@ -113,6 +113,10 @@ export default function PortalLayout({
                     #portal-root[data-page="home"] [data-testid="home-hero"] p { max-width: 100% !important; text-align: left !important; }
                     #portal-root[data-page="home"] [data-testid="home-hero"] h1 { font-size: clamp(18px, 5vw, 22px) !important; }
                 }
+                @media (max-height: 750px) {
+                    #portal-root[data-page="home"] #portal-content { padding-top: 12px !important; padding-bottom: 8px !important; }
+                    #portal-root[data-page="home"] [data-testid="home-root"] { gap: 4px !important; }
+                }
             `}</style>
 
             <div
@@ -203,7 +207,7 @@ export default function PortalLayout({
                             overflowX: 'hidden',
                             padding:
                                 active === 'home'
-                                    ? '18px 28px 12px 96px'
+                                    ? '14px 24px 8px 96px'
                                     : '44px 56px 40px 112px',
                             position: 'relative',
                             display: 'flex',

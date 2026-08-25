@@ -244,7 +244,7 @@ export default function Home() {
                             alignItems: 'flex-end',
                             justifyContent: 'space-between',
                             gap: '24px',
-                            paddingBottom: '8px',
+                            paddingBottom: '6px',
                             borderBottom: '1px solid #000',
                         }}
                     >
@@ -268,8 +268,8 @@ export default function Home() {
                                 maxWidth: '42%',
                                 textAlign: 'right',
                                 fontFamily: "'Archivo', sans-serif",
-                                fontSize: '11px',
-                                lineHeight: 1.35,
+                                fontSize: '10px',
+                                lineHeight: 1.3,
                                 fontWeight: 600,
                                 color: '#444',
                                 flex: '0 0 auto',
@@ -300,8 +300,8 @@ export default function Home() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                minHeight: '72px',
-                                padding: '10px 12px',
+                                minHeight: '56px',
+                                padding: '6px 8px',
                                 textDecoration: 'none',
                                 color: '#000',
                                 borderRight: '1px solid #000',
@@ -391,7 +391,7 @@ export default function Home() {
                             gap: 0,
                             borderLeft: '1px solid #000',
                             gridAutoRows: '1fr',
-                            maxHeight: '360px',
+                            maxHeight: '250px',
                             overflow: 'hidden',
                         }}
                     >
@@ -406,8 +406,8 @@ export default function Home() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    minHeight: '108px',
-                                    padding: '12px',
+                                    minHeight: '75px',
+                                    padding: '8px',
                                     textDecoration: 'none',
                                     color: '#fff',
                                     backgroundColor: '#111',
@@ -481,8 +481,8 @@ export default function Home() {
                                 alignItems: 'baseline',
                                 justifyContent: 'space-between',
                                 borderBottom: '1.5px solid #000',
-                                paddingBottom: '6px',
-                                marginBottom: '8px',
+                                paddingBottom: '4px',
+                                marginBottom: '6px',
                             }}
                         >
                             <div
@@ -520,7 +520,7 @@ export default function Home() {
                                 <div
                                     key={c.city}
                                     style={{
-                                        padding: '6px 12px 6px 0',
+                                        padding: '4px 8px 4px 0',
                                         borderRight: '1px dotted #000',
                                     }}
                                 >
@@ -528,7 +528,7 @@ export default function Home() {
                                         style={{
                                             fontFamily:
                                                 "'Space Mono', monospace",
-                                            fontSize: '9px',
+                                            fontSize: '8px',
                                             letterSpacing: '0.06em',
                                             textTransform: 'uppercase',
                                             color: '#666',
@@ -540,15 +540,15 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
-                                            fontSize: '28px',
+                                            fontSize: '22px',
                                             lineHeight: 1,
-                                            margin: '4px 0 2px',
+                                            margin: '2px 0 1px',
                                         }}
                                     >
                                         {c.temp}
                                         <span
                                             style={{
-                                                fontSize: '16px',
+                                                fontSize: '13px',
                                                 verticalAlign: 'top',
                                                 fontWeight: 400,
                                             }}
@@ -560,8 +560,8 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 600,
-                                            fontSize: '11px',
-                                            marginTop: '2px',
+                                            fontSize: '10px',
+                                            marginTop: '1px',
                                         }}
                                     >
                                         {c.cond}
