@@ -114,9 +114,11 @@ export default function PortalLayout({
             <div
                 id="portal-root"
                 className="eurotur-portal"
+                data-page={active}
                 style={{
                     display: 'flex',
-                    minHeight: '100vh',
+                    height: '100vh',
+                    overflow: 'hidden',
                     background: '#fff',
                     color: '#000',
                     fontFamily: "'Archivo', sans-serif",
@@ -126,18 +128,24 @@ export default function PortalLayout({
                     active={active}
                     menuOpen={menuOpen}
                     onToggleMenu={() => setMenuOpen((v) => !v)}
+                    isHome={active === 'home'}
                 />
 
                 <main
                     style={{
                         flex: 1,
                         minWidth: 0,
+                        minHeight: 0,
                         position: 'relative',
                         display: 'flex',
                         flexDirection: 'column',
                     }}
                 >
-                    <Header dolarOficial={dolarOficial} iataRate={iataRate} />
+                    <Header
+                        dolarOficial={dolarOficial}
+                        iataRate={iataRate}
+                        isHome={active === 'home'}
+                    />
 
                     {STRIPE_ACCENT && (
                         <div
@@ -185,8 +193,17 @@ export default function PortalLayout({
                         id="portal-content"
                         style={{
                             flex: 1,
-                            padding: '44px 56px 40px 112px',
+                            minHeight: 0,
+                            overflowY:
+                                active === 'home' ? 'hidden' : 'auto',
+                            overflowX: 'hidden',
+                            padding:
+                                active === 'home'
+                                    ? '18px 28px 12px 96px'
+                                    : '44px 56px 40px 112px',
                             position: 'relative',
+                            display: 'flex',
+                            flexDirection: 'column',
                         }}
                     >
                         {children}
@@ -203,10 +220,12 @@ function Sidebar({
     active,
     menuOpen,
     onToggleMenu,
+    isHome,
 }: {
     active: ActiveView;
     menuOpen: boolean;
     onToggleMenu: () => void;
+    isHome?: boolean;
 }) {
     const { auth, canEdit } = usePage().props;
     const isAuthenticated = Boolean(auth.user);
@@ -645,12 +664,14 @@ function GlobalSearch() {
 function Header({
     dolarOficial,
     iataRate,
+    isHome,
 }: {
     dolarOficial: {
         venta: number;
         fecha: string | null;
     } | null;
     iataRate: { rate: number; updatedAt: string | null; stale: boolean } | null;
+    isHome?: boolean;
 }) {
     const iataStale =
         iataRate?.stale || isRateStale(iataRate?.updatedAt ?? null);

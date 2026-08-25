@@ -206,10 +206,14 @@ export default function Home() {
             <Head title="Portal Eurotur" />
 
             <section
+                data-testid="home-root"
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '56px',
+                    gap: '5px',
+                    flex: 1,
+                    minHeight: 0,
+                    overflow: 'hidden',
                 }}
             >
                 <div>
