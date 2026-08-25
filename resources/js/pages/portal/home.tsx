@@ -374,12 +374,15 @@ export default function Home() {
                     <div
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(4,1fr)',
+                            gridTemplateColumns: 'repeat(5,1fr)',
                             gap: 0,
                             borderLeft: '1px solid #000',
+                            gridAutoRows: '1fr',
+                            maxHeight: '360px',
+                            overflow: 'hidden',
                         }}
                     >
-                        {visibleSectors.map((sector) => (
+                        {visibleSectors.slice(0, 15).map((sector) => (
                             <Link
                                 key={sector.id}
                                 href={sector.href}
@@ -390,8 +393,8 @@ export default function Home() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    minHeight: '172px',
-                                    padding: '16px',
+                                    minHeight: '108px',
+                                    padding: '12px',
                                     textDecoration: 'none',
                                     color: '#fff',
                                     backgroundColor: '#111',
