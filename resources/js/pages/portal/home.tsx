@@ -213,6 +213,7 @@ function formatTodayShort(): string {
     const dd = String(now.getDate()).padStart(2, '0');
     const mm = String(now.getMonth() + 1).padStart(2, '0');
     const yy = String(now.getFullYear() % 100).padStart(2, '0');
+
     return `${dd}·${mm}·${yy}`;
 }
 
@@ -220,7 +221,11 @@ export default function Home() {
     const { canEdit, dolarOficial, iataRate } = usePage().props as unknown as {
         canEdit: boolean;
         dolarOficial: { venta: number; fecha: string | null } | null;
-        iataRate: { rate: number; updatedAt: string | null; stale: boolean } | null;
+        iataRate: {
+            rate: number;
+            updatedAt: string | null;
+            stale: boolean;
+        } | null;
     };
     const visibleSectors = SECTORS.filter(
         (sector) => sector.id !== 'search-admin' || canEdit,
@@ -316,8 +321,7 @@ export default function Home() {
                                     </div>
                                     <div
                                         style={{
-                                            fontFamily:
-                                                "'Archivo', sans-serif",
+                                            fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
                                             fontSize: '15px',
                                             lineHeight: 1,
@@ -361,8 +365,7 @@ export default function Home() {
                                     </div>
                                     <div
                                         style={{
-                                            fontFamily:
-                                                "'Archivo', sans-serif",
+                                            fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
                                             fontSize: '15px',
                                             lineHeight: 1,
@@ -402,8 +405,7 @@ export default function Home() {
                                     </div>
                                     <div
                                         style={{
-                                            fontFamily:
-                                                "'Archivo', sans-serif",
+                                            fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
                                             fontSize: '15px',
                                             lineHeight: 1,

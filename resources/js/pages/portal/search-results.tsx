@@ -90,16 +90,20 @@ export default function SearchResults({
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.background = RED;
                                     e.currentTarget.style.color = '#fff';
-                                    e.currentTarget.querySelectorAll('div').forEach((d) => {
-                                        d.style.color = '#fff';
-                                    });
+                                    e.currentTarget
+                                        .querySelectorAll('div')
+                                        .forEach((d) => {
+                                            d.style.color = '#fff';
+                                        });
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.background = '';
                                     e.currentTarget.style.color = '';
-                                    e.currentTarget.querySelectorAll('div').forEach((d) => {
-                                        d.style.color = '';
-                                    });
+                                    e.currentTarget
+                                        .querySelectorAll('div')
+                                        .forEach((d) => {
+                                            d.style.color = '';
+                                        });
                                 }}
                             >
                                 <div

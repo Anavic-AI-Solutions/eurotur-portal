@@ -497,7 +497,10 @@ function GlobalSearch({ compact = false }: { compact?: boolean } = {}) {
 
     return (
         <div
-            style={{ position: 'relative', width: compact ? '100%' : undefined }}
+            style={{
+                position: 'relative',
+                width: compact ? '100%' : undefined,
+            }}
             data-testid={compact ? 'search-aside' : 'search-header'}
         >
             {!compact && (

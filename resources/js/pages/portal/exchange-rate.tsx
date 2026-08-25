@@ -156,7 +156,10 @@ function RateBlock({
                             href={sourceHref}
                             target="_blank"
                             rel="noreferrer"
-                            style={{ color: 'inherit', textDecoration: 'underline' }}
+                            style={{
+                                color: 'inherit',
+                                textDecoration: 'underline',
+                            }}
                         >
                             {source}
                         </a>

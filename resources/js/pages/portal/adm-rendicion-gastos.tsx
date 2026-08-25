@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import type { CSSProperties } from 'react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import ReceiptOcrController from '@/actions/App/Http/Controllers/Portal/ReceiptOcrController';
 import {
     COMPANY_CODES,
@@ -187,10 +187,16 @@ async function leerComprobante(
                 letra_factura: resultado.letra_factura ?? undefined,
                 talonario: resultado.talonario ?? undefined,
                 numero_comprobante: resultado.numero_comprobante ?? undefined,
+                // Comprobantes sin desglose fiscal (ej. transferencias) no
+                // traen "neto" — no hay IVA que restarle al total. En ese
+                // caso el total leído cubre el mismo campo (con las IVAs en
+                // blanco, gastoTotal() da el mismo importe).
                 importe_neto:
                     resultado.importe_neto !== null
                         ? numeroAGasto(resultado.importe_neto)
-                        : undefined,
+                        : resultado.importe_total !== null
+                          ? numeroAGasto(resultado.importe_total)
+                          : undefined,
                 iva_27:
                     resultado.iva_27 !== null
                         ? numeroAGasto(resultado.iva_27)
@@ -1117,6 +1123,8 @@ function GastoCard({
             </div>
 
             <div style={{ display: 'grid', gap: '16px' }}>
+                <ComprobanteInput gasto={g} onUpdate={onUpdate} />
+
                 <Campo label="¿Es de un file/proyecto específico?" hint="">
                     <select
                         value={g.esFile ? 'true' : 'false'}
@@ -1216,8 +1224,6 @@ function GastoCard({
                         ))}
                     </select>
                 </Campo>
-
-                <ComprobanteInput gasto={g} onUpdate={onUpdate} />
 
                 <div
                     style={{
@@ -1631,13 +1637,43 @@ function ComprobanteInput({
         'idle' | 'leyendo' | 'ok' | 'sin-lectura' | 'error'
     >('idle');
     const [ocrMensajes, setOcrMensajes] = useState<OcrMensaje[]>([]);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const ejecutarOcr = useCallback(
+        async (comprobante_image: NonNullable<Gasto['comprobante_image']>) => {
+            setOcrStatus('leyendo');
+            setOcrMensajes([]);
+
+            const { patch, resultado } = await leerComprobante(
+                comprobante_image,
+                g.monedaTipo,
+            );
+
+            if (resultado === null) {
+                setOcrStatus('error');
+
+                return;
+            }
+
+            if (Object.keys(patch).length > 0) {
+                onUpdate(patch);
+            }
+
+            setOcrMensajes(resultado.mensajes);
+            setOcrStatus(
+                resultado.estado_lectura === 'SIN_LECTURA' ? 'sin-lectura' : 'ok',
+            );
+        },
+        [g.monedaTipo, onUpdate],
+    );
 
     return (
         <Campo
             label="Adjuntar comprobante (foto o escaneo)"
-            hint="Se guarda dentro del Excel, en la hoja de comprobantes, lista para Tesorería."
+            hint="Se guarda dentro del Excel, en la hoja de comprobantes, lista para Tesorería. Subilo primero: se lee automáticamente con IA."
         >
             <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={async (e) => {
@@ -1651,33 +1687,43 @@ function ComprobanteInput({
                     onUpdate({ comprobante_image });
                     e.target.value = '';
 
-                    setOcrStatus('leyendo');
-                    setOcrMensajes([]);
-
-                    const { patch, resultado } = await leerComprobante(
-                        comprobante_image,
-                        g.monedaTipo,
-                    );
-
-                    if (resultado === null) {
-                        setOcrStatus('error');
-
-                        return;
-                    }
-
-                    if (Object.keys(patch).length > 0) {
-                        onUpdate(patch);
-                    }
-
-                    setOcrMensajes(resultado.mensajes);
-                    setOcrStatus(
-                        resultado.estado_lectura === 'SIN_LECTURA'
-                            ? 'sin-lectura'
-                            : 'ok',
-                    );
+                    await ejecutarOcr(comprobante_image);
                 }}
-                style={inputStyle}
+                style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    opacity: 0,
+                    overflow: 'hidden',
+                }}
             />
+            <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={ocrStatus === 'leyendo'}
+                style={{
+                    ...mono,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    width: '100%',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    padding: '16px',
+                    background: g.comprobante_image ? '#fff' : '#000',
+                    color: g.comprobante_image ? '#000' : '#fff',
+                    border: '1px solid #000',
+                    cursor: ocrStatus === 'leyendo' ? 'default' : 'pointer',
+                }}
+            >
+                <span style={{ fontSize: '15px', lineHeight: 1 }}>
+                    {g.comprobante_image ? '↻' : '+'}
+                </span>
+                {g.comprobante_image
+                    ? 'Cambiar comprobante'
+                    : 'Adjuntar comprobante'}
+            </button>
             {ocrStatus === 'leyendo' && (
                 <div
                     style={{
@@ -1762,7 +1808,14 @@ function ComprobanteInput({
                     >
                         !
                     </span>
-                    <span style={{ ...mono, fontSize: '11px', color: '#666' }}>
+                    <span
+                        style={{
+                            ...mono,
+                            fontSize: '11px',
+                            color: '#666',
+                            flex: 1,
+                        }}
+                    >
                         No se pudo leer el comprobante automáticamente —
                         completá los datos a mano.
                     </span>
@@ -1793,6 +1846,28 @@ function ComprobanteInput({
                         </li>
                     ))}
                 </ul>
+            )}
+            {(ocrStatus === 'ok' ||
+                ocrStatus === 'sin-lectura' ||
+                ocrStatus === 'error') && (
+                <button
+                    type="button"
+                    onClick={() =>
+                        g.comprobante_image &&
+                        void ejecutarOcr(g.comprobante_image)
+                    }
+                    style={{
+                        ...mono,
+                        marginTop: '8px',
+                        fontSize: '10px',
+                        background: '#fff',
+                        border: '1px solid #000',
+                        padding: '5px 10px',
+                        cursor: 'pointer',
+                    }}
+                >
+                    ↻ Reintentar lectura
+                </button>
             )}
             {g.comprobante_image && (
                 <div
