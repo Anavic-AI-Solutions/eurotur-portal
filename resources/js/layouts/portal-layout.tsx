@@ -109,9 +109,11 @@ export default function PortalLayout({
                     #portal-content [style*="repeat(2"] { grid-template-columns: 1fr !important; }
                     #portal-content [style*="gap:18px"] { flex-wrap: wrap; row-gap: 8px !important; }
                     #portal-content #qrated-cats { grid-template-columns: 1fr !important; }
-                    #portal-root[data-page="home"] [data-testid="home-hero"] { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
-                    #portal-root[data-page="home"] [data-testid="home-hero"] p { max-width: 100% !important; text-align: left !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] { gap: 6px !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] p { max-width: 100% !important; text-align: left !important; align-self: flex-start !important; }
                     #portal-root[data-page="home"] [data-testid="home-hero"] h1 { font-size: clamp(18px, 5vw, 22px) !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero-top"] { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+                    #portal-root[data-page="home"] [data-testid="home-dollars"] { flex-wrap: wrap !important; }
                 }
                 @media (max-height: 750px) {
                     #portal-root[data-page="home"] #portal-content { padding-top: 12px !important; padding-bottom: 8px !important; }
@@ -322,46 +324,48 @@ function Sidebar({
                 }}
             />
 
-            <nav
-                id="portal-nav"
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '2px',
-                    flex: 1,
-                }}
-            >
-                {visibleSectors.map((sector) => (
-                    <Link
-                        key={sector.id}
-                        href={sector.href}
-                        className="nav-item"
-                        style={{
-                            all: 'unset',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'baseline',
-                            gap: '9px',
-                            padding: '7px 6px',
-                            color: sector.id === active ? RED : '#000',
-                            transition:
-                                'color .12s, background .12s, transform .12s',
-                        }}
-                    >
-                        <span
+            {!isHome && (
+                <nav
+                    id="portal-nav"
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px',
+                        flex: 1,
+                    }}
+                >
+                    {visibleSectors.map((sector) => (
+                        <Link
+                            key={sector.id}
+                            href={sector.href}
+                            className="nav-item"
                             style={{
-                                fontFamily: "'Archivo', sans-serif",
-                                fontWeight: 600,
-                                fontSize: '12.5px',
-                                letterSpacing: '-0.01em',
-                                lineHeight: 1.15,
+                                all: 'unset',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'baseline',
+                                gap: '9px',
+                                padding: '7px 6px',
+                                color: sector.id === active ? RED : '#000',
+                                transition:
+                                    'color .12s, background .12s, transform .12s',
                             }}
                         >
-                            {sector.navLabel}
-                        </span>
-                    </Link>
-                ))}
-            </nav>
+                            <span
+                                style={{
+                                    fontFamily: "'Archivo', sans-serif",
+                                    fontWeight: 600,
+                                    fontSize: '12.5px',
+                                    letterSpacing: '-0.01em',
+                                    lineHeight: 1.15,
+                                }}
+                            >
+                                {sector.navLabel}
+                            </span>
+                        </Link>
+                    ))}
+                </nav>
+            )}
 
             {isHome && (
                 <div
@@ -834,38 +838,20 @@ function Header({
 
     if (isHome) {
         return (
-            <>
-                <header
-                    id="portal-header"
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '40px',
-                        padding: '14px 56px 14px 112px',
-                        borderBottom: '1px solid #000',
-                        minHeight: '62px',
-                    }}
-                >
-                    {/* Buscador movido al aside en home; header queda minimal */}
-                    <div style={{ flex: 1 }} />
-                </header>
-                <div
-                    data-testid="meta-absolute"
-                    style={{
-                        position: 'absolute',
-                        top: '14px',
-                        right: '20px',
-                        display: 'flex',
-                        gap: '18px',
-                        textAlign: 'right',
-                        zIndex: 10,
-                        background: '#fff',
-                        padding: '4px 8px',
-                    }}
-                >
-                    {metaBlocks}
-                </div>
-            </>
+            <header
+                id="portal-header"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '40px',
+                    padding: '10px 56px 10px 112px',
+                    borderBottom: '1px solid #000',
+                    minHeight: '36px',
+                }}
+            >
+                {/* En home la nav se oculta y los dólares van junto al título; header queda minimal */}
+                <div style={{ flex: 1 }} />
+            </header>
         );
     }
 

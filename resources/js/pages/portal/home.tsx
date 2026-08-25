@@ -1,5 +1,6 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
+import { formatDay, lastBusinessDay } from '@/lib/exchange-rates';
 import { SECTORS } from '@/lib/portal-sectors';
 import { exchangeRate, mesa } from '@/routes/portal';
 
@@ -203,11 +204,30 @@ function SectionHeading({
     );
 }
 
+function formatArs(value: number): string {
+    return Math.round(value).toLocaleString('es-AR');
+}
+
+function formatTodayShort(): string {
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yy = String(now.getFullYear() % 100).padStart(2, '0');
+    return `${dd}·${mm}·${yy}`;
+}
+
 export default function Home() {
-    const { canEdit } = usePage().props;
+    const { canEdit, dolarOficial, iataRate } = usePage().props as unknown as {
+        canEdit: boolean;
+        dolarOficial: { venta: number; fecha: string | null } | null;
+        iataRate: { rate: number; updatedAt: string | null; stale: boolean } | null;
+    };
     const visibleSectors = SECTORS.filter(
         (sector) => sector.id !== 'search-admin' || canEdit,
     );
+    const bnaDate = dolarOficial?.fecha
+        ? formatDay(new Date(dolarOficial.fecha))
+        : formatDay(lastBusinessDay());
 
     return (
         <>
@@ -241,38 +261,170 @@ export default function Home() {
                         data-testid="home-hero"
                         style={{
                             display: 'flex',
-                            alignItems: 'flex-end',
-                            justifyContent: 'space-between',
-                            gap: '24px',
+                            flexDirection: 'column',
+                            gap: '8px',
                             paddingBottom: '10px',
                             borderBottom: '2px solid #000',
                         }}
                     >
-                        <h1
+                        <div
+                            data-testid="home-hero-top"
                             style={{
-                                fontFamily: "'Anton', sans-serif",
-                                fontWeight: 400,
-                                fontSize: 'clamp(36px,4.2vw,52px)',
-                                lineHeight: 0.9,
-                                letterSpacing: '-0.02em',
-                                margin: 0,
-                                textTransform: 'uppercase',
+                                display: 'flex',
+                                alignItems: 'flex-end',
+                                justifyContent: 'space-between',
+                                gap: '24px',
                             }}
                         >
-                            Portal de eurotur
-                            <span style={{ color: RED }}>.</span>
-                        </h1>
+                            <h1
+                                style={{
+                                    fontFamily: "'Anton', sans-serif",
+                                    fontWeight: 400,
+                                    fontSize: 'clamp(36px,4.2vw,52px)',
+                                    lineHeight: 0.9,
+                                    letterSpacing: '-0.02em',
+                                    margin: 0,
+                                    textTransform: 'uppercase',
+                                }}
+                            >
+                                Portal de eurotur
+                                <span style={{ color: RED }}>.</span>
+                            </h1>
+                            <div
+                                data-testid="home-dollars"
+                                style={{
+                                    display: 'flex',
+                                    gap: '18px',
+                                    textAlign: 'right',
+                                    flex: '0 0 auto',
+                                    alignItems: 'flex-end',
+                                }}
+                            >
+                                <div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Space Mono', monospace",
+                                            fontSize: '8px',
+                                            letterSpacing: '0.1em',
+                                            textTransform: 'uppercase',
+                                            color: '#999',
+                                            textAlign: 'right',
+                                        }}
+                                    >
+                                        dólar iata
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Archivo', sans-serif",
+                                            fontWeight: 900,
+                                            fontSize: '15px',
+                                            lineHeight: 1,
+                                        }}
+                                    >
+                                        {iataRate
+                                            ? `$${formatArs(iataRate.rate)}`
+                                            : '—'}
+                                        <span style={{ color: RED }}>.</span>
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Space Mono', monospace",
+                                            fontSize: '7px',
+                                            color: '#999',
+                                            textAlign: 'right',
+                                            marginTop: '2px',
+                                        }}
+                                    >
+                                        {iataRate?.updatedAt
+                                            ? formatDay(
+                                                  new Date(iataRate.updatedAt),
+                                              )
+                                            : '—'}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Space Mono', monospace",
+                                            fontSize: '8px',
+                                            letterSpacing: '0.1em',
+                                            textTransform: 'uppercase',
+                                            color: '#999',
+                                            textAlign: 'right',
+                                        }}
+                                    >
+                                        dólar bna
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Archivo', sans-serif",
+                                            fontWeight: 900,
+                                            fontSize: '15px',
+                                            lineHeight: 1,
+                                        }}
+                                    >
+                                        {dolarOficial
+                                            ? `$${formatArs(dolarOficial.venta)}`
+                                            : '—'}
+                                        <span style={{ color: RED }}>.</span>
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Space Mono', monospace",
+                                            fontSize: '7px',
+                                            color: '#999',
+                                            textAlign: 'right',
+                                            marginTop: '2px',
+                                        }}
+                                    >
+                                        {bnaDate}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Space Mono', monospace",
+                                            fontSize: '8px',
+                                            letterSpacing: '0.1em',
+                                            textTransform: 'uppercase',
+                                            color: '#999',
+                                            textAlign: 'right',
+                                        }}
+                                    >
+                                        hoy
+                                    </div>
+                                    <div
+                                        style={{
+                                            fontFamily:
+                                                "'Archivo', sans-serif",
+                                            fontWeight: 900,
+                                            fontSize: '15px',
+                                            lineHeight: 1,
+                                        }}
+                                    >
+                                        {formatTodayShort()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <p
                             style={{
                                 margin: 0,
-                                maxWidth: '44%',
+                                maxWidth: '50%',
                                 textAlign: 'right',
                                 fontFamily: "'Archivo', sans-serif",
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 lineHeight: 1.4,
                                 fontWeight: 600,
-                                color: '#111',
-                                flex: '0 0 auto',
+                                color: '#444',
+                                alignSelf: 'flex-end',
                             }}
                         >
                             Todo lo que usás cada día, en un solo lugar.
