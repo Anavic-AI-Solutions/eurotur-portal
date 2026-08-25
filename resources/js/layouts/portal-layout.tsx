@@ -324,48 +324,46 @@ function Sidebar({
                 }}
             />
 
-            {!isHome && (
-                <nav
-                    id="portal-nav"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px',
-                        flex: 1,
-                    }}
-                >
-                    {visibleSectors.map((sector) => (
-                        <Link
-                            key={sector.id}
-                            href={sector.href}
-                            className="nav-item"
+            <nav
+                id="portal-nav"
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '2px',
+                    flex: 1,
+                }}
+            >
+                {visibleSectors.map((sector) => (
+                    <Link
+                        key={sector.id}
+                        href={sector.href}
+                        className="nav-item"
+                        style={{
+                            all: 'unset',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: '9px',
+                            padding: '7px 6px',
+                            color: sector.id === active ? RED : '#000',
+                            transition:
+                                'color .12s, background .12s, transform .12s',
+                        }}
+                    >
+                        <span
                             style={{
-                                all: 'unset',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'baseline',
-                                gap: '9px',
-                                padding: '7px 6px',
-                                color: sector.id === active ? RED : '#000',
-                                transition:
-                                    'color .12s, background .12s, transform .12s',
+                                fontFamily: "'Archivo', sans-serif",
+                                fontWeight: 600,
+                                fontSize: '12.5px',
+                                letterSpacing: '-0.01em',
+                                lineHeight: 1.15,
                             }}
                         >
-                            <span
-                                style={{
-                                    fontFamily: "'Archivo', sans-serif",
-                                    fontWeight: 600,
-                                    fontSize: '12.5px',
-                                    letterSpacing: '-0.01em',
-                                    lineHeight: 1.15,
-                                }}
-                            >
-                                {sector.navLabel}
-                            </span>
-                        </Link>
-                    ))}
-                </nav>
-            )}
+                            {sector.navLabel}
+                        </span>
+                    </Link>
+                ))}
+            </nav>
 
             {isHome && (
                 <div
@@ -837,22 +835,7 @@ function Header({
     );
 
     if (isHome) {
-        return (
-            <header
-                id="portal-header"
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '40px',
-                    padding: '10px 56px 10px 112px',
-                    borderBottom: '1px solid #000',
-                    minHeight: '36px',
-                }}
-            >
-                {/* En home la nav se oculta y los dólares van junto al título; header queda minimal */}
-                <div style={{ flex: 1 }} />
-            </header>
-        );
+        return null;
     }
 
     return (
