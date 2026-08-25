@@ -171,17 +171,17 @@ function SectionHeading({
                 display: 'flex',
                 alignItems: 'baseline',
                 justifyContent: 'space-between',
-                borderBottom: compact ? '1.5px solid #000' : '3px solid #000',
-                paddingBottom: compact ? '6px' : '10px',
-                marginBottom: compact ? '8px' : 0,
+                borderBottom: compact ? '2px solid #000' : '3px solid #000',
+                paddingBottom: compact ? '8px' : '10px',
+                marginBottom: compact ? '10px' : 0,
             }}
         >
             <div
                 style={{
                     fontFamily: "'Archivo', sans-serif",
                     fontWeight: 900,
-                    fontSize: compact ? '11px' : '19px',
-                    letterSpacing: compact ? '0.04em' : '-0.01em',
+                    fontSize: compact ? '14px' : '19px',
+                    letterSpacing: compact ? '0.02em' : '-0.01em',
                     textTransform: compact ? 'uppercase' : undefined,
                 }}
             >
@@ -191,7 +191,7 @@ function SectionHeading({
             <div
                 style={{
                     fontFamily: "'Space Mono', monospace",
-                    fontSize: compact ? '9px' : '10px',
+                    fontSize: compact ? '10px' : '10px',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     color: '#999',
@@ -218,10 +218,10 @@ export default function Home() {
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '5px',
+                    gap: '18px',
                     flex: 1,
                     minHeight: 0,
-                    overflow: 'hidden',
+                    overflow: 'visible',
                 }}
             >
                 <div>
@@ -244,15 +244,15 @@ export default function Home() {
                             alignItems: 'flex-end',
                             justifyContent: 'space-between',
                             gap: '24px',
-                            paddingBottom: '6px',
-                            borderBottom: '1px solid #000',
+                            paddingBottom: '10px',
+                            borderBottom: '2px solid #000',
                         }}
                     >
                         <h1
                             style={{
                                 fontFamily: "'Anton', sans-serif",
                                 fontWeight: 400,
-                                fontSize: 'clamp(22px,2.4vw,30px)',
+                                fontSize: 'clamp(36px,4.2vw,52px)',
                                 lineHeight: 0.9,
                                 letterSpacing: '-0.02em',
                                 margin: 0,
@@ -265,13 +265,13 @@ export default function Home() {
                         <p
                             style={{
                                 margin: 0,
-                                maxWidth: '42%',
+                                maxWidth: '44%',
                                 textAlign: 'right',
                                 fontFamily: "'Archivo', sans-serif",
-                                fontSize: '10px',
-                                lineHeight: 1.3,
+                                fontSize: '13px',
+                                lineHeight: 1.4,
                                 fontWeight: 600,
-                                color: '#444',
+                                color: '#111',
                                 flex: '0 0 auto',
                             }}
                         >
@@ -300,8 +300,8 @@ export default function Home() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                minHeight: '56px',
-                                padding: '6px 8px',
+                                minHeight: '110px',
+                                padding: '14px 14px',
                                 textDecoration: 'none',
                                 color: '#000',
                                 borderRight: '1px solid #000',
@@ -329,7 +329,7 @@ export default function Home() {
                                             style={{
                                                 fontFamily:
                                                     "'Space Mono', monospace",
-                                                fontSize: '9px',
+                                                fontSize: '10px',
                                                 letterSpacing: '0.08em',
                                                 color: '#999',
                                             }}
@@ -340,10 +340,10 @@ export default function Home() {
                                             style={{
                                                 fontFamily:
                                                     "'Archivo', sans-serif",
-                                                fontWeight: 700,
-                                                fontSize: '12px',
+                                                fontWeight: 800,
+                                                fontSize: '15px',
                                                 letterSpacing: '-0.01em',
-                                                marginTop: '6px',
+                                                marginTop: '4px',
                                                 lineHeight: 1.2,
                                             }}
                                         >
@@ -387,15 +387,14 @@ export default function Home() {
                     <div
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'repeat(5,1fr)',
+                            gridTemplateColumns:
+                                'repeat(auto-fit, minmax(210px, 1fr))',
                             gap: 0,
                             borderLeft: '1px solid #000',
                             gridAutoRows: '1fr',
-                            maxHeight: '250px',
-                            overflow: 'hidden',
                         }}
                     >
-                        {visibleSectors.slice(0, 15).map((sector) => (
+                        {visibleSectors.map((sector) => (
                             <Link
                                 key={sector.id}
                                 href={sector.href}
@@ -406,8 +405,8 @@ export default function Home() {
                                     display: 'flex',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    minHeight: '75px',
-                                    padding: '8px',
+                                    minHeight: '135px',
+                                    padding: '14px',
                                     textDecoration: 'none',
                                     color: '#fff',
                                     backgroundColor: '#111',
@@ -480,17 +479,17 @@ export default function Home() {
                                 display: 'flex',
                                 alignItems: 'baseline',
                                 justifyContent: 'space-between',
-                                borderBottom: '1.5px solid #000',
-                                paddingBottom: '4px',
-                                marginBottom: '6px',
+                                borderBottom: '2px solid #000',
+                                paddingBottom: '8px',
+                                marginBottom: '10px',
                             }}
                         >
                             <div
                                 style={{
                                     fontFamily: "'Archivo', sans-serif",
                                     fontWeight: 900,
-                                    fontSize: '11px',
-                                    letterSpacing: '0.04em',
+                                    fontSize: '14px',
+                                    letterSpacing: '0.02em',
                                     textTransform: 'uppercase',
                                 }}
                             >
@@ -500,7 +499,7 @@ export default function Home() {
                             <div
                                 style={{
                                     fontFamily: "'Space Mono', monospace",
-                                    fontSize: '9px',
+                                    fontSize: '10px',
                                     letterSpacing: '0.12em',
                                     textTransform: 'uppercase',
                                     color: '#999',
@@ -520,7 +519,7 @@ export default function Home() {
                                 <div
                                     key={c.city}
                                     style={{
-                                        padding: '4px 8px 4px 0',
+                                        padding: '8px 12px 8px 0',
                                         borderRight: '1px dotted #000',
                                     }}
                                 >
@@ -528,7 +527,7 @@ export default function Home() {
                                         style={{
                                             fontFamily:
                                                 "'Space Mono', monospace",
-                                            fontSize: '8px',
+                                            fontSize: '9px',
                                             letterSpacing: '0.06em',
                                             textTransform: 'uppercase',
                                             color: '#666',
@@ -540,15 +539,15 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
-                                            fontSize: '22px',
+                                            fontSize: '32px',
                                             lineHeight: 1,
-                                            margin: '2px 0 1px',
+                                            margin: '4px 0 2px',
                                         }}
                                     >
                                         {c.temp}
                                         <span
                                             style={{
-                                                fontSize: '13px',
+                                                fontSize: '18px',
                                                 verticalAlign: 'top',
                                                 fontWeight: 400,
                                             }}
@@ -560,8 +559,8 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 600,
-                                            fontSize: '10px',
-                                            marginTop: '1px',
+                                            fontSize: '11px',
+                                            marginTop: '2px',
                                         }}
                                     >
                                         {c.cond}

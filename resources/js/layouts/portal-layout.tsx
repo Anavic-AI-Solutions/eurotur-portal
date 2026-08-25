@@ -202,12 +202,11 @@ export default function PortalLayout({
                         style={{
                             flex: 1,
                             minHeight: 0,
-                            overflowY:
-                                active === 'home' ? 'hidden' : 'auto',
+                            overflowY: 'auto',
                             overflowX: 'hidden',
                             padding:
                                 active === 'home'
-                                    ? '14px 24px 8px 96px'
+                                    ? '20px 28px 16px 112px'
                                     : '44px 56px 40px 112px',
                             position: 'relative',
                             display: 'flex',
