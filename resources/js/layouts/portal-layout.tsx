@@ -680,6 +680,159 @@ function Header({
         ? formatDay(new Date(dolarOficial.fecha))
         : formatDay(lastBusinessDay());
 
+    const metaValStyle: React.CSSProperties = {
+        fontFamily: "'Archivo', sans-serif",
+        fontWeight: 900,
+        fontSize: '15px',
+        lineHeight: 1,
+        letterSpacing: '-0.02em',
+    };
+    const metaLabelStyle: React.CSSProperties = {
+        fontFamily: "'Space Mono', monospace",
+        fontSize: '9px',
+        letterSpacing: '0.14em',
+        textTransform: 'uppercase',
+        color: '#999',
+    };
+
+    // Bloques meta reutilizables (IATA / BNA / HOY) con estilo compacto 15px
+    const metaBlocks = (
+        <>
+            <div data-testid="meta-iata">
+                <div
+                    style={{
+                        ...metaLabelStyle,
+                        color: iataStale ? RED : '#999',
+                        display: 'flex',
+                        gap: '6px',
+                        justifyContent: 'flex-end',
+                    }}
+                >
+                    dólar iata
+                    {iataStale && (
+                        <span
+                            style={{
+                                background: RED,
+                                color: '#fff',
+                                padding: '1px 5px',
+                                fontSize: '8px',
+                            }}
+                        >
+                            desact.
+                        </span>
+                    )}
+                </div>
+                <div style={metaValStyle} data-testid="meta-val">
+                    {iataRate !== null ? `$${formatArs(iataRate.rate)}` : '—'}
+                    <span style={{ color: RED }}>.</span>
+                </div>
+                <div
+                    style={{
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: '8px',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: '#999',
+                        marginTop: '3px',
+                        textAlign: 'right',
+                    }}
+                >
+                    {iataRate?.updatedAt
+                        ? formatDay(new Date(iataRate.updatedAt))
+                        : '—'}
+                </div>
+            </div>
+            <div data-testid="meta-bna">
+                <div
+                    style={{
+                        ...metaLabelStyle,
+                        color: bnaStale ? RED : '#999',
+                        display: 'flex',
+                        gap: '6px',
+                        justifyContent: 'flex-end',
+                    }}
+                >
+                    dólar bna
+                    {bnaStale && (
+                        <span
+                            style={{
+                                background: RED,
+                                color: '#fff',
+                                padding: '1px 5px',
+                                fontSize: '8px',
+                            }}
+                        >
+                            desact.
+                        </span>
+                    )}
+                </div>
+                <div style={metaValStyle} data-testid="meta-val">
+                    {dolarOficial !== null
+                        ? `$${formatArs(dolarOficial.venta)}`
+                        : '—'}
+                    <span style={{ color: RED }}>.</span>
+                </div>
+                <div
+                    style={{
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: '8px',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase',
+                        color: '#999',
+                        marginTop: '3px',
+                        textAlign: 'right',
+                    }}
+                >
+                    {bnaDate}
+                </div>
+            </div>
+            <div data-testid="meta-hoy">
+                <div style={metaLabelStyle}>hoy</div>
+                <div style={metaValStyle} data-testid="meta-val">
+                    {formatToday()}
+                </div>
+            </div>
+        </>
+    );
+
+    if (isHome) {
+        return (
+            <>
+                <header
+                    id="portal-header"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        justifyContent: 'space-between',
+                        gap: '40px',
+                        padding: '14px 56px 12px 112px',
+                        borderBottom: '1px solid #000',
+                    }}
+                >
+                    <div style={{ flex: 1, maxWidth: '440px' }}>
+                        <GlobalSearch />
+                    </div>
+                    {/* spacer para mantener altura del header cuando meta es absolute */}
+                    <div style={{ width: '280px', flexShrink: 0 }} />
+                </header>
+                <div
+                    data-testid="meta-absolute"
+                    style={{
+                        position: 'absolute',
+                        top: '14px',
+                        right: '20px',
+                        display: 'flex',
+                        gap: '18px',
+                        textAlign: 'right',
+                        zIndex: 5,
+                    }}
+                >
+                    {metaBlocks}
+                </div>
+            </>
+        );
+    }
+
     return (
         <header
             id="portal-header"
@@ -688,143 +841,15 @@ function Header({
                 alignItems: 'flex-end',
                 justifyContent: 'space-between',
                 gap: '40px',
-                padding: '30px 56px 22px 112px',
+                padding: '14px 56px 12px 112px',
                 borderBottom: '1px solid #000',
             }}
         >
             <div style={{ flex: 1, maxWidth: '440px' }}>
                 <GlobalSearch />
             </div>
-            <div style={{ display: 'flex', gap: '34px', textAlign: 'right' }}>
-                <div>
-                    <div
-                        style={{
-                            fontFamily: "'Space Mono', monospace",
-                            fontSize: '9px',
-                            letterSpacing: '0.14em',
-                            textTransform: 'uppercase',
-                            color: iataStale ? RED : '#999',
-                            display: 'flex',
-                            gap: '6px',
-                            justifyContent: 'flex-end',
-                        }}
-                    >
-                        dólar iata
-                        {iataStale && (
-                            <span
-                                style={{
-                                    background: RED,
-                                    color: '#fff',
-                                    padding: '1px 5px',
-                                }}
-                            >
-                                desact.
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        style={{
-                            fontFamily: "'Archivo', sans-serif",
-                            fontWeight: 900,
-                            fontSize: '22px',
-                            lineHeight: 1,
-                        }}
-                    >
-                        {iataRate !== null
-                            ? `$${formatArs(iataRate.rate)}`
-                            : '—'}
-                        <span style={{ color: RED }}>.</span>
-                    </div>
-                    <div
-                        style={{
-                            fontFamily: "'Space Mono', monospace",
-                            fontSize: '9px',
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                            color: '#999',
-                            marginTop: '4px',
-                        }}
-                    >
-                        {iataRate?.updatedAt
-                            ? formatDay(new Date(iataRate.updatedAt))
-                            : '—'}
-                    </div>
-                </div>
-                <div>
-                    <div
-                        style={{
-                            fontFamily: "'Space Mono', monospace",
-                            fontSize: '9px',
-                            letterSpacing: '0.14em',
-                            textTransform: 'uppercase',
-                            color: bnaStale ? RED : '#999',
-                            display: 'flex',
-                            gap: '6px',
-                            justifyContent: 'flex-end',
-                        }}
-                    >
-                        dólar bna
-                        {bnaStale && (
-                            <span
-                                style={{
-                                    background: RED,
-                                    color: '#fff',
-                                    padding: '1px 5px',
-                                }}
-                            >
-                                desact.
-                            </span>
-                        )}
-                    </div>
-                    <div
-                        style={{
-                            fontFamily: "'Archivo', sans-serif",
-                            fontWeight: 900,
-                            fontSize: '22px',
-                            lineHeight: 1,
-                        }}
-                    >
-                        {dolarOficial !== null
-                            ? `$${formatArs(dolarOficial.venta)}`
-                            : '—'}
-                        <span style={{ color: RED }}>.</span>
-                    </div>
-                    <div
-                        style={{
-                            fontFamily: "'Space Mono', monospace",
-                            fontSize: '9px',
-                            letterSpacing: '0.1em',
-                            textTransform: 'uppercase',
-                            color: '#999',
-                            marginTop: '4px',
-                        }}
-                    >
-                        {bnaDate}
-                    </div>
-                </div>
-                <div>
-                    <div
-                        style={{
-                            fontFamily: "'Space Mono', monospace",
-                            fontSize: '9px',
-                            letterSpacing: '0.14em',
-                            textTransform: 'uppercase',
-                            color: '#999',
-                        }}
-                    >
-                        hoy
-                    </div>
-                    <div
-                        style={{
-                            fontFamily: "'Archivo', sans-serif",
-                            fontWeight: 900,
-                            fontSize: '22px',
-                            lineHeight: 1,
-                        }}
-                    >
-                        {formatToday()}
-                    </div>
-                </div>
+            <div style={{ display: 'flex', gap: '24px', textAlign: 'right' }}>
+                {metaBlocks}
             </div>
         </header>
     );
