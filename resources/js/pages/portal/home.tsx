@@ -156,24 +156,33 @@ const CLIMA: Clima[] = [
     { city: 'Salta', temp: '17', cond: 'Despejado', hi: '24', lo: '8' },
 ];
 
-function SectionHeading({ label, hint }: { label: string; hint: string }) {
+function SectionHeading({
+    label,
+    hint,
+    compact = false,
+}: {
+    label: string;
+    hint: string;
+    compact?: boolean;
+}) {
     return (
         <div
             style={{
                 display: 'flex',
                 alignItems: 'baseline',
                 justifyContent: 'space-between',
-                borderBottom: '3px solid #000',
-                paddingBottom: '10px',
-                marginBottom: 0,
+                borderBottom: compact ? '1.5px solid #000' : '3px solid #000',
+                paddingBottom: compact ? '6px' : '10px',
+                marginBottom: compact ? '8px' : 0,
             }}
         >
             <div
                 style={{
                     fontFamily: "'Archivo', sans-serif",
                     fontWeight: 900,
-                    fontSize: '19px',
-                    letterSpacing: '-0.01em',
+                    fontSize: compact ? '11px' : '19px',
+                    letterSpacing: compact ? '0.04em' : '-0.01em',
+                    textTransform: compact ? 'uppercase' : undefined,
                 }}
             >
                 {label}
@@ -182,7 +191,7 @@ function SectionHeading({ label, hint }: { label: string; hint: string }) {
             <div
                 style={{
                     fontFamily: "'Space Mono', monospace",
-                    fontSize: '10px',
+                    fontSize: compact ? '9px' : '10px',
                     letterSpacing: '0.12em',
                     textTransform: 'uppercase',
                     color: '#999',
@@ -275,6 +284,7 @@ export default function Home() {
                     <SectionHeading
                         label="Accesos rápidos"
                         hint="↗ la mayoría abre en otra pestaña"
+                        compact
                     />
                     <div
                         style={{
@@ -290,8 +300,8 @@ export default function Home() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                minHeight: '170px',
-                                padding: '18px',
+                                minHeight: '72px',
+                                padding: '10px 12px',
                                 textDecoration: 'none',
                                 color: '#000',
                                 borderRight: '1px solid #000',
@@ -304,23 +314,24 @@ export default function Home() {
                                     <span
                                         style={{
                                             position: 'absolute',
-                                            top: '16px',
-                                            right: '16px',
+                                            top: '10px',
+                                            right: '10px',
                                             fontFamily:
                                                 "'Space Mono', monospace",
-                                            fontSize: '13px',
+                                            fontSize: '11px',
+                                            opacity: 0.7,
                                         }}
                                     >
                                         {q.internal ? '→' : '↗'}
                                     </span>
-                                    {q.icon}
                                     <div>
                                         <div
                                             style={{
                                                 fontFamily:
                                                     "'Space Mono', monospace",
-                                                fontSize: '10px',
+                                                fontSize: '9px',
                                                 letterSpacing: '0.08em',
+                                                color: '#999',
                                             }}
                                         >
                                             {q.num}
@@ -329,10 +340,11 @@ export default function Home() {
                                             style={{
                                                 fontFamily:
                                                     "'Archivo', sans-serif",
-                                                fontWeight: 800,
-                                                fontSize: '17px',
+                                                fontWeight: 700,
+                                                fontSize: '12px',
                                                 letterSpacing: '-0.01em',
-                                                marginTop: '2px',
+                                                marginTop: '6px',
+                                                lineHeight: 1.2,
                                             }}
                                         >
                                             {q.title}
@@ -370,6 +382,7 @@ export default function Home() {
                     <SectionHeading
                         label="Sectores"
                         hint="→ tocá para entrar"
+                        compact
                     />
                     <div
                         style={{
@@ -467,17 +480,18 @@ export default function Home() {
                                 display: 'flex',
                                 alignItems: 'baseline',
                                 justifyContent: 'space-between',
-                                borderBottom: '3px solid #000',
-                                paddingBottom: '10px',
-                                marginBottom: '22px',
+                                borderBottom: '1.5px solid #000',
+                                paddingBottom: '6px',
+                                marginBottom: '8px',
                             }}
                         >
                             <div
                                 style={{
                                     fontFamily: "'Archivo', sans-serif",
                                     fontWeight: 900,
-                                    fontSize: '19px',
-                                    letterSpacing: '-0.01em',
+                                    fontSize: '11px',
+                                    letterSpacing: '0.04em',
+                                    textTransform: 'uppercase',
                                 }}
                             >
                                 Clima
@@ -486,7 +500,7 @@ export default function Home() {
                             <div
                                 style={{
                                     fontFamily: "'Space Mono', monospace",
-                                    fontSize: '10px',
+                                    fontSize: '9px',
                                     letterSpacing: '0.12em',
                                     textTransform: 'uppercase',
                                     color: '#999',
@@ -506,7 +520,7 @@ export default function Home() {
                                 <div
                                     key={c.city}
                                     style={{
-                                        padding: '2px 22px 2px 0',
+                                        padding: '6px 12px 6px 0',
                                         borderRight: '1px dotted #000',
                                     }}
                                 >
@@ -514,8 +528,8 @@ export default function Home() {
                                         style={{
                                             fontFamily:
                                                 "'Space Mono', monospace",
-                                            fontSize: '10px',
-                                            letterSpacing: '0.1em',
+                                            fontSize: '9px',
+                                            letterSpacing: '0.06em',
                                             textTransform: 'uppercase',
                                             color: '#666',
                                         }}
@@ -526,16 +540,17 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 900,
-                                            fontSize: '56px',
-                                            lineHeight: 0.85,
-                                            margin: '8px 0 6px',
+                                            fontSize: '28px',
+                                            lineHeight: 1,
+                                            margin: '4px 0 2px',
                                         }}
                                     >
                                         {c.temp}
                                         <span
                                             style={{
-                                                fontSize: '24px',
+                                                fontSize: '16px',
                                                 verticalAlign: 'top',
+                                                fontWeight: 400,
                                             }}
                                         >
                                             °
@@ -545,22 +560,11 @@ export default function Home() {
                                         style={{
                                             fontFamily: "'Archivo', sans-serif",
                                             fontWeight: 600,
-                                            fontSize: '13px',
+                                            fontSize: '11px',
+                                            marginTop: '2px',
                                         }}
                                     >
                                         {c.cond}
-                                    </div>
-                                    <div
-                                        style={{
-                                            fontFamily:
-                                                "'Space Mono', monospace",
-                                            fontSize: '10px',
-                                            letterSpacing: '0.06em',
-                                            color: '#999',
-                                            marginTop: '6px',
-                                        }}
-                                    >
-                                        máx {c.hi}° · mín {c.lo}°
                                     </div>
                                 </div>
                             ))}
