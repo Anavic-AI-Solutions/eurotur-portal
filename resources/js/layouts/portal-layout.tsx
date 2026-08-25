@@ -327,8 +327,8 @@ function Sidebar({
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '1px',
-                    flex: isHome ? '0 0 auto' : 1,
+                    gap: '2px',
+                    flex: 1,
                 }}
             >
                 {visibleSectors.map((sector) => (
@@ -342,7 +342,7 @@ function Sidebar({
                             display: 'flex',
                             alignItems: 'baseline',
                             gap: '9px',
-                            padding: '5px 4px',
+                            padding: '7px 6px',
                             color: sector.id === active ? RED : '#000',
                             transition:
                                 'color .12s, background .12s, transform .12s',
@@ -841,9 +841,9 @@ function Header({
                         display: 'flex',
                         alignItems: 'center',
                         gap: '40px',
-                        padding: '10px 56px 10px 112px',
+                        padding: '14px 56px 14px 112px',
                         borderBottom: '1px solid #000',
-                        minHeight: '36px',
+                        minHeight: '62px',
                     }}
                 >
                     {/* Buscador movido al aside en home; header queda minimal */}
@@ -858,7 +858,9 @@ function Header({
                         display: 'flex',
                         gap: '18px',
                         textAlign: 'right',
-                        zIndex: 5,
+                        zIndex: 10,
+                        background: '#fff',
+                        padding: '4px 8px',
                     }}
                 >
                     {metaBlocks}
