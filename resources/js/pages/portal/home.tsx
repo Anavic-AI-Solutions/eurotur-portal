@@ -1,6 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
-import { ImageSlot } from '@/components/portal/image-slot';
 import { SECTORS } from '@/lib/portal-sectors';
 import { exchangeRate, mesa } from '@/routes/portal';
 
@@ -224,52 +223,51 @@ export default function Home() {
                             letterSpacing: '0.16em',
                             textTransform: 'uppercase',
                             color: '#666',
-                            marginBottom: '14px',
+                            marginBottom: '6px',
                         }}
                     >
                         intranet corporativa — hub de accesos
                     </div>
-                    <h1
-                        style={{
-                            fontFamily: "'Anton', sans-serif",
-                            fontWeight: 400,
-                            fontSize: 'clamp(64px,9vw,132px)',
-                            lineHeight: 0.82,
-                            letterSpacing: '-0.005em',
-                            margin: 0,
-                        }}
-                    >
-                        Portal de
-                        <br />
-                        eurotur
-                        <span style={{ color: RED }}>.</span>
-                    </h1>
-                    <p
-                        style={{
-                            maxWidth: '560px',
-                            margin: '20px 0 0',
-                            fontSize: '16px',
-                            lineHeight: 1.45,
-                            fontWeight: 600,
-                            color: '#111',
-                        }}
-                    >
-                        Todo lo que usás cada día, a un toque. Elegí un acceso
-                        rápido o entrá a tu sector.
-                    </p>
                     <div
+                        data-testid="home-hero"
                         style={{
-                            position: 'relative',
-                            marginTop: '26px',
-                            overflow: 'hidden',
+                            display: 'flex',
+                            alignItems: 'flex-end',
+                            justifyContent: 'space-between',
+                            gap: '24px',
+                            paddingBottom: '8px',
+                            borderBottom: '1px solid #000',
                         }}
                     >
-                        <ImageSlot
-                            src="/img/portal/portada.jpg"
-                            alt="Portada Eurotur"
-                            placeholder="Imagen de portada — arquitectura / Patagonia (blanco y negro, a sangre)"
-                            contain
-                        />
+                        <h1
+                            style={{
+                                fontFamily: "'Anton', sans-serif",
+                                fontWeight: 400,
+                                fontSize: 'clamp(22px,2.4vw,30px)',
+                                lineHeight: 0.9,
+                                letterSpacing: '-0.02em',
+                                margin: 0,
+                                textTransform: 'uppercase',
+                            }}
+                        >
+                            Portal de eurotur
+                            <span style={{ color: RED }}>.</span>
+                        </h1>
+                        <p
+                            style={{
+                                margin: 0,
+                                maxWidth: '42%',
+                                textAlign: 'right',
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '11px',
+                                lineHeight: 1.35,
+                                fontWeight: 600,
+                                color: '#444',
+                                flex: '0 0 auto',
+                            }}
+                        >
+                            Todo lo que usás cada día, en un solo lugar.
+                        </p>
                     </div>
                 </div>
 

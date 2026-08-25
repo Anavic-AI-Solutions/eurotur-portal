@@ -100,6 +100,7 @@ export default function PortalLayout({
                     #portal-content [style*="1.55fr 1fr"] { grid-template-columns: 1fr !important; }
                     #portal-content [style*="0.82fr 1.18fr"] { grid-template-columns: 1fr !important; }
                     #portal-content [style*="1.08fr 0.92fr"] { grid-template-columns: 1fr !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] h1 { font-size: clamp(20px, 3.2vw, 26px) !important; }
                 }
                 @media (max-width: 600px) {
                     #portal-content [style*="repeat(5"],
@@ -108,6 +109,9 @@ export default function PortalLayout({
                     #portal-content [style*="repeat(2"] { grid-template-columns: 1fr !important; }
                     #portal-content [style*="gap:18px"] { flex-wrap: wrap; row-gap: 8px !important; }
                     #portal-content #qrated-cats { grid-template-columns: 1fr !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] { flex-direction: column !important; align-items: flex-start !important; gap: 6px !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] p { max-width: 100% !important; text-align: left !important; }
+                    #portal-root[data-page="home"] [data-testid="home-hero"] h1 { font-size: clamp(18px, 5vw, 22px) !important; }
                 }
             `}</style>
 
