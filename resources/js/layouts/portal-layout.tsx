@@ -321,7 +321,7 @@ function Sidebar({
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '1px',
-                    flex: 1,
+                    flex: isHome ? '0 0 auto' : 1,
                 }}
             >
                 {visibleSectors.map((sector) => (
@@ -355,6 +355,21 @@ function Sidebar({
                     </Link>
                 ))}
             </nav>
+
+            {isHome && (
+                <div
+                    id="portal-search-aside"
+                    style={{
+                        marginTop: '18px',
+                        paddingTop: '14px',
+                        borderTop: '1px solid #000',
+                    }}
+                >
+                    <GlobalSearch compact />
+                </div>
+            )}
+
+            <div style={{ flex: 1 }} />
 
             <div
                 id="portal-asidefoot"
@@ -412,7 +427,7 @@ type SearchResult = {
     sectorHref: string | null;
 };
 
-function GlobalSearch() {
+function GlobalSearch({ compact = false }: { compact?: boolean } = {}) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<SearchResult[]>([]);
     const [loading, setLoading] = useState(false);
@@ -467,35 +482,46 @@ function GlobalSearch() {
 
     const showDropdown = open && query.trim().length >= 2;
 
+    const iconSize = compact ? 14 : 16;
+    const inputFont = compact ? '13px' : '15px';
+    const gap = compact ? '8px' : '12px';
+
     return (
-        <div style={{ position: 'relative' }}>
-            <div
-                style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '9px',
-                    letterSpacing: '0.16em',
-                    textTransform: 'uppercase',
-                    color: '#999',
-                    marginBottom: '8px',
-                }}
-            >
-                búsqueda global
-            </div>
+        <div
+            style={{ position: 'relative', width: compact ? '100%' : undefined }}
+            data-testid={compact ? 'search-aside' : 'search-header'}
+        >
+            {!compact && (
+                <div
+                    style={{
+                        fontFamily: "'Space Mono', monospace",
+                        fontSize: '9px',
+                        letterSpacing: '0.16em',
+                        textTransform: 'uppercase',
+                        color: '#999',
+                        marginBottom: '8px',
+                    }}
+                >
+                    búsqueda global
+                </div>
+            )}
             <div
                 style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '12px',
-                    borderBottom: '2px solid #000',
-                    paddingBottom: '8px',
+                    gap,
+                    borderBottom: compact
+                        ? '1.5px solid #000'
+                        : '2px solid #000',
+                    paddingBottom: compact ? '6px' : '8px',
                 }}
             >
                 <svg
-                    width="16"
-                    height="16"
+                    width={iconSize}
+                    height={iconSize}
                     viewBox="0 0 16 16"
                     fill="none"
-                    style={{ flex: '0 0 16px' }}
+                    style={{ flex: `0 0 ${iconSize}px` }}
                 >
                     <circle
                         cx="7"
@@ -560,12 +586,16 @@ function GlobalSearch() {
                             setActiveIndex(-1);
                         }
                     }}
-                    placeholder="Buscar documentos, formularios, sectores…"
+                    placeholder={
+                        compact
+                            ? 'Buscar…'
+                            : 'Buscar documentos, formularios, sectores…'
+                    }
                     style={{
                         all: 'unset',
                         flex: 1,
                         fontFamily: "'Archivo', sans-serif",
-                        fontSize: '15px',
+                        fontSize: inputFont,
                         fontWeight: 500,
                         color: '#000',
                     }}
@@ -802,18 +832,15 @@ function Header({
                     id="portal-header"
                     style={{
                         display: 'flex',
-                        alignItems: 'flex-end',
-                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         gap: '40px',
-                        padding: '14px 56px 12px 112px',
+                        padding: '10px 56px 10px 112px',
                         borderBottom: '1px solid #000',
+                        minHeight: '36px',
                     }}
                 >
-                    <div style={{ flex: 1, maxWidth: '440px' }}>
-                        <GlobalSearch />
-                    </div>
-                    {/* spacer para mantener altura del header cuando meta es absolute */}
-                    <div style={{ width: '280px', flexShrink: 0 }} />
+                    {/* Buscador movido al aside en home; header queda minimal */}
+                    <div style={{ flex: 1 }} />
                 </header>
                 <div
                     data-testid="meta-absolute"
