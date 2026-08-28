@@ -1,11 +1,13 @@
 import { Form, Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { boFieldClass } from '@/components/backoffice/field';
+import { SectionHeading } from '@/components/backoffice/section-heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Table, TableCell, TableRow } from '@/components/ui/table';
 import { index } from '@/routes/admin/roles';
 import type { RouteFormDefinition } from '@/wayfinder';
 
@@ -48,6 +50,10 @@ export default function RoleForm({
     submitLabel: string;
 }) {
     const [granted, setGranted] = useState<string[]>(role?.permissions ?? []);
+    const totalPermissions = permissionGroups.reduce(
+        (count, group) => count + group.permissions.length,
+        0,
+    );
 
     const toggle = (slug: string, checked: boolean) =>
         setGranted((current) =>
@@ -67,28 +73,36 @@ export default function RoleForm({
     };
 
     return (
-        <Form<RoleFormData> {...action} className="space-y-6">
+        <Form<RoleFormData> {...action} className="max-w-3xl">
             {({ processing, errors }) => (
                 <>
-                    <div className="grid max-w-xl gap-2">
-                        <Label htmlFor="name">Nombre</Label>
-                        <Input
-                            id="name"
-                            name="name"
-                            defaultValue={role?.name}
-                            required
-                        />
-                        <InputError message={errors.name} />
-                    </div>
+                    <div className="grid gap-6 sm:grid-cols-2">
+                        <div className="grid gap-1">
+                            <Label htmlFor="name" className="bo-label">
+                                Nombre
+                            </Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                defaultValue={role?.name}
+                                required
+                                className={boFieldClass}
+                            />
+                            <InputError message={errors.name} />
+                        </div>
 
-                    <div className="grid max-w-xl gap-2">
-                        <Label htmlFor="description">Descripción</Label>
-                        <Input
-                            id="description"
-                            name="description"
-                            defaultValue={role?.description ?? ''}
-                        />
-                        <InputError message={errors.description} />
+                        <div className="grid gap-1">
+                            <Label htmlFor="description" className="bo-label">
+                                Descripción
+                            </Label>
+                            <Input
+                                id="description"
+                                name="description"
+                                defaultValue={role?.description ?? ''}
+                                className={boFieldClass}
+                            />
+                            <InputError message={errors.description} />
+                        </div>
                     </div>
 
                     {granted.map((slug) => (
@@ -100,14 +114,23 @@ export default function RoleForm({
                         />
                     ))}
 
+                    <SectionHeading
+                        label="Permisos"
+                        hint={
+                            locked
+                                ? `${totalPermissions} de ${totalPermissions} otorgados`
+                                : `${granted.length} de ${totalPermissions} otorgados`
+                        }
+                    />
+
                     {locked && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="border border-primary bg-muted px-3 py-2 text-sm text-primary">
                             El rol Administrador siempre tiene todos los
                             permisos: su matriz es de solo lectura.
                         </p>
                     )}
 
-                    <div className="grid gap-4 md:grid-cols-2">
+                    <Table>
                         {permissionGroups.map((group) => {
                             const allChecked = group.permissions.every(
                                 (permission) =>
@@ -115,31 +138,38 @@ export default function RoleForm({
                             );
 
                             return (
-                                <Card key={group.key}>
-                                    <CardHeader className="flex-row items-center justify-between gap-2 space-y-0">
-                                        <CardTitle className="text-base">
-                                            {group.label}
-                                        </CardTitle>
-
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            disabled={locked}
-                                            onClick={() =>
-                                                toggleGroup(group, !allChecked)
-                                            }
+                                <tbody key={group.key}>
+                                    <tr className="bo-rule-head">
+                                        <TableCell
+                                            colSpan={2}
+                                            className="text-[13px] font-black"
                                         >
-                                            {allChecked ? 'Ninguno' : 'Todos'}
-                                        </Button>
-                                    </CardHeader>
-
-                                    <CardContent className="space-y-3">
-                                        {group.permissions.map((permission) => (
-                                            <div
-                                                key={permission.slug}
-                                                className="flex items-center gap-2"
+                                            {group.label}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                className="rounded-none"
+                                                disabled={locked}
+                                                onClick={() =>
+                                                    toggleGroup(
+                                                        group,
+                                                        !allChecked,
+                                                    )
+                                                }
                                             >
+                                                {allChecked
+                                                    ? 'Ninguno'
+                                                    : 'Todos'}
+                                            </Button>
+                                        </TableCell>
+                                    </tr>
+
+                                    {group.permissions.map((permission) => (
+                                        <TableRow key={permission.slug}>
+                                            <TableCell className="w-10">
                                                 <Checkbox
                                                     id={permission.slug}
                                                     disabled={locked}
@@ -158,21 +188,26 @@ export default function RoleForm({
                                                         )
                                                     }
                                                 />
+                                            </TableCell>
+                                            <TableCell>
                                                 <Label
                                                     htmlFor={permission.slug}
                                                     className="font-normal"
                                                 >
                                                     {permission.label}
                                                 </Label>
-                                            </div>
-                                        ))}
-                                    </CardContent>
-                                </Card>
+                                            </TableCell>
+                                            <TableCell className="text-right text-[10px] font-[var(--bo-mono)] text-muted-foreground">
+                                                {permission.slug}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </tbody>
                             );
                         })}
-                    </div>
+                    </Table>
 
-                    <div className="flex items-center gap-3">
+                    <div className="mt-6 flex items-center gap-3">
                         <Button type="submit" disabled={processing}>
                             {submitLabel}
                         </Button>

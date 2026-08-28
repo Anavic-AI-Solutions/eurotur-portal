@@ -1,7 +1,10 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { X } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
-import Heading from '@/components/heading';
-import { Badge } from '@/components/ui/badge';
+import { PageHeader } from '@/components/backoffice/page-header';
+import { RowActions } from '@/components/backoffice/row-actions';
+import { TableFilter } from '@/components/backoffice/table-filter';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -13,6 +16,14 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 
 type UserRow = {
     id: number;
@@ -27,61 +38,105 @@ type Paginated<T> = {
 };
 
 export default function UsersIndex({ users }: { users: Paginated<UserRow> }) {
+    const [query, setQuery] = useState('');
+
+    const visible = useMemo(() => {
+        const needle = query.trim().toLowerCase();
+
+        if (!needle) {
+            return users.data;
+        }
+
+        return users.data.filter((user) =>
+            [user.name, user.email, user.role?.name ?? '']
+                .join(' ')
+                .toLowerCase()
+                .includes(needle),
+        );
+    }, [users.data, query]);
+
     return (
         <>
             <Head title="Usuarios" />
 
-            <div className="space-y-6">
-                <div className="flex items-start justify-between gap-4">
-                    <Heading
-                        title="Usuarios"
-                        description="Altas, bajas y asignación de roles."
-                    />
-
+            <PageHeader
+                eyebrow="Administración"
+                title="Usuarios"
+                description="Altas, bajas y asignación de roles."
+                action={
                     <Button asChild>
                         <Link href={UserController.create()}>
                             Nuevo usuario
                         </Link>
                     </Button>
-                </div>
+                }
+            />
 
-                <div className="divide-y rounded-lg border">
-                    {users.data.map((user) => (
-                        <div
-                            key={user.id}
-                            className="flex flex-wrap items-center justify-between gap-3 p-4"
-                        >
-                            <div className="min-w-0">
-                                <p className="truncate font-medium">
+            <div className="mt-6">
+                <TableFilter
+                    value={query}
+                    onChange={setQuery}
+                    placeholder="Filtrar por nombre, email o rol…"
+                    matched={visible.length}
+                    total={users.data.length}
+                />
+
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Nombre</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Rol</TableHead>
+                            <TableHead>
+                                <span className="sr-only">Acciones</span>
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {visible.map((user) => (
+                            <TableRow key={user.id}>
+                                <TableCell className="font-bold">
                                     {user.name}
-                                </p>
-                                <p className="truncate text-sm text-muted-foreground">
+                                </TableCell>
+                                <TableCell className="text-[11px] font-[var(--bo-mono)] text-muted-foreground">
                                     {user.email}
-                                </p>
-                            </div>
+                                </TableCell>
+                                <TableCell>
+                                    {user.role ? (
+                                        <span className="inline-block border border-foreground px-[6px] py-[2px] bo-label text-foreground">
+                                            {user.role.name}
+                                        </span>
+                                    ) : (
+                                        <span className="bo-label">
+                                            Sin rol
+                                        </span>
+                                    )}
+                                </TableCell>
+                                <TableCell>
+                                    <RowActions
+                                        editHref={UserController.edit(user.id)}
+                                        editLabel={`Editar a ${user.name}`}
+                                    >
+                                        <DeleteUserDialog user={user} />
+                                    </RowActions>
+                                </TableCell>
+                            </TableRow>
+                        ))}
 
-                            <div className="flex items-center gap-2">
-                                <Badge variant="secondary">
-                                    {user.role?.name ?? 'Sin rol'}
-                                </Badge>
-
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href={UserController.edit(user.id)}>
-                                        Editar
-                                    </Link>
-                                </Button>
-
-                                <DeleteUserDialog user={user} />
-                            </div>
-                        </div>
-                    ))}
-
-                    {users.data.length === 0 && (
-                        <p className="p-4 text-sm text-muted-foreground">
-                            Todavía no hay usuarios.
-                        </p>
-                    )}
-                </div>
+                        {visible.length === 0 && (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={4}
+                                    className="py-6 text-center bo-label"
+                                >
+                                    {users.data.length === 0
+                                        ? 'Todavía no hay usuarios.'
+                                        : 'Sin resultados para el filtro.'}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
 
                 <Pagination links={users.links} />
             </div>
@@ -93,8 +148,13 @@ function DeleteUserDialog({ user }: { user: UserRow }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="destructive" size="sm">
-                    Eliminar
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 rounded-none text-primary hover:text-primary"
+                >
+                    <X className="size-3.5" aria-hidden="true" />
+                    <span className="sr-only">Eliminar a {user.name}</span>
                 </Button>
             </DialogTrigger>
 
@@ -134,27 +194,28 @@ function Pagination({ links }: { links: Paginated<UserRow>['links'] }) {
     }
 
     return (
-        <nav className="flex flex-wrap gap-1">
-            {links.map((link) => (
-                <Button
-                    key={link.label}
-                    variant={link.active ? 'default' : 'outline'}
-                    size="sm"
-                    disabled={!link.url}
-                    asChild={Boolean(link.url)}
-                >
-                    {link.url ? (
-                        <Link
-                            href={link.url}
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    ) : (
-                        <span
-                            dangerouslySetInnerHTML={{ __html: link.label }}
-                        />
-                    )}
-                </Button>
-            ))}
+        <nav className="mt-4 flex flex-wrap items-center gap-3">
+            {links.map((link) =>
+                link.url ? (
+                    <Link
+                        key={link.label}
+                        href={link.url}
+                        className={
+                            'px-1 bo-label ' +
+                            (link.active
+                                ? 'text-primary'
+                                : 'transition-colors duration-[120ms] hover:text-primary')
+                        }
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                    />
+                ) : (
+                    <span
+                        key={link.label}
+                        className="px-1 bo-label opacity-40"
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                    />
+                ),
+            )}
         </nav>
     );
 }

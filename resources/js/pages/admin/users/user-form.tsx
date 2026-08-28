@@ -1,5 +1,7 @@
 import { Form, Link } from '@inertiajs/react';
 import { useState } from 'react';
+import { boFieldClass } from '@/components/backoffice/field';
+import { SectionHeading } from '@/components/backoffice/section-heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,41 +51,104 @@ export default function UserForm({
     const [roleId, setRoleId] = useState(
         String(user?.role_id ?? roles[0]?.id ?? ''),
     );
+    const selectedRole = roles.find((role) => String(role.id) === roleId);
 
     return (
-        <Form<UserFormData> {...action} className="max-w-xl space-y-6">
+        <Form<UserFormData> {...action} className="max-w-3xl">
             {({ processing, errors }) => (
-                <>
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Nombre</Label>
-                        <Input
-                            id="name"
-                            name="name"
-                            defaultValue={user?.name}
-                            required
-                            autoComplete="name"
-                        />
-                        <InputError message={errors.name} />
+                <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_260px]">
+                    <div className="space-y-6">
+                        <div className="grid gap-1">
+                            <Label htmlFor="name" className="bo-label">
+                                Nombre
+                            </Label>
+                            <Input
+                                id="name"
+                                name="name"
+                                defaultValue={user?.name}
+                                required
+                                autoComplete="name"
+                                className={boFieldClass}
+                            />
+                            <InputError message={errors.name} />
+                        </div>
+
+                        <div className="grid gap-1">
+                            <Label htmlFor="email" className="bo-label">
+                                Correo electrónico
+                            </Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                defaultValue={user?.email}
+                                required
+                                autoComplete="email"
+                                className={boFieldClass}
+                            />
+                            <InputError message={errors.email} />
+                        </div>
+
+                        <div className="grid gap-1">
+                            <Label htmlFor="password" className="bo-label">
+                                Contraseña
+                                {user && (
+                                    <span className="ml-1 text-muted-foreground normal-case">
+                                        (dejar vacío para no cambiarla)
+                                    </span>
+                                )}
+                            </Label>
+                            <Input
+                                id="password"
+                                name="password"
+                                type="password"
+                                required={!user}
+                                autoComplete="new-password"
+                                className={boFieldClass}
+                            />
+                            <InputError message={errors.password} />
+                        </div>
+
+                        <div className="grid gap-1">
+                            <Label
+                                htmlFor="password_confirmation"
+                                className="bo-label"
+                            >
+                                Repetir contraseña
+                            </Label>
+                            <Input
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                type="password"
+                                required={!user}
+                                autoComplete="new-password"
+                                className={boFieldClass}
+                            />
+                            <InputError
+                                message={errors.password_confirmation}
+                            />
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-2">
+                            <Button type="submit" disabled={processing}>
+                                {submitLabel}
+                            </Button>
+
+                            <Button variant="ghost" asChild>
+                                <Link href={index()}>Cancelar</Link>
+                            </Button>
+                        </div>
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Correo electrónico</Label>
-                        <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            defaultValue={user?.email}
-                            required
-                            autoComplete="email"
-                        />
-                        <InputError message={errors.email} />
-                    </div>
+                    <div className="border border-border p-5">
+                        <SectionHeading label="Rol" />
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="role_id">Rol</Label>
                         <input type="hidden" name="role_id" value={roleId} />
                         <Select value={roleId} onValueChange={setRoleId}>
-                            <SelectTrigger id="role_id">
+                            <SelectTrigger
+                                id="role_id"
+                                className="rounded-none"
+                            >
                                 <SelectValue placeholder="Elegí un rol" />
                             </SelectTrigger>
                             <SelectContent>
@@ -98,51 +163,14 @@ export default function UserForm({
                             </SelectContent>
                         </Select>
                         <InputError message={errors.role_id} />
-                    </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">
-                            Contraseña
-                            {user && (
-                                <span className="ml-1 text-muted-foreground">
-                                    (dejar vacío para no cambiarla)
-                                </span>
-                            )}
-                        </Label>
-                        <Input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required={!user}
-                            autoComplete="new-password"
-                        />
-                        <InputError message={errors.password} />
+                        {selectedRole && (
+                            <p className="mt-3 bo-label text-muted-foreground normal-case">
+                                Slug: {selectedRole.slug}
+                            </p>
+                        )}
                     </div>
-
-                    <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">
-                            Repetir contraseña
-                        </Label>
-                        <Input
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            type="password"
-                            required={!user}
-                            autoComplete="new-password"
-                        />
-                        <InputError message={errors.password_confirmation} />
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <Button type="submit" disabled={processing}>
-                            {submitLabel}
-                        </Button>
-
-                        <Button variant="ghost" asChild>
-                            <Link href={index()}>Cancelar</Link>
-                        </Button>
-                    </div>
-                </>
+                </div>
             )}
         </Form>
     );

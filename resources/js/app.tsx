@@ -4,6 +4,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
+import BackofficeLayout from '@/layouts/backoffice-layout';
 import PortalLayout from '@/layouts/portal-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
@@ -13,6 +14,8 @@ createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
         switch (true) {
+            case name.startsWith('admin/'):
+                return BackofficeLayout;
             case name.startsWith('portal/'):
                 return PortalLayout;
             case name.startsWith('auth/'):

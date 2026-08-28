@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import RoleController from '@/actions/App/Http/Controllers/Admin/RoleController';
-import Heading from '@/components/heading';
+import { PageHeader } from '@/components/backoffice/page-header';
 import RoleForm from './role-form';
 import type { EditableRole, PermissionGroup } from './role-form';
 
@@ -17,12 +17,13 @@ export default function EditRole({
         <>
             <Head title={`Editar ${role.name}`} />
 
-            <div className="space-y-6">
-                <Heading
-                    title={`Rol: ${role.name}`}
-                    description="Marcá los permisos que este rol debe tener."
-                />
+            <PageHeader
+                eyebrow="Administración — roles"
+                title={`Rol: ${role.name}`}
+                description="Marcá los permisos que este rol debe tener."
+            />
 
+            <div className="mt-6">
                 <RoleForm
                     action={RoleController.update.form(role.id)}
                     permissionGroups={permissionGroups}

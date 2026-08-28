@@ -141,3 +141,112 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* ── Backoffice Eurotur ─────────────────────────────────────────────
+   Scoped tokens so pages/admin/* inherit the portal's palette without
+   touching components/ui/* or leaking into settings/auth/dashboard. */
+.eurotur-backoffice {
+    --radius: 0rem;
+    --radius-lg: 0px;
+    --radius-md: 0px;
+    --radius-sm: 0px;
+
+    --background: oklch(1 0 0);
+    --foreground: oklch(0 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0 0 0);
+    --primary: oklch(0.577 0.245 27.33);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(1 0 0);
+    --secondary-foreground: oklch(0 0 0);
+    --muted: oklch(0.985 0.002 20);
+    --muted-foreground: oklch(0.55 0 0);
+    --accent: oklch(0.577 0.245 27.33);
+    --accent-foreground: oklch(1 0 0);
+    --destructive: oklch(0.577 0.245 27.33);
+    --destructive-foreground: oklch(1 0 0);
+    --border: oklch(0 0 0);
+    --input: oklch(0 0 0);
+    --ring: oklch(0.577 0.245 27.33);
+
+    --sidebar: oklch(1 0 0);
+    --sidebar-foreground: oklch(0 0 0);
+    --sidebar-primary: oklch(0.577 0.245 27.33);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.577 0.245 27.33);
+    --sidebar-accent-foreground: oklch(1 0 0);
+    --sidebar-border: oklch(0 0 0);
+    --sidebar-ring: oklch(0.577 0.245 27.33);
+
+    --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+    --bo-mono: 'Space Mono', ui-monospace, monospace;
+    --bo-hairline: oklch(0.85 0 0);
+}
+
+.dark .eurotur-backoffice {
+    --background: oklch(0 0 0);
+    --foreground: oklch(1 0 0);
+    --card: oklch(0.13 0 0);
+    --card-foreground: oklch(1 0 0);
+    --popover: oklch(0.13 0 0);
+    --popover-foreground: oklch(1 0 0);
+    --primary: oklch(0.7 0.205 25.5);
+    --primary-foreground: oklch(0 0 0);
+    --secondary: oklch(0.13 0 0);
+    --secondary-foreground: oklch(1 0 0);
+    --muted: oklch(0.17 0.01 25);
+    --muted-foreground: oklch(0.68 0 0);
+    --accent: oklch(0.7 0.205 25.5);
+    --accent-foreground: oklch(0 0 0);
+    --destructive: oklch(0.7 0.205 25.5);
+    --destructive-foreground: oklch(0 0 0);
+    --border: oklch(1 0 0);
+    --input: oklch(1 0 0);
+    --ring: oklch(0.7 0.205 25.5);
+
+    --sidebar: oklch(0 0 0);
+    --sidebar-foreground: oklch(1 0 0);
+    --sidebar-primary: oklch(0.7 0.205 25.5);
+    --sidebar-primary-foreground: oklch(0 0 0);
+    --sidebar-accent: oklch(0.7 0.205 25.5);
+    --sidebar-accent-foreground: oklch(0 0 0);
+    --sidebar-border: oklch(1 0 0);
+    --sidebar-ring: oklch(0.7 0.205 25.5);
+
+    --bo-hairline: oklch(0.32 0 0);
+}
+
+.eurotur-backoffice :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+@utility bo-label {
+    font-family: var(--bo-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+}
+
+@utility bo-eyebrow {
+    font-family: var(--bo-mono);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+}
+
+@utility bo-rule-heavy {
+    border-bottom: 3px solid var(--foreground);
+}
+
+@utility bo-rule-head {
+    border-bottom: 2px solid var(--foreground);
+}
+
+@utility bo-rule-row {
+    border-bottom: 1px dotted var(--bo-hairline);
+}

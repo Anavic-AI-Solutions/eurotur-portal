@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
-import Heading from '@/components/heading';
+import { PageHeader } from '@/components/backoffice/page-header';
 import UserForm from './user-form';
 import type { EditableUser, RoleOption } from './user-form';
 
@@ -15,12 +15,13 @@ export default function EditUser({
         <>
             <Head title={`Editar ${user.name}`} />
 
-            <div className="space-y-6">
-                <Heading
-                    title="Editar usuario"
-                    description="Actualizá los datos de la cuenta o cambiale el rol."
-                />
+            <PageHeader
+                eyebrow="Administración — usuarios"
+                title="Editar usuario"
+                description="Actualizá los datos de la cuenta o cambiale el rol."
+            />
 
+            <div className="mt-6">
                 <UserForm
                     action={UserController.update.form(user.id)}
                     roles={roles}
