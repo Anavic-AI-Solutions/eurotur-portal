@@ -2,8 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Enums\Permission;
 use App\Enums\UserRole;
+use App\Models\Role;
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -49,9 +52,7 @@ class UserFactory extends Factory
      */
     public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Admin,
-        ]);
+        return $this->withRole(UserRole::Admin);
     }
 
     /**
@@ -59,9 +60,7 @@ class UserFactory extends Factory
      */
     public function editor(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Editor,
-        ]);
+        return $this->withRole(UserRole::Editor);
     }
 
     /**
@@ -69,9 +68,57 @@ class UserFactory extends Factory
      */
     public function viewer(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::Viewer,
-        ]);
+        return $this->withRole(UserRole::Viewer);
+    }
+
+    /**
+     * Attach the user to a role, creating the system role (with its seeded
+     * permissions) when it does not exist yet.
+     */
+    public function withRole(UserRole|Role|string $role): static
+    {
+        return $this->state(function (array $attributes) use ($role): array {
+            if ($role instanceof Role) {
+                return ['role_id' => $role->id];
+            }
+
+            $slug = $role instanceof UserRole ? $role->value : $role;
+
+            return ['role_id' => RolePermissionSeeder::ensureRole($slug, self::permissionsFor($slug))->id];
+        });
+    }
+
+    /**
+     * Attach the user to an ad-hoc role holding exactly the given permissions.
+     *
+     * @param  list<Permission>  $permissions
+     */
+    public function withPermissions(array $permissions, string $slug = 'custom'): static
+    {
+        return $this->state(function (array $attributes) use ($permissions, $slug): array {
+            $role = Role::updateOrCreate(['slug' => $slug], ['name' => Str::headline($slug)]);
+
+            RolePermissionSeeder::syncPermissionCatalogue();
+
+            $role->permissions()->sync(
+                \App\Models\Permission::whereIn('slug', array_column($permissions, 'value'))->pluck('id'),
+            );
+            $role->flushPermissionCache();
+
+            return ['role_id' => $role->id];
+        });
+    }
+
+    /**
+     * @return list<Permission>
+     */
+    protected static function permissionsFor(string $slug): array
+    {
+        return match ($slug) {
+            UserRole::Admin->value => Permission::cases(),
+            UserRole::Editor->value => Permission::contentPermissions(),
+            default => [],
+        };
     }
 
     /**

@@ -47,6 +47,8 @@ export type Sector = {
     shortLabel: string;
     place: string;
     href: RouteDefinition<'get'>;
+    /** When set, the nav entry is hidden from users lacking this permission. */
+    requiredPermission?: string;
 };
 
 export const SECTORS: Sector[] = [
@@ -177,6 +179,7 @@ export const SECTORS: Sector[] = [
         shortLabel: 'Buscador',
         place: 'keywords · tesauro',
         href: searchAdmin(),
+        requiredPermission: 'search.admin',
     },
     {
         id: 'meeting-room',

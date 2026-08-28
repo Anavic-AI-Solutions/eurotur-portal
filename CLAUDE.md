@@ -251,3 +251,16 @@ Use Wayfinder to generate TypeScript functions for Laravel routes. Import from `
 - IMPORTANT: Activate `inertia-react-development` when working with Inertia React client-side patterns.
 
 </laravel-boost-guidelines>
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- **Mantener el grafo actualizado es obligatorio, no opcional.** Antes de cerrar cualquier tarea que haya tocado archivos, corré `graphify update .` (solo AST, sin costo de API, unos segundos). Aplica a todo cambio: código PHP/TS, migraciones, rutas, componentes. Si no se actualiza, la próxima sesión consulta un grafo desactualizado y responde sobre código que ya no existe.
+- Si el cambio tocó docs, `.md`, `.html` estáticos o imágenes, `graphify update .` no los reextrae (es AST-only). En ese caso corré `/graphify . --update`, que sí reextrae lo semántico con LLM.
+- Después de un refactor que borró código, usá `graphify update . --force` — sin `--force` el rebuild se rechaza cuando el grafo nuevo tiene menos nodos que el anterior.
+- Los hooks `post-commit` y `post-checkout` de git ya reconstruyen el grafo tras cada commit y cada cambio de rama. Eso es una red de seguridad, no un reemplazo: actualizá igual antes de terminar la tarea, porque el trabajo sin commitear no lo cubre ningún hook.

@@ -48,7 +48,9 @@ Route::post('rendicion-gastos/ocr', ReceiptOcrController::class)
     ->name('portal.rendicion-gastos.ocr');
 
 Route::middleware(['auth', 'can:editar-portal'])->group(function () {
-    Route::get('buscador', SearchAdminController::class)->name('portal.search-admin');
+    Route::get('buscador', SearchAdminController::class)
+        ->middleware('can:search.admin')
+        ->name('portal.search-admin');
 
     Route::post('{sector}/groups', [SectorGroupController::class, 'store'])->name('portal.groups.store');
     Route::put('groups/{group}', [SectorGroupController::class, 'update'])->name('portal.groups.update');
@@ -58,22 +60,28 @@ Route::middleware(['auth', 'can:editar-portal'])->group(function () {
     Route::put('items/{item}', [SectorItemController::class, 'update'])->name('portal.items.update');
     Route::delete('items/{item}', [SectorItemController::class, 'destroy'])->name('portal.items.destroy');
 
-    Route::post('frentes', [FrenteController::class, 'store'])->name('portal.frentes.store');
-    Route::put('frentes/{frente}', [FrenteController::class, 'update'])->name('portal.frentes.update');
-    Route::delete('frentes/{frente}', [FrenteController::class, 'destroy'])->name('portal.frentes.destroy');
+    Route::middleware('can:innovacion.manage')->group(function () {
+        Route::post('frentes', [FrenteController::class, 'store'])->name('portal.frentes.store');
+        Route::put('frentes/{frente}', [FrenteController::class, 'update'])->name('portal.frentes.update');
+        Route::delete('frentes/{frente}', [FrenteController::class, 'destroy'])->name('portal.frentes.destroy');
 
-    Route::post('frentes/{frente}/iniciativas', [IniciativaController::class, 'store'])->name('portal.iniciativas.store');
-    Route::put('iniciativas/{iniciativa}', [IniciativaController::class, 'update'])->name('portal.iniciativas.update');
-    Route::delete('iniciativas/{iniciativa}', [IniciativaController::class, 'destroy'])->name('portal.iniciativas.destroy');
+        Route::post('frentes/{frente}/iniciativas', [IniciativaController::class, 'store'])->name('portal.iniciativas.store');
+        Route::put('iniciativas/{iniciativa}', [IniciativaController::class, 'update'])->name('portal.iniciativas.update');
+        Route::delete('iniciativas/{iniciativa}', [IniciativaController::class, 'destroy'])->name('portal.iniciativas.destroy');
+    });
 
-    Route::post('tipo-de-cambio/bna', [BnaDailyRateController::class, 'store'])->name('portal.bna-rates.store');
-    Route::put('bna-rates/{rate}', [BnaDailyRateController::class, 'update'])->name('portal.bna-rates.update');
-    Route::delete('bna-rates/{rate}', [BnaDailyRateController::class, 'destroy'])->name('portal.bna-rates.destroy');
+    Route::middleware('can:exchange-rate.manage')->group(function () {
+        Route::post('tipo-de-cambio/bna', [BnaDailyRateController::class, 'store'])->name('portal.bna-rates.store');
+        Route::put('bna-rates/{rate}', [BnaDailyRateController::class, 'update'])->name('portal.bna-rates.update');
+        Route::delete('bna-rates/{rate}', [BnaDailyRateController::class, 'destroy'])->name('portal.bna-rates.destroy');
+    });
 
-    Route::post('search-static-entries', [SearchStaticEntryController::class, 'store'])->name('portal.search-static-entries.store');
-    Route::put('search-static-entries/{entry}', [SearchStaticEntryController::class, 'update'])->name('portal.search-static-entries.update');
-    Route::delete('search-static-entries/{entry}', [SearchStaticEntryController::class, 'destroy'])->name('portal.search-static-entries.destroy');
+    Route::middleware('can:search.admin')->group(function () {
+        Route::post('search-static-entries', [SearchStaticEntryController::class, 'store'])->name('portal.search-static-entries.store');
+        Route::put('search-static-entries/{entry}', [SearchStaticEntryController::class, 'update'])->name('portal.search-static-entries.update');
+        Route::delete('search-static-entries/{entry}', [SearchStaticEntryController::class, 'destroy'])->name('portal.search-static-entries.destroy');
 
-    Route::post('search-synonym-terms', [SearchSynonymTermController::class, 'store'])->name('portal.search-synonym-terms.store');
-    Route::delete('search-synonym-terms/{term}', [SearchSynonymTermController::class, 'destroy'])->name('portal.search-synonym-terms.destroy');
+        Route::post('search-synonym-terms', [SearchSynonymTermController::class, 'store'])->name('portal.search-synonym-terms.store');
+        Route::delete('search-synonym-terms/{term}', [SearchSynonymTermController::class, 'destroy'])->name('portal.search-synonym-terms.destroy');
+    });
 });

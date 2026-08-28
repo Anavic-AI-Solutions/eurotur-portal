@@ -1,10 +1,13 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { usePermissions } from '@/hooks/use-permissions';
 import { formatDay, isRateStale, lastBusinessDay } from '@/lib/exchange-rates';
 import { SECTORS } from '@/lib/portal-sectors';
 import type { ActiveView } from '@/lib/portal-sectors';
 import { home, logout } from '@/routes';
+import { index as rolesIndex } from '@/routes/admin/roles';
+import { index as usersIndex } from '@/routes/admin/users';
 import { search, searchResults } from '@/routes/portal';
 
 const RED = '#E30613';
@@ -236,11 +239,14 @@ function Sidebar({
     onToggleMenu: () => void;
     isHome?: boolean;
 }) {
-    const { auth, canEdit } = usePage().props;
+    const { auth } = usePage().props;
+    const { can, canAny } = usePermissions();
     const isAuthenticated = Boolean(auth.user);
     const visibleSectors = SECTORS.filter(
-        (sector) => sector.id !== 'search-admin' || canEdit,
+        (sector) =>
+            !sector.requiredPermission || can(sector.requiredPermission),
     );
+    const canAdminister = canAny('users.manage', 'roles.manage');
 
     return (
         <aside
@@ -363,6 +369,36 @@ function Sidebar({
                         </span>
                     </Link>
                 ))}
+
+                {canAdminister && (
+                    <Link
+                        href={can('users.manage') ? usersIndex() : rolesIndex()}
+                        className="nav-item"
+                        style={{
+                            all: 'unset',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            gap: '9px',
+                            padding: '7px 6px',
+                            color: '#000',
+                            transition:
+                                'color .12s, background .12s, transform .12s',
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "'Archivo', sans-serif",
+                                fontWeight: 600,
+                                fontSize: '12.5px',
+                                letterSpacing: '-0.01em',
+                                lineHeight: 1.15,
+                            }}
+                        >
+                            Administración
+                        </span>
+                    </Link>
+                )}
             </nav>
 
             {isHome && (

@@ -1661,7 +1661,9 @@ function ComprobanteInput({
 
             setOcrMensajes(resultado.mensajes);
             setOcrStatus(
-                resultado.estado_lectura === 'SIN_LECTURA' ? 'sin-lectura' : 'ok',
+                resultado.estado_lectura === 'SIN_LECTURA'
+                    ? 'sin-lectura'
+                    : 'ok',
             );
         },
         [g.monedaTipo, onUpdate],

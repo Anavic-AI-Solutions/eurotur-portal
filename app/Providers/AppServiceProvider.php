@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Permission;
 use App\Enums\UserRole;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -43,8 +44,17 @@ class AppServiceProvider extends ServiceProvider
             app()->isProduction(),
         );
 
-        Gate::define('editar-portal', fn (User $user): bool => $user->role !== null
-            && in_array($user->role, [UserRole::Admin, UserRole::Editor], true));
+        Gate::before(fn (User $user, string $ability): ?bool => $user->roleSlug() === UserRole::Admin->value
+            ? true
+            : null);
+
+        foreach (Permission::cases() as $permission) {
+            Gate::define($permission->value, fn (User $user): bool => $user->hasPermission($permission));
+        }
+
+        // Legacy alias kept so the outer guard on routes/portal.php still works:
+        // anyone holding at least one content permission passes it.
+        Gate::define('editar-portal', fn (User $user): bool => $user->canEditPortal());
 
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)

@@ -43,7 +43,7 @@ class PortalPermissionsTest extends TestCase
         $group = SectorGroup::create(['sector' => 'rrhh', 'title' => 'Grupo', 'sort_order' => 0]);
 
         foreach ([UserRole::Editor, UserRole::Admin] as $role) {
-            $user = User::factory()->create(['role' => $role]);
+            $user = User::factory()->withRole($role)->create();
 
             $this->actingAs($user)
                 ->post(route('portal.items.store', $group), [

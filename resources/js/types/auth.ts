@@ -1,7 +1,15 @@
+export type Role = {
+    id: number;
+    name: string;
+    slug: string;
+};
+
 export type User = {
     id: number;
     name: string;
     email: string;
+    role_id: number | null;
+    role?: Role | null;
     avatar?: string;
     email_verified_at: string | null;
     created_at: string;
@@ -11,6 +19,10 @@ export type User = {
 
 export type Auth = {
     user: User;
+    /** Slug of the user's role, or null when they have none. */
+    role: string | null;
+    /** Every permission slug the user holds; admins get the full catalogue. */
+    permissions: string[];
 };
 
 /* @chisel-passkeys */

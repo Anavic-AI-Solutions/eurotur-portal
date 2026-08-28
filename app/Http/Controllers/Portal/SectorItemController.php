@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Portal;
 
+use App\Enums\EditableSector;
+use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Portal\StoreSectorItemRequest;
 use App\Http\Requests\Portal\UpdateSectorItemRequest;
 use App\Models\SectorGroup;
 use App\Models\SectorItem;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use RuntimeException;
@@ -73,6 +76,8 @@ class SectorItemController extends Controller
      */
     public function destroy(SectorItem $item): RedirectResponse
     {
+        Gate::authorize(Permission::forSector(EditableSector::from($item->group->sector))->value);
+
         if ($item->file_path !== null) {
             Storage::disk('public')->delete($item->file_path);
         }

@@ -37,4 +37,10 @@ yarn-error.log
 !/docs/Keywords/
 docs/Keywords/Diccionario_Busqueda_Portal_Eurotur.xlsx
 
-graphify-out/*
+# graphify (grafo de conocimiento) - se versionan graph.json y GRAPH_REPORT.md
+graphify-out/cache/
+graphify-out/graph.html
+graphify-out/manifest.json
+graphify-out/cost.json
+graphify-out/.graphify_*
+graphify-out/

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Enums\EditableSector;
+use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Portal\StoreSectorGroupRequest;
 use App\Http\Requests\Portal\UpdateSectorGroupRequest;
 use App\Models\SectorGroup;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SectorGroupController extends Controller
@@ -47,6 +49,8 @@ class SectorGroupController extends Controller
      */
     public function destroy(SectorGroup $group): RedirectResponse
     {
+        Gate::authorize(Permission::forSector(EditableSector::from($group->sector))->value);
+
         $group->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Grupo eliminado.')]);
