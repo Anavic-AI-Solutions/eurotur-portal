@@ -16,9 +16,11 @@ use App\Http\Controllers\Portal\SearchSynonymTermController;
 use App\Http\Controllers\Portal\SectorGroupController;
 use App\Http\Controllers\Portal\SectorItemController;
 use App\Http\Controllers\Portal\SectorPageController;
+use App\Http\Controllers\Portal\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'portal/home')->name('home');
+Route::get('weather', WeatherController::class)->name('portal.weather');
 Route::get('search', SearchController::class)->name('portal.search');
 Route::get('busqueda', SearchResultsController::class)->name('portal.search-results');
 Route::inertia('institucional', 'portal/institucional')->name('portal.institucional');

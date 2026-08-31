@@ -259,6 +259,7 @@ function Sidebar({
                 top: 0,
                 alignSelf: 'flex-start',
                 height: '100vh',
+                overflowY: 'auto',
                 padding: '34px 22px 28px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -319,6 +320,15 @@ function Sidebar({
                 >
                     {menuOpen ? 'Cerrar ✕' : 'Menú ≡'}
                 </button>
+            </div>
+
+            <div
+                id="portal-search-aside"
+                style={{
+                    marginTop: '14px',
+                }}
+            >
+                <GlobalSearch compact />
             </div>
 
             <div
@@ -400,19 +410,6 @@ function Sidebar({
                     </Link>
                 )}
             </nav>
-
-            {isHome && (
-                <div
-                    id="portal-search-aside"
-                    style={{
-                        marginTop: '18px',
-                        paddingTop: '14px',
-                        borderTop: '1px solid #000',
-                    }}
-                >
-                    <GlobalSearch compact />
-                </div>
-            )}
 
             <div style={{ flex: 1 }} />
 
@@ -883,15 +880,12 @@ function Header({
             style={{
                 display: 'flex',
                 alignItems: 'flex-end',
-                justifyContent: 'space-between',
+                justifyContent: 'flex-end',
                 gap: '40px',
                 padding: '14px 56px 12px 112px',
                 borderBottom: '1px solid #000',
             }}
         >
-            <div style={{ flex: 1, maxWidth: '440px' }}>
-                <GlobalSearch />
-            </div>
             <div style={{ display: 'flex', gap: '24px', textAlign: 'right' }}>
                 {metaBlocks}
             </div>
