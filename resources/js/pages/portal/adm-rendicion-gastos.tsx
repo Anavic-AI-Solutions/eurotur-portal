@@ -425,11 +425,12 @@ export default function AdmRendicionGastos() {
                     animation: ocr-spin 0.7s linear infinite;
                 }
                 @keyframes ocr-field-flash {
-                    0%   { background-color: rgba(250, 204, 21, 0.35); }
+                    0%   { background-color: rgba(250, 204, 21, 0.45); }
+                    70%  { background-color: rgba(250, 204, 21, 0.15); }
                     100% { background-color: transparent; }
                 }
                 .ocr-field-highlight {
-                    animation: ocr-field-flash 2.5s ease-out forwards;
+                    animation: ocr-field-flash 3s ease-out forwards;
                 }
             `}</style>
 
@@ -1329,7 +1330,7 @@ function CamposArs({
                         <span
                             aria-hidden="true"
                             style={{
-                                fontSize: '10px',
+                                fontSize: '14px',
                                 lineHeight: 1,
                                 color:
                                     cuitEstado === 'valido'
@@ -1338,6 +1339,7 @@ function CamposArs({
                                           ? RED
                                           : '#9ca3af',
                                 flexShrink: 0,
+                                userSelect: 'none',
                             }}
                         >
                             ●
@@ -1384,6 +1386,7 @@ function CamposArs({
                             className={ocrHighlight.includes('cuit') ? 'ocr-field-highlight' : undefined}
                             style={{
                                 ...inputStyle,
+                                transition: 'border-color 0.2s ease',
                                 borderBottomColor:
                                     g.cuit
                                         ? cuitEstado === 'valido'
@@ -1396,10 +1399,11 @@ function CamposArs({
                     {fieldErrors.cuit && (
                         <div
                             style={{
-                                ...mono,
-                                fontSize: '9px',
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '11px',
+                                fontWeight: 600,
                                 color: RED,
-                                marginTop: '4px',
+                                marginTop: '5px',
                             }}
                         >
                             {fieldErrors.cuit}
