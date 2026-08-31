@@ -1,8 +1,8 @@
-import { Form, Head } from '@inertiajs/react';
-import { usePage } from '@inertiajs/react';
+import { Form, Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import BnaDailyRateController from '@/actions/App/Http/Controllers/Portal/BnaDailyRateController';
+import BnaDailyRateExportController from '@/actions/App/Http/Controllers/Portal/BnaDailyRateExportController';
 import InputError from '@/components/input-error';
 import {
     formatDay,
@@ -11,6 +11,7 @@ import {
     lastBusinessDay,
 } from '@/lib/exchange-rates';
 import type { ExchangeRate } from '@/lib/exchange-rates';
+import { exchangeRate } from '@/routes/portal';
 
 const RED = '#E30613';
 
@@ -19,38 +20,6 @@ function formatArs(value: number): string {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
-}
-
-function formatCsvCell(value: string | number | null): string {
-    if (value === null) {
-        return '';
-    }
-
-    return `"${String(value).replaceAll('"', '""')}"`;
-}
-
-function exportHistoryCsv(rows: HistoryRow[]): void {
-    const header = ['Fecha', 'Compra', 'Venta', 'Nota'];
-    const lines = rows.map((row) =>
-        [
-            formatCsvCell(row.dateLabel),
-            formatCsvCell(row.cashBuy),
-            formatCsvCell(row.cashSell),
-            formatCsvCell(row.note),
-        ].join(';'),
-    );
-
-    const blob = new Blob([[header.join(';'), ...lines].join('\n')], {
-        type: 'text/csv;charset=utf-8;',
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = `historico-bna-${formatDay(new Date())}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
 }
 
 type HistoryRow = {
@@ -65,6 +34,15 @@ type HistoryRow = {
 type Props = {
     bna: ExchangeRate | null;
     history: HistoryRow[];
+    pagination: {
+        current_page: number;
+        last_page: number;
+        total: number;
+    };
+    filters: {
+        date_from: string | null;
+        date_to: string | null;
+    };
 };
 
 const labelFieldStyle: React.CSSProperties = {
@@ -203,12 +181,19 @@ function RateBlock({
     );
 }
 
-export default function ExchangeRate({ bna, history }: Props) {
+export default function ExchangeRate({
+    bna,
+    history,
+    pagination,
+    filters,
+}: Props) {
     const { auth, canEdit: canEditProp, iataRate } = usePage().props;
     const canEdit = Boolean(auth.user) && canEditProp;
     const [adding, setAdding] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [filter, setFilter] = useState('');
+    const [dateFrom, setDateFrom] = useState(filters.date_from ?? '');
+    const [dateTo, setDateTo] = useState(filters.date_to ?? '');
 
     const needle = filter.trim().toLowerCase();
     const visibleHistory =
@@ -220,6 +205,43 @@ export default function ExchangeRate({ bna, history }: Props) {
                       .toLowerCase()
                       .includes(needle),
               );
+
+    function applyFilters(overrides: Record<string, string | null> = {}) {
+        const params: Record<string, string> = {};
+        if (overrides.date_from !== undefined && overrides.date_from !== null) {
+            params.date_from = overrides.date_from;
+        } else if (dateFrom) {
+            params.date_from = dateFrom;
+        }
+        if (overrides.date_to !== undefined && overrides.date_to !== null) {
+            params.date_to = overrides.date_to;
+        } else if (dateTo) {
+            params.date_to = dateTo;
+        }
+        router.get(exchangeRate.url({ query: params }), {}, {
+            preserveState: true,
+            replace: true,
+        });
+    }
+
+    function goToPage(page: number) {
+        const params: Record<string, string | number> = { page };
+        if (dateFrom) params.date_from = dateFrom;
+        if (dateTo) params.date_to = dateTo;
+        router.get(exchangeRate.url({ query: params }), {}, {
+            preserveState: true,
+            replace: true,
+        });
+    }
+
+    function exportCsv() {
+        const params = new URLSearchParams();
+        if (dateFrom) params.set('date_from', dateFrom);
+        if (dateTo) params.set('date_to', dateTo);
+        window.location.href = BnaDailyRateExportController.url({
+            query: Object.fromEntries(params),
+        });
+    }
 
     const bnaDate = bna?.fecha ? new Date(bna.fecha) : lastBusinessDay();
     const bnaLabel = `BNA — ${formatDay(bnaDate)}`;
@@ -327,28 +349,103 @@ export default function ExchangeRate({ bna, history }: Props) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        gap: '20px',
+                        gap: '16px',
                         marginTop: '18px',
+                        flexWrap: 'wrap',
                     }}
                 >
-                    <input
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                        placeholder="Filtrar histórico (fecha o nota)…"
+                    <div
                         style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '12px',
+                            flexWrap: 'wrap',
                             flex: 1,
-                            maxWidth: '320px',
-                            fontFamily: "'Archivo', sans-serif",
-                            fontSize: '13px',
-                            border: 'none',
-                            borderBottom: '2px solid #000',
-                            borderRadius: 0,
-                            padding: '6px 0',
                         }}
-                    />
+                    >
+                        <input
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            placeholder="Filtrar (fecha o nota)…"
+                            style={{
+                                maxWidth: '220px',
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '13px',
+                                border: 'none',
+                                borderBottom: '2px solid #000',
+                                borderRadius: 0,
+                                padding: '6px 0',
+                            }}
+                        />
+                        <input
+                            type="date"
+                            value={dateFrom}
+                            onChange={(e) => setDateFrom(e.target.value)}
+                            placeholder="Desde"
+                            style={{
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '13px',
+                                border: 'none',
+                                borderBottom: '2px solid #000',
+                                borderRadius: 0,
+                                padding: '6px 0',
+                                width: '150px',
+                            }}
+                        />
+                        <span
+                            style={{
+                                fontFamily: "'Space Mono', monospace",
+                                fontSize: '10px',
+                                color: '#999',
+                            }}
+                        >
+                            a
+                        </span>
+                        <input
+                            type="date"
+                            value={dateTo}
+                            onChange={(e) => setDateTo(e.target.value)}
+                            placeholder="Hasta"
+                            style={{
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '13px',
+                                border: 'none',
+                                borderBottom: '2px solid #000',
+                                borderRadius: 0,
+                                padding: '6px 0',
+                                width: '150px',
+                            }}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => applyFilters()}
+                            style={smallButtonStyle}
+                        >
+                            Filtrar
+                        </button>
+                        {(dateFrom || dateTo) && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setDateFrom('');
+                                    setDateTo('');
+                                    applyFilters({
+                                        date_from: '',
+                                        date_to: '',
+                                    });
+                                }}
+                                style={{
+                                    ...smallButtonStyle,
+                                    color: '#666',
+                                }}
+                            >
+                                Limpiar
+                            </button>
+                        )}
+                    </div>
                     <button
                         type="button"
-                        onClick={() => exportHistoryCsv(history)}
+                        onClick={exportCsv}
                         style={smallButtonStyle}
                     >
                         Exportar CSV ↓
@@ -492,6 +589,74 @@ export default function ExchangeRate({ bna, history }: Props) {
                         )}
                     </tbody>
                 </table>
+
+                {pagination.last_page > 1 && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '16px',
+                            marginTop: '20px',
+                            paddingBottom: '10px',
+                        }}
+                    >
+                        <button
+                            type="button"
+                            disabled={pagination.current_page <= 1}
+                            onClick={() => goToPage(pagination.current_page - 1)}
+                            style={{
+                                ...smallButtonStyle,
+                                opacity: pagination.current_page <= 1 ? 0.4 : 1,
+                                cursor:
+                                    pagination.current_page <= 1
+                                        ? 'default'
+                                        : 'pointer',
+                            }}
+                        >
+                            ← Anterior
+                        </button>
+                        <span
+                            style={{
+                                fontFamily: "'Space Mono', monospace",
+                                fontSize: '11px',
+                                color: '#666',
+                            }}
+                        >
+                            Página {pagination.current_page} de{' '}
+                            {pagination.last_page}
+                            <span
+                                style={{
+                                    marginLeft: '8px',
+                                    color: '#999',
+                                    fontSize: '10px',
+                                }}
+                            >
+                                ({pagination.total} registros)
+                            </span>
+                        </span>
+                        <button
+                            type="button"
+                            disabled={
+                                pagination.current_page >= pagination.last_page
+                            }
+                            onClick={() => goToPage(pagination.current_page + 1)}
+                            style={{
+                                ...smallButtonStyle,
+                                opacity:
+                                    pagination.current_page >= pagination.last_page
+                                        ? 0.4
+                                        : 1,
+                                cursor:
+                                    pagination.current_page >= pagination.last_page
+                                        ? 'default'
+                                        : 'pointer',
+                            }}
+                        >
+                            Siguiente →
+                        </button>
+                    </div>
+                )}
 
                 {canEdit && (
                     <div style={{ paddingTop: '14px' }}>

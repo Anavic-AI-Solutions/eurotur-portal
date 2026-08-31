@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Portal\BnaDailyRateController;
+use App\Http\Controllers\Portal\BnaDailyRateExportController;
 use App\Http\Controllers\Portal\ExchangeRateController;
 use App\Http\Controllers\Portal\FrenteController;
 use App\Http\Controllers\Portal\IniciativaController;
@@ -72,6 +73,7 @@ Route::middleware(['auth', 'can:editar-portal'])->group(function () {
 
     Route::middleware('can:exchange-rate.manage')->group(function () {
         Route::post('tipo-de-cambio/bna', [BnaDailyRateController::class, 'store'])->name('portal.bna-rates.store');
+        Route::get('tipo-de-cambio/export', BnaDailyRateExportController::class)->name('portal.bna-rates.export');
         Route::put('bna-rates/{rate}', [BnaDailyRateController::class, 'update'])->name('portal.bna-rates.update');
         Route::delete('bna-rates/{rate}', [BnaDailyRateController::class, 'destroy'])->name('portal.bna-rates.destroy');
     });
