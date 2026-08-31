@@ -38,8 +38,9 @@ const mono: CSSProperties = {
 };
 
 const bloqueStyle: CSSProperties = {
-    borderTop: '3px solid #000',
-    padding: '14px 0 26px',
+    backgroundColor: '#f9fafb',
+    borderRadius: '8px',
+    padding: '20px 24px',
 };
 
 const inputStyle: CSSProperties = {
@@ -47,17 +48,18 @@ const inputStyle: CSSProperties = {
     fontFamily: "'Archivo', sans-serif",
     fontSize: '13px',
     fontWeight: 500,
-    color: '#000',
-    background: 'transparent',
-    border: 'none',
-    borderBottom: '1px solid #000',
-    borderRadius: 0,
-    padding: '5px 0',
+    color: '#111827',
+    backgroundColor: '#ffffff',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    padding: '8px 12px',
+    outline: 'none',
+    transition: 'border-color 0.15s ease, box-shadow 0.15s ease',
 };
 
 const selectStyle: CSSProperties = { ...inputStyle, cursor: 'pointer' };
 
-/** Returns border-bottom color for a field: GREEN=filled ok, YELLOW=empty required, RED=invalid, default=#000. */
+/** Returns border color for a field: GREEN=filled ok, YELLOW=empty required, RED=invalid, default=#d1d5db. */
 function campoBorde(
     value: string,
     opts?: { required?: boolean; invalid?: boolean },
@@ -74,29 +76,30 @@ function campoBorde(
         return YELLOW;
     }
 
-    return '#000';
+    return '#d1d5db';
 }
 
 const botonStyle: CSSProperties = {
-    fontFamily: "'Space Mono', monospace",
-    fontSize: '10px',
-    letterSpacing: '0.1em',
-    textTransform: 'uppercase',
-    background: 'transparent',
-    border: '1px solid #000',
-    padding: '9px 14px',
+    fontFamily: "'Archivo', sans-serif",
+    fontSize: '13px',
+    fontWeight: 600,
+    background: '#111827',
+    border: '1px solid #111827',
+    borderRadius: '6px',
+    padding: '10px 16px',
     cursor: 'pointer',
-    color: '#000',
+    color: '#ffffff',
 };
 
 const enlaceCaja: CSSProperties = {
-    ...mono,
-    fontSize: '10px',
-    letterSpacing: '0.1em',
+    fontFamily: "'Archivo', sans-serif",
+    fontSize: '12px',
+    fontWeight: 500,
     textDecoration: 'none',
-    color: '#000',
-    border: '1px solid #000',
-    padding: '5px 9px',
+    color: '#374151',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    padding: '8px 12px',
     whiteSpace: 'nowrap',
 };
 
@@ -632,10 +635,6 @@ export default function AdmRendicionGastos() {
                                 onClick={() => irAPaso(2)}
                                 style={{
                                     ...botonStyle,
-                                    background: RED,
-                                    borderColor: RED,
-                                    color: '#fff',
-                                    fontWeight: 700,
                                 }}
                             >
                                 Siguiente: cargar gastos →
@@ -663,7 +662,12 @@ export default function AdmRendicionGastos() {
                         <button
                             type="button"
                             onClick={addGasto}
-                            style={botonStyle}
+                            style={{
+                                ...botonStyle,
+                                backgroundColor: '#ffffff',
+                                borderColor: '#d1d5db',
+                                color: '#374151',
+                            }}
                         >
                             + Agregar otro gasto
                         </button>
@@ -674,11 +678,11 @@ export default function AdmRendicionGastos() {
                                 justifyContent: 'space-between',
                                 alignItems: 'center',
                                 marginTop: '22px',
-                                borderTop: '1px solid #000',
+                                borderTop: '1px solid #e5e7eb',
                                 paddingTop: '14px',
                             }}
                         >
-                            <span style={{ ...mono, color: '#666' }}>
+                            <span style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#6b7280' }}>
                                 {gastos.length} de {MAX_GASTOS} comprobantes
                                 cargados
                             </span>
@@ -718,10 +722,6 @@ export default function AdmRendicionGastos() {
                                 onClick={() => irAPaso(3)}
                                 style={{
                                     ...botonStyle,
-                                    background: RED,
-                                    borderColor: RED,
-                                    color: '#fff',
-                                    fontWeight: 700,
                                 }}
                             >
                                 Siguiente: revisar →
@@ -759,13 +759,12 @@ export default function AdmRendicionGastos() {
                                 disabled={generando}
                                 style={{
                                     ...botonStyle,
-                                    background: generando ? '#f6f5f2' : RED,
-                                    borderColor: generando ? '#d9d9d9' : RED,
-                                    color: generando ? '#8a8a8a' : '#fff',
+                                    backgroundColor: generando ? '#f3f4f6' : '#111827',
+                                    borderColor: generando ? '#d1d5db' : '#111827',
+                                    color: generando ? '#9ca3af' : '#ffffff',
                                     cursor: generando
                                         ? 'not-allowed'
                                         : 'pointer',
-                                    fontWeight: 700,
                                 }}
                             >
                                 {generando ? 'Generando...' : 'Generar Excel ✓'}
@@ -782,22 +781,24 @@ export default function AdmRendicionGastos() {
                             <div
                                 style={{
                                     marginTop: '18px',
-                                    border: '1px solid #000',
+                                    border: '1px solid #bbf7d0',
+                                    borderRadius: '8px',
+                                    backgroundColor: '#f0fdf4',
                                     padding: '20px',
                                     textAlign: 'center',
                                 }}
                             >
-                                <b>✓ Archivo generado</b>
-                                <p style={{ margin: '8px 0 0' }}>
+                                <b style={{ color: '#166534' }}>✓ Archivo generado</b>
+                                <p style={{ margin: '8px 0 0', fontFamily: "'Archivo', sans-serif", fontSize: '13px', color: '#374151' }}>
                                     Se descargó{' '}
                                     <strong>{resultado.filename}</strong>, ya
                                     completo y con las validaciones correctas.
                                 </p>
                                 <p
                                     style={{
-                                        ...mono,
-                                        textTransform: 'none',
-                                        color: '#666',
+                                        fontFamily: "'Archivo', sans-serif",
+                                        fontSize: '12px',
+                                        color: '#6b7280',
                                         marginTop: '8px',
                                     }}
                                 >
@@ -881,12 +882,13 @@ function Encabezado() {
             >
                 <span
                     style={{
-                        ...mono,
-                        fontSize: '10px',
-                        letterSpacing: '0.1em',
-                        color: '#fff',
-                        background: RED,
-                        padding: '5px 9px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        color: '#ffffff',
+                        backgroundColor: '#dc2626',
+                        padding: '4px 10px',
+                        borderRadius: '4px',
                         whiteSpace: 'nowrap',
                     }}
                 >
@@ -900,17 +902,15 @@ function Encabezado() {
                     target="_blank"
                     rel="noreferrer"
                     className="doc-link"
-                    style={{ ...enlaceCaja, borderColor: '#c4c4c4' }}
+                    style={{ ...enlaceCaja, borderColor: '#e5e7eb' }}
                 >
                     versión offline ↗
                 </a>
                 <div
                     style={{
-                        ...mono,
-                        fontSize: '9px',
-                        letterSpacing: '0.04em',
-                        textTransform: 'none',
-                        color: '#999',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '11px',
+                        color: '#9ca3af',
                         maxWidth: '160px',
                         textAlign: 'right',
                     }}
@@ -922,11 +922,11 @@ function Encabezado() {
                     href={adm()}
                     className="doc-link"
                     style={{
-                        ...mono,
-                        fontSize: '10px',
-                        letterSpacing: '0.1em',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '12px',
+                        fontWeight: 500,
                         textDecoration: 'none',
-                        color: '#666',
+                        color: '#6b7280',
                     }}
                 >
                     ← volver a administración
@@ -944,24 +944,34 @@ function Pasos({ paso }: { paso: Paso }) {
     ];
 
     return (
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
             {items.map((it) => (
                 <div
                     key={it.n}
                     style={{
-                        ...mono,
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '12px',
+                        fontWeight: 600,
                         flex: 1,
                         textAlign: 'center',
-                        padding: '8px 4px',
-                        border: '1px solid #000',
-                        background:
+                        padding: '10px 4px',
+                        borderRadius: '6px',
+                        border:
                             it.n === paso
-                                ? RED
+                                ? '1px solid #111827'
+                                : '1px solid #e5e7eb',
+                        backgroundColor:
+                            it.n === paso
+                                ? '#111827'
                                 : it.n < paso
-                                  ? '#fdeceb'
-                                  : 'transparent',
+                                  ? '#f0fdf4'
+                                  : '#ffffff',
                         color:
-                            it.n === paso ? '#fff' : it.n < paso ? RED : '#666',
+                            it.n === paso
+                                ? '#ffffff'
+                                : it.n < paso
+                                  ? '#16a34a'
+                                  : '#6b7280',
                     }}
                 >
                     {it.label}
@@ -975,12 +985,13 @@ function Aviso({ children }: { children: React.ReactNode }) {
     return (
         <div
             style={{
-                background: '#fdeceb',
-                border: `1px solid ${RED}`,
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
                 padding: '12px 16px',
                 marginBottom: '16px',
                 fontSize: '13px',
-                color: RED,
+                color: '#991b1b',
             }}
         >
             {children}
@@ -1004,16 +1015,20 @@ function Bloque({
             <div
                 style={{
                     display: 'flex',
-                    alignItems: 'baseline',
+                    alignItems: 'center',
                     gap: '10px',
-                    marginBottom: '16px',
+                    marginBottom: '20px',
                 }}
             >
                 <span
                     style={{
-                        fontFamily: "'Space Mono', monospace",
-                        fontWeight: 700,
+                        fontFamily: "'Archivo', sans-serif",
                         fontSize: '11px',
+                        fontWeight: 700,
+                        backgroundColor: '#e5e7eb',
+                        color: '#374151',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
                     }}
                 >
                     {n}
@@ -1021,9 +1036,9 @@ function Bloque({
                 <span
                     style={{
                         fontFamily: "'Archivo', sans-serif",
-                        fontWeight: 800,
-                        fontSize: '19px',
-                        letterSpacing: '-0.01em',
+                        fontWeight: 700,
+                        fontSize: '18px',
+                        color: '#111827',
                     }}
                 >
                     {titulo}
@@ -1031,10 +1046,9 @@ function Bloque({
                 {nota && (
                     <span
                         style={{
-                            ...mono,
-                            letterSpacing: '0.04em',
-                            textTransform: 'none',
-                            color: '#999',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontSize: '12px',
+                            color: '#9ca3af',
                             marginLeft: 'auto',
                         }}
                     >
@@ -1058,26 +1072,25 @@ function Campo({
 }) {
     return (
         <div>
-            <div
+            <label
                 style={{
-                    ...mono,
-                    fontSize: '9px',
-                    letterSpacing: '0.14em',
-                    color: '#999',
+                    fontFamily: "'Archivo', sans-serif",
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    color: '#374151',
+                    display: 'block',
                     marginBottom: '6px',
                 }}
             >
                 {label}
-            </div>
+            </label>
             {children}
             {hint && (
                 <div
                     style={{
-                        ...mono,
-                        fontSize: '9px',
-                        letterSpacing: '0.04em',
-                        textTransform: 'none',
-                        color: '#999',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '12px',
+                        color: '#6b7280',
                         marginTop: '6px',
                         lineHeight: 1.4,
                         wordBreak: 'break-word',
@@ -1117,10 +1130,13 @@ function GastoCard({
     return (
         <div
             style={{
-                border: '1px solid #000',
-                padding: '20px',
+                backgroundColor: '#ffffff',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                padding: '24px',
                 marginBottom: '18px',
                 position: 'relative',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
             }}
         >
             <div
@@ -1133,10 +1149,13 @@ function GastoCard({
             >
                 <span
                     style={{
-                        ...mono,
-                        background: RED,
-                        color: '#fff',
-                        padding: '2px 8px',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        backgroundColor: '#f3f4f6',
+                        color: '#374151',
+                        padding: '4px 10px',
+                        borderRadius: '4px',
                     }}
                 >
                     Gasto {idx + 1}
@@ -1145,10 +1164,12 @@ function GastoCard({
                     type="button"
                     onClick={onRemove}
                     style={{
-                        ...mono,
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '12px',
+                        fontWeight: 500,
                         background: 'none',
                         border: 'none',
-                        color: '#666',
+                        color: '#9ca3af',
                         cursor: 'pointer',
                         textDecoration: 'underline',
                     }}
@@ -1217,7 +1238,7 @@ function GastoCard({
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderBottomColor: campoBorde(g.fecha, { required: true }),
+                                borderColor: campoBorde(g.fecha, { required: true }),
                             }}
                         />
                     </Campo>
@@ -1232,7 +1253,7 @@ function GastoCard({
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderBottomColor: campoBorde(g.proveedor, { required: true }),
+                                borderColor: campoBorde(g.proveedor, { required: true }),
                             }}
                         />
                     </Campo>
@@ -1278,9 +1299,10 @@ function GastoCard({
                 <div
                     style={{
                         textAlign: 'right',
-                        ...mono,
-                        textTransform: 'none',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '13px',
                         fontWeight: 700,
+                        color: '#111827',
                     }}
                 >
                     Subtotal: {fmtByMoneda(gastoTotal(g), gastoMoneda(g))}
@@ -1397,7 +1419,7 @@ function CamposArs({
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderBottomColor: g.sinComprobante
+                                borderColor: g.sinComprobante
                                     ? '#000'
                                     : campoBorde(g.cuit, {
                                           required: true,
@@ -1463,7 +1485,7 @@ function CamposArs({
                             );
                         }}
                     />
-                    <label htmlFor={`sc-${g.id}`} style={{ fontSize: '13px' }}>
+                    <label htmlFor={`sc-${g.id}`} style={{ fontFamily: "'Archivo', sans-serif", fontSize: '13px', color: '#374151' }}>
                         No tengo comprobante válido / el CUIT no es válido
                     </label>
                 </div>
@@ -1488,7 +1510,7 @@ function CamposArs({
                         style={{
                             ...selectStyle,
                             transition: 'border-color 0.2s ease',
-                            borderBottomColor: g.sinComprobante
+                            borderColor: g.sinComprobante
                                 ? '#000'
                                 : campoBorde(g.letra_factura, { required: true }),
                         }}
@@ -1522,7 +1544,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.talonario, { required: true }),
+                                    borderColor: campoBorde(g.talonario, { required: true }),
                                 }}
                             />
                         </Campo>
@@ -1541,7 +1563,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.numero_comprobante, { required: true }),
+                                    borderColor: campoBorde(g.numero_comprobante, { required: true }),
                                 }}
                             />
                         </Campo>
@@ -1566,7 +1588,7 @@ function CamposArs({
                     style={{
                         ...inputStyle,
                         transition: 'border-color 0.2s ease',
-                        borderBottomColor: campoBorde(g.importe_neto, { required: true }),
+                        borderColor: campoBorde(g.importe_neto, { required: true }),
                     }}
                 />
             </Campo>
@@ -1592,7 +1614,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.iva_27),
+                                    borderColor: campoBorde(g.iva_27),
                                 }}
                             />
                         </Campo>
@@ -1608,7 +1630,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.iva_21),
+                                    borderColor: campoBorde(g.iva_21),
                                 }}
                             />
                         </Campo>
@@ -1624,7 +1646,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.iva_105),
+                                    borderColor: campoBorde(g.iva_105),
                                 }}
                             />
                         </Campo>
@@ -1648,7 +1670,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.percepcion_iva),
+                                    borderColor: campoBorde(g.percepcion_iva),
                                 }}
                             />
                         </Campo>
@@ -1666,7 +1688,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.percepcion_iibb_caba),
+                                    borderColor: campoBorde(g.percepcion_iibb_caba),
                                 }}
                             />
                         </Campo>
@@ -1684,7 +1706,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.percepcion_iibb_sc),
+                                    borderColor: campoBorde(g.percepcion_iibb_sc),
                                 }}
                             />
                         </Campo>
@@ -1702,7 +1724,7 @@ function CamposArs({
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderBottomColor: campoBorde(g.percepcion_iibb_tdf),
+                                    borderColor: campoBorde(g.percepcion_iibb_tdf),
                                 }}
                             />
                         </Campo>
@@ -1722,7 +1744,7 @@ function CamposArs({
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderBottomColor: campoBorde(g.otros_cargos),
+                                borderColor: campoBorde(g.otros_cargos),
                             }}
                         />
                     </Campo>
@@ -1796,7 +1818,7 @@ function CamposExtranjera({
                         style={{
                             ...inputStyle,
                             transition: 'border-color 0.2s ease',
-                            borderBottomColor: campoBorde(g.importe_original, { required: true }),
+                            borderColor: campoBorde(g.importe_original, { required: true }),
                         }}
                     />
                 </Campo>
@@ -1820,7 +1842,7 @@ function CamposExtranjera({
                         style={{
                             ...inputStyle,
                             transition: 'border-color 0.2s ease',
-                            borderBottomColor: g.moneda_iso === 'USD'
+                            borderColor: g.moneda_iso === 'USD'
                                 ? '#000'
                                 : campoBorde(g.tipo_cambio_a_dolares, { required: true }),
                         }}
@@ -1909,18 +1931,19 @@ function ComprobanteInput({
                 onClick={() => fileInputRef.current?.click()}
                 disabled={ocrStatus === 'leyendo'}
                 style={{
-                    ...mono,
+                    fontFamily: "'Archivo', sans-serif",
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '10px',
                     width: '100%',
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    padding: '16px',
-                    background: g.comprobante_image ? '#fff' : '#000',
-                    color: g.comprobante_image ? '#000' : '#fff',
-                    border: '1px solid #000',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    padding: '14px',
+                    background: g.comprobante_image ? '#ffffff' : '#111827',
+                    color: g.comprobante_image ? '#111827' : '#ffffff',
+                    border: g.comprobante_image ? '1px solid #d1d5db' : '1px solid #111827',
+                    borderRadius: '6px',
                     cursor: ocrStatus === 'leyendo' ? 'default' : 'pointer',
                 }}
             >
@@ -1939,17 +1962,18 @@ function ComprobanteInput({
                         gap: '10px',
                         marginTop: '10px',
                         padding: '10px 14px',
-                        border: '1px solid #000',
-                        background: '#f6f5f2',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        backgroundColor: '#f9fafb',
                     }}
                 >
                     <span className="ocr-spinner" aria-hidden="true" />
                     <span
                         style={{
-                            ...mono,
-                            fontSize: '11px',
-                            color: '#000',
-                            fontWeight: 700,
+                            fontFamily: "'Archivo', sans-serif",
+                            fontSize: '13px',
+                            color: '#374151',
+                            fontWeight: 600,
                         }}
                     >
                         Leyendo comprobante con IA…
@@ -1964,8 +1988,9 @@ function ComprobanteInput({
                         gap: '10px',
                         marginTop: '10px',
                         padding: '10px 14px',
-                        border: `1px solid #1e7a2e`,
-                        background: '#eaf7ec',
+                        border: '1px solid #bbf7d0',
+                        borderRadius: '6px',
+                        backgroundColor: '#f0fdf4',
                     }}
                 >
                     <span
@@ -1973,7 +1998,7 @@ function ComprobanteInput({
                             fontFamily: "'Archivo', sans-serif",
                             fontWeight: 900,
                             fontSize: '15px',
-                            color: '#1e7a2e',
+                            color: '#16a34a',
                             lineHeight: 1,
                         }}
                     >
@@ -1981,10 +2006,10 @@ function ComprobanteInput({
                     </span>
                     <span
                         style={{
-                            ...mono,
-                            fontSize: '11px',
-                            color: '#1e7a2e',
-                            fontWeight: 700,
+                            fontFamily: "'Archivo', sans-serif",
+                            fontSize: '13px',
+                            color: '#166534',
+                            fontWeight: 500,
                         }}
                     >
                         Listo — datos leídos automáticamente. Revisá y corregí
@@ -2000,8 +2025,9 @@ function ComprobanteInput({
                         gap: '10px',
                         marginTop: '10px',
                         padding: '10px 14px',
-                        border: '1px solid #999',
-                        background: '#f6f5f2',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        backgroundColor: '#f9fafb',
                     }}
                 >
                     <span
@@ -2009,7 +2035,7 @@ function ComprobanteInput({
                             fontFamily: "'Archivo', sans-serif",
                             fontWeight: 900,
                             fontSize: '15px',
-                            color: '#666',
+                            color: '#6b7280',
                             lineHeight: 1,
                         }}
                     >
@@ -2017,9 +2043,9 @@ function ComprobanteInput({
                     </span>
                     <span
                         style={{
-                            ...mono,
-                            fontSize: '11px',
-                            color: '#666',
+                            fontFamily: "'Archivo', sans-serif",
+                            fontSize: '13px',
+                            color: '#6b7280',
                             flex: 1,
                         }}
                     >
@@ -2033,8 +2059,9 @@ function ComprobanteInput({
                     style={{
                         margin: '6px 0 0',
                         paddingLeft: '18px',
-                        fontSize: '11.5px',
-                        color: '#886',
+                        fontFamily: "'Archivo', sans-serif",
+                        fontSize: '12px',
+                        color: '#6b7280',
                     }}
                 >
                     {ocrMensajes.map((m) => (
@@ -2043,10 +2070,10 @@ function ComprobanteInput({
                             style={{
                                 color:
                                     m.nivel === 'error'
-                                        ? RED
+                                        ? '#991b1b'
                                         : m.nivel === 'advertencia'
-                                          ? '#9a6a00'
-                                          : '#666',
+                                          ? '#92400e'
+                                          : '#6b7280',
                             }}
                         >
                             {m.texto}
@@ -2064,13 +2091,16 @@ function ComprobanteInput({
                         void ejecutarOcr(g.comprobante_image)
                     }
                     style={{
-                        ...mono,
+                        fontFamily: "'Archivo', sans-serif",
                         marginTop: '8px',
-                        fontSize: '10px',
-                        background: '#fff',
-                        border: '1px solid #000',
-                        padding: '5px 10px',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        background: '#ffffff',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '6px',
+                        padding: '6px 12px',
                         cursor: 'pointer',
+                        color: '#374151',
                     }}
                 >
                     ↻ Reintentar lectura
@@ -2296,7 +2326,7 @@ function Resumen({
             </p>
 
             {conImagen > 0 && (
-                <p style={{ ...mono, textTransform: 'none', color: '#666' }}>
+                <p style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#6b7280', marginTop: '8px' }}>
                     {conImagen} comprobante(s) con foto adjunta — se van a
                     insertar en la hoja de comprobantes del Excel.
                 </p>
@@ -2314,22 +2344,21 @@ function Pie() {
                 justifyContent: 'space-between',
                 gap: '20px',
                 marginTop: '20px',
-                borderTop: '1px solid #000',
+                borderTop: '1px solid #e5e7eb',
                 paddingTop: '14px',
             }}
         >
             <div
                 style={{
-                    ...mono,
-                    letterSpacing: '0.04em',
-                    textTransform: 'none',
-                    color: '#999',
+                    fontFamily: "'Archivo', sans-serif",
+                    fontSize: '12px',
+                    color: '#9ca3af',
                 }}
             >
                 El panel corre en esta misma computadora: no sube tus datos ni
                 comprobantes a ningún servidor.
             </div>
-            <div style={{ ...mono, color: '#666', whiteSpace: 'nowrap' }}>
+            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#9ca3af', whiteSpace: 'nowrap' }}>
                 mantiene— Homez, Valentina · act. 07·2026
             </div>
         </div>
