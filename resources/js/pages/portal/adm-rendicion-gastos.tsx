@@ -23,6 +23,8 @@ import type { Gasto, Header, RendicionTipo } from '@/lib/rendicion/engine';
 import { adm } from '@/routes/portal';
 
 const RED = '#E30613';
+const GREEN = '#22c55e';
+const YELLOW = '#d9a10a';
 const HTML_FALLBACK = '/herramientas/rendicion-gastos.html';
 const DOC_URL = '/documentos/rendicion-gastos-manual.docx';
 
@@ -54,6 +56,26 @@ const inputStyle: CSSProperties = {
 };
 
 const selectStyle: CSSProperties = { ...inputStyle, cursor: 'pointer' };
+
+/** Returns border-bottom color for a field: GREEN=filled ok, YELLOW=empty required, RED=invalid, default=#000. */
+function campoBorde(
+    value: string,
+    opts?: { required?: boolean; invalid?: boolean },
+): string {
+    if (opts?.invalid) {
+        return RED;
+    }
+
+    if (value) {
+        return GREEN;
+    }
+
+    if (opts?.required) {
+        return YELLOW;
+    }
+
+    return '#000';
+}
 
 const botonStyle: CSSProperties = {
     fontFamily: "'Space Mono', monospace",
@@ -423,14 +445,6 @@ export default function AdmRendicionGastos() {
                     border-top-color: #000;
                     border-radius: 50%;
                     animation: ocr-spin 0.7s linear infinite;
-                }
-                @keyframes ocr-field-flash {
-                    0%   { background-color: rgba(250, 204, 21, 0.45); }
-                    70%  { background-color: rgba(250, 204, 21, 0.15); }
-                    100% { background-color: transparent; }
-                }
-                .ocr-field-highlight {
-                    animation: ocr-field-flash 3s ease-out forwards;
                 }
             `}</style>
 
@@ -1088,13 +1102,7 @@ function GastoCard({
     onRemove: () => void;
 }) {
     const formaPagoInfo = FORMAS_PAGO.find((f) => f.value === g.forma_pago);
-    const [ocrHighlight, setOcrHighlight] = useState<string[]>([]);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-    const handleOcrFields = useCallback((keys: string[]) => {
-        setOcrHighlight(keys);
-        setTimeout(() => setOcrHighlight([]), 2600);
-    }, []);
 
     const cuitEstado: 'vacio' | 'valido' | 'invalido' = g.cuit
         ? cuitCheck(g.cuit)
@@ -1150,7 +1158,7 @@ function GastoCard({
             </div>
 
             <div style={{ display: 'grid', gap: '16px' }}>
-                <ComprobanteInput gasto={g} onUpdate={onUpdate} onOcrFields={handleOcrFields} />
+                <ComprobanteInput gasto={g} onUpdate={onUpdate} />
 
                 <Campo label="¿Es de un file/proyecto específico?" hint="">
                     <select
@@ -1206,8 +1214,11 @@ function GastoCard({
                             onChange={(e) =>
                                 onUpdate({ fecha: e.target.value })
                             }
-                            className={ocrHighlight.includes('fecha') ? 'ocr-field-highlight' : undefined}
-                            style={inputStyle}
+                            style={{
+                                ...inputStyle,
+                                transition: 'border-color 0.2s ease',
+                                borderBottomColor: campoBorde(g.fecha, { required: true }),
+                            }}
                         />
                     </Campo>
                     <Campo label="Proveedor / Razón social" hint="">
@@ -1218,8 +1229,11 @@ function GastoCard({
                             onChange={(e) =>
                                 onUpdate({ proveedor: e.target.value })
                             }
-                            className={ocrHighlight.includes('proveedor') ? 'ocr-field-highlight' : undefined}
-                            style={inputStyle}
+                            style={{
+                                ...inputStyle,
+                                transition: 'border-color 0.2s ease',
+                                borderBottomColor: campoBorde(g.proveedor, { required: true }),
+                            }}
                         />
                     </Campo>
                 </div>
@@ -1230,7 +1244,6 @@ function GastoCard({
                     <CamposArs
                         g={g}
                         onUpdate={onUpdate}
-                        ocrHighlight={ocrHighlight}
                         fieldErrors={fieldErrors}
                         setFieldErrors={setFieldErrors}
                         cuitEstado={cuitEstado}
@@ -1280,7 +1293,6 @@ function GastoCard({
 function CamposArs({
     g,
     onUpdate,
-    ocrHighlight,
     fieldErrors,
     setFieldErrors,
     cuitEstado,
@@ -1288,7 +1300,6 @@ function CamposArs({
 }: {
     g: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
-    ocrHighlight: string[];
     fieldErrors: Record<string, string>;
     setFieldErrors: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     cuitEstado: 'vacio' | 'valido' | 'invalido';
@@ -1383,16 +1394,17 @@ function CamposArs({
                                 }
                             }}
                             onWheel={blockScroll}
-                            className={ocrHighlight.includes('cuit') ? 'ocr-field-highlight' : undefined}
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderBottomColor:
-                                    g.cuit
-                                        ? cuitEstado === 'valido'
-                                            ? '#22c55e'
-                                            : RED
-                                        : '#000',
+                                borderBottomColor: g.sinComprobante
+                                    ? '#000'
+                                    : campoBorde(g.cuit, {
+                                          required: true,
+                                          invalid:
+                                              g.cuit.length > 0 &&
+                                              cuitEstado === 'invalido',
+                                      }),
                             }}
                         />
                     </div>
@@ -1473,8 +1485,13 @@ function CamposArs({
                         onChange={(e) =>
                             onUpdate({ letra_factura: e.target.value })
                         }
-                        className={ocrHighlight.includes('letra_factura') ? 'ocr-field-highlight' : undefined}
-                        style={selectStyle}
+                        style={{
+                            ...selectStyle,
+                            transition: 'border-color 0.2s ease',
+                            borderBottomColor: g.sinComprobante
+                                ? '#000'
+                                : campoBorde(g.letra_factura, { required: true }),
+                        }}
                     >
                         <option value="">Elegir...</option>
                         {LETRAS_FACTURA.filter((l) =>
@@ -1502,8 +1519,11 @@ function CamposArs({
                                     })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('talonario') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.talonario, { required: true }),
+                                }}
                             />
                         </Campo>
                         <Campo label="Número de comprobante" hint="">
@@ -1518,8 +1538,11 @@ function CamposArs({
                                     })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('numero_comprobante') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.numero_comprobante, { required: true }),
+                                }}
                             />
                         </Campo>
                     </>
@@ -1540,8 +1563,11 @@ function CamposArs({
                     value={g.importe_neto}
                     onChange={(e) => onUpdate({ importe_neto: e.target.value })}
                     onWheel={blockScroll}
-                    className={ocrHighlight.includes('importe_neto') ? 'ocr-field-highlight' : undefined}
-                    style={inputStyle}
+                    style={{
+                        ...inputStyle,
+                        transition: 'border-color 0.2s ease',
+                        borderBottomColor: campoBorde(g.importe_neto, { required: true }),
+                    }}
                 />
             </Campo>
 
@@ -1563,8 +1589,11 @@ function CamposArs({
                                     onUpdate({ iva_27: e.target.value })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('iva_27') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.iva_27),
+                                }}
                             />
                         </Campo>
                         <Campo label="IVA 21%" hint="">
@@ -1576,8 +1605,11 @@ function CamposArs({
                                     onUpdate({ iva_21: e.target.value })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('iva_21') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.iva_21),
+                                }}
                             />
                         </Campo>
                         <Campo label="IVA 10,5%" hint="">
@@ -1589,8 +1621,11 @@ function CamposArs({
                                     onUpdate({ iva_105: e.target.value })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('iva_105') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.iva_105),
+                                }}
                             />
                         </Campo>
                     </div>
@@ -1610,8 +1645,11 @@ function CamposArs({
                                     onUpdate({ percepcion_iva: e.target.value })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('percepcion_iva') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.percepcion_iva),
+                                }}
                             />
                         </Campo>
                         <Campo label="Percepción IIBB CABA" hint="">
@@ -1625,8 +1663,11 @@ function CamposArs({
                                     })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('percepcion_iibb_caba') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.percepcion_iibb_caba),
+                                }}
                             />
                         </Campo>
                         <Campo label="Percepción IIBB Santa Cruz" hint="">
@@ -1640,8 +1681,11 @@ function CamposArs({
                                     })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('percepcion_iibb_sc') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.percepcion_iibb_sc),
+                                }}
                             />
                         </Campo>
                         <Campo label="Percepción IIBB T. de Fuego" hint="">
@@ -1655,8 +1699,11 @@ function CamposArs({
                                     })
                                 }
                                 onWheel={blockScroll}
-                                className={ocrHighlight.includes('percepcion_iibb_tdf') ? 'ocr-field-highlight' : undefined}
-                                style={inputStyle}
+                                style={{
+                                    ...inputStyle,
+                                    transition: 'border-color 0.2s ease',
+                                    borderBottomColor: campoBorde(g.percepcion_iibb_tdf),
+                                }}
                             />
                         </Campo>
                     </div>
@@ -1672,8 +1719,11 @@ function CamposArs({
                                 onUpdate({ otros_cargos: e.target.value })
                             }
                             onWheel={blockScroll}
-                            className={ocrHighlight.includes('otros_cargos') ? 'ocr-field-highlight' : undefined}
-                            style={inputStyle}
+                            style={{
+                                ...inputStyle,
+                                transition: 'border-color 0.2s ease',
+                                borderBottomColor: campoBorde(g.otros_cargos),
+                            }}
                         />
                     </Campo>
                 </>
@@ -1743,7 +1793,11 @@ function CamposExtranjera({
                             onUpdate({ importe_original: e.target.value })
                         }
                         onWheel={blockScroll}
-                        style={inputStyle}
+                        style={{
+                            ...inputStyle,
+                            transition: 'border-color 0.2s ease',
+                            borderBottomColor: campoBorde(g.importe_original, { required: true }),
+                        }}
                     />
                 </Campo>
                 <Campo
@@ -1763,7 +1817,13 @@ function CamposExtranjera({
                             onUpdate({ tipo_cambio_a_dolares: e.target.value })
                         }
                         onWheel={blockScroll}
-                        style={inputStyle}
+                        style={{
+                            ...inputStyle,
+                            transition: 'border-color 0.2s ease',
+                            borderBottomColor: g.moneda_iso === 'USD'
+                                ? '#000'
+                                : campoBorde(g.tipo_cambio_a_dolares, { required: true }),
+                        }}
                     />
                 </Campo>
             </div>
@@ -1774,11 +1834,9 @@ function CamposExtranjera({
 function ComprobanteInput({
     gasto: g,
     onUpdate,
-    onOcrFields,
 }: {
     gasto: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
-    onOcrFields?: (keys: string[]) => void;
 }) {
     const [ocrStatus, setOcrStatus] = useState<
         'idle' | 'leyendo' | 'ok' | 'sin-lectura' | 'error'
@@ -1804,7 +1862,6 @@ function ComprobanteInput({
 
             if (Object.keys(patch).length > 0) {
                 onUpdate(patch);
-                onOcrFields?.(Object.keys(patch));
             }
 
             setOcrMensajes(resultado.mensajes);
@@ -1814,7 +1871,7 @@ function ComprobanteInput({
                     : 'ok',
             );
         },
-        [g.monedaTipo, onUpdate, onOcrFields],
+        [g.monedaTipo, onUpdate],
     );
 
     return (
