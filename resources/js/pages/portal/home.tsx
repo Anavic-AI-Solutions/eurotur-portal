@@ -148,10 +148,12 @@ function SectionHeading({
     label,
     hint,
     compact = false,
+    noMargin = false,
 }: {
     label: string;
     hint: string;
     compact?: boolean;
+    noMargin?: boolean;
 }) {
     return (
         <div
@@ -161,7 +163,7 @@ function SectionHeading({
                 justifyContent: 'space-between',
                 borderBottom: compact ? '2px solid #000' : '3px solid #000',
                 paddingBottom: compact ? '8px' : '10px',
-                marginBottom: compact ? '10px' : 0,
+                marginBottom: noMargin ? 0 : compact ? '10px' : 0,
             }}
         >
             <div
@@ -446,21 +448,6 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <p
-                            style={{
-                                margin: 0,
-                                maxWidth: '50%',
-                                textAlign: 'right',
-                                fontFamily: "'Archivo', sans-serif",
-                                fontSize: '12px',
-                                lineHeight: 1.4,
-                                fontWeight: 600,
-                                color: '#444',
-                                alignSelf: 'flex-end',
-                            }}
-                        >
-                            Todo lo que usás cada día, en un solo lugar.
-                        </p>
                     </div>
                 </div>
 
@@ -469,6 +456,7 @@ export default function Home() {
                         label="Accesos rápidos"
                         hint="↗ la mayoría abre en otra pestaña"
                         compact
+                        noMargin
                     />
                     <div
                         style={{
@@ -484,7 +472,6 @@ export default function Home() {
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
-                                minHeight: '110px',
                                 padding: '14px 14px',
                                 textDecoration: 'none',
                                 color: '#000',
@@ -596,7 +583,7 @@ export default function Home() {
                                     backgroundColor: '#111',
                                     borderRight: '1px solid #000',
                                     borderBottom: '1px solid #000',
-                                    ['--tile-photo' as string]: `url('/img/portal/sectores/${sector.id}.webp')`,
+                                    ['--tile-photo' as string]: `url('${sector.photo ?? `/img/portal/sectores/${sector.id}.webp`}')`,
                                     transition:
                                         'background .12s,color .12s,transform .14s',
                                 }}

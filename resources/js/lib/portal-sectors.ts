@@ -49,6 +49,8 @@ export type Sector = {
     href: RouteDefinition<'get'>;
     /** When set, the nav entry is hidden from users lacking this permission. */
     requiredPermission?: string;
+    /** Override the default sector tile image (defaults to /img/portal/sectores/{id}.webp). */
+    photo?: string;
 };
 
 export const SECTORS: Sector[] = [
@@ -126,16 +128,8 @@ export const SECTORS: Sector[] = [
         requiredPermission: 'search.admin',
     },
     {
-        id: 'innovacion',
-        num: '10',
-        navLabel: 'Innovación',
-        shortLabel: 'Innovación',
-        place: 'ia · scripts',
-        href: innovacion(),
-    },
-    {
         id: 'it',
-        num: '11',
+        num: '10',
         navLabel: 'IT',
         shortLabel: 'IT',
         place: 'sistemas',
@@ -143,7 +137,7 @@ export const SECTORS: Sector[] = [
     },
     {
         id: 'mesa',
-        num: '12',
+        num: '11',
         navLabel: 'Mesa de Información',
         shortLabel: 'Mesa de Info',
         place: 'soporte',
@@ -151,31 +145,24 @@ export const SECTORS: Sector[] = [
     },
     {
         id: 'qrated',
-        num: '13',
+        num: '12',
         navLabel: 'Qrated',
         shortLabel: 'Qrated',
         place: 'premium · mice',
         href: qrated(),
     },
     {
-        id: 'responsables',
-        num: '14',
-        navLabel: 'Responsables del Portal',
-        shortLabel: 'Responsables',
-        place: 'portal',
-        href: responsables(),
-    },
-    {
         id: 'meeting-room',
-        num: '15',
+        num: '13',
         navLabel: 'Sala de Reuniones',
         shortLabel: 'Sala de Reuniones',
         place: 'reservas · calendar',
         href: meetingRoom(),
+        photo: '/img/portal/sectores/meeting-room.png',
     },
     {
         id: 'exchange-rate',
-        num: '16',
+        num: '14',
         navLabel: 'Tipo de Cambio',
         shortLabel: 'Tipo de Cambio',
         place: 'iata · bna',
@@ -183,10 +170,26 @@ export const SECTORS: Sector[] = [
     },
     {
         id: 'traveldesigners',
-        num: '17',
+        num: '15',
         navLabel: 'Travel Designers',
         shortLabel: 'Travel Designers',
         place: 'ruta 40',
         href: traveldesigners(),
+    },
+    {
+        id: 'innovacion',
+        num: '16',
+        navLabel: 'Innovación',
+        shortLabel: 'Innovación',
+        place: 'ia · scripts',
+        href: innovacion(),
+    },
+    {
+        id: 'responsables',
+        num: '17',
+        navLabel: 'Responsables del Portal',
+        shortLabel: 'Responsables',
+        place: 'portal',
+        href: responsables(),
     },
 ];

@@ -893,7 +893,7 @@ function Header({
     );
 }
 
-const PORTAL_PHONE = 'tel:+541140000000';
+const PORTAL_PHONE = 'tel:+541143126077';
 
 const SOCIAL_LINKS: { label: string; href: string }[] = [
     { label: 'facebook', href: 'https://www.facebook.com/Eurotur.Incoming' },
@@ -942,21 +942,21 @@ function Footer() {
                         href={PORTAL_PHONE}
                         style={{ color: 'inherit', textDecoration: 'none' }}
                     >
-                        (011) 4000-0000
+                        +54 11 4312 6077
                     </a>
                 </span>
                 <span>
                     <span style={{ color: '#999' }}>email</span>
                     &nbsp;&nbsp;
                     <a
-                        href="mailto:portal@eurotur.tur.ar"
+                        href="mailto:correo@eurotur.tur.ar"
                         style={{ color: 'inherit', textDecoration: 'none' }}
                     >
-                        portal@eurotur.tur.ar
+                        correo@eurotur.tur.ar
                     </a>
                 </span>
                 <span style={{ color: '#999' }}>
-                    Av. Montes de Oca 2238, CABA
+                    Viamonte 486 (C1053ABJ) Buenos Aires, Argentina
                 </span>
             </div>
             <div
