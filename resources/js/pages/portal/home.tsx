@@ -1,7 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { formatDay, lastBusinessDay } from '@/lib/exchange-rates';
+
 import { SECTORS } from '@/lib/portal-sectors';
 import { exchangeRate, mesa } from '@/routes/portal';
 
@@ -232,10 +232,6 @@ export default function Home() {
             (sector.id !== 'search-admin' || canEdit) &&
             sector.id !== 'exchange-rate',
     );
-    const bnaDate = dolarOficial?.fecha
-        ? formatDay(new Date(dolarOficial.fecha))
-        : formatDay(lastBusinessDay());
-
     return (
         <>
             <Head title="Portal Eurotur" />
@@ -394,22 +390,6 @@ export default function Home() {
                                             : '—'}
                                         <span style={{ color: RED }}>.</span>
                                     </div>
-                                    <div
-                                        style={{
-                                            fontFamily:
-                                                "'Space Mono', monospace",
-                                            fontSize: '7px',
-                                            color: '#999',
-                                            textAlign: 'right',
-                                            marginTop: '2px',
-                                        }}
-                                    >
-                                        {iataRate?.updatedAt
-                                            ? formatDay(
-                                                  new Date(iataRate.updatedAt),
-                                              )
-                                            : '—'}
-                                    </div>
                                 </div>
                                 <div>
                                     <div
@@ -437,18 +417,6 @@ export default function Home() {
                                             ? `$${formatArs(dolarOficial.venta)}`
                                             : '—'}
                                         <span style={{ color: RED }}>.</span>
-                                    </div>
-                                    <div
-                                        style={{
-                                            fontFamily:
-                                                "'Space Mono', monospace",
-                                            fontSize: '7px',
-                                            color: '#999',
-                                            textAlign: 'right',
-                                            marginTop: '2px',
-                                        }}
-                                    >
-                                        {bnaDate}
                                     </div>
                                 </div>
                                 <div>
