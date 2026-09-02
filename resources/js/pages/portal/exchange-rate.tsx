@@ -302,8 +302,8 @@ export default function ExchangeRate({
                     />
                     <RateBlock
                         label={bnaLabel}
-                        source="dolarapi.com · venta"
-                        sourceHref="https://dolarapi.com/v1/dolares/oficial"
+                        source="bna.com.ar"
+                        sourceHref="https://www.bna.com.ar/Personas"
                         value={bna?.venta ?? null}
                         stale={bnaStale}
                         updatedAt={bna?.fecha}
