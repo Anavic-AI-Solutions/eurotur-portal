@@ -59,10 +59,10 @@ const inputStyle: CSSProperties = {
 
 const selectStyle: CSSProperties = { ...inputStyle, cursor: 'pointer' };
 
-/** Returns border color for a field: GREEN=filled ok, YELLOW=empty required, RED=invalid, default=#d1d5db. */
+/** Returns border color for a field: GREEN=filled ok, YELLOW=empty required or OCR incomplete, RED=invalid, default=#d1d5db. */
 function campoBorde(
     value: string,
-    opts?: { required?: boolean; invalid?: boolean },
+    opts?: { required?: boolean; invalid?: boolean; ocrIncomplete?: boolean },
 ): string {
     if (opts?.invalid) {
         return RED;
@@ -72,7 +72,7 @@ function campoBorde(
         return GREEN;
     }
 
-    if (opts?.required) {
+    if (opts?.required || opts?.ocrIncomplete) {
         return YELLOW;
     }
 
@@ -282,6 +282,50 @@ async function generar(
     return generarExcel(header, gastos, rendicionTipo);
 }
 
+const ERROR_FIELD_MAP: [RegExp, string][] = [
+    [/falta el proveedor/, 'proveedor'],
+    [/falta la fecha/, 'fecha'],
+    [/falta la forma de pago/, 'forma_pago'],
+    [/falta el CUIT|CUIT ingresado no es válido/, 'cuit'],
+    [/falta el tipo de factura/, 'letra_factura'],
+    [/falta el importe\b(?! original)/, 'importe_neto'],
+    [/falta elegir el tipo de gasto/, 'tipo_gasto'],
+    [/número de file/, 'file_numero'],
+    [/falta elegir el concepto/, 'concepto_ext'],
+    [/falta el importe original/, 'importe_original'],
+    [/falta el tipo de cambio/, 'tipo_cambio_a_dolares'],
+];
+
+function parseStepErrors(errs: string[]): Record<number, string[]> {
+    const result: Record<number, string[]> = {};
+
+    for (const err of errs) {
+        const gastoMatch = err.match(/Gasto (\d+)/);
+
+        if (!gastoMatch) {
+            continue;
+        }
+
+        const idx = Number(gastoMatch[1]) - 1;
+
+        for (const [pattern, field] of ERROR_FIELD_MAP) {
+            if (pattern.test(err)) {
+                if (!result[idx]) {
+                    result[idx] = [];
+                }
+
+                if (!result[idx].includes(field)) {
+                    result[idx].push(field);
+                }
+
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
 /* -------------------------------------------------------------------- page */
 
 type Paso = 1 | 2 | 3;
@@ -301,6 +345,9 @@ export default function AdmRendicionGastos() {
     const [gastoIdCounter, setGastoIdCounter] = useState(0);
 
     const [errores, setErrores] = useState<string[]>([]);
+    const [stepInvalidFields, setStepInvalidFields] = useState<
+        Record<number, string[]>
+    >({});
     const [generando, setGenerando] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [resultado, setResultado] = useState<{
@@ -391,12 +438,14 @@ export default function AdmRendicionGastos() {
 
                 if (errs.length > 0) {
                     setErrores(errs);
+                    setStepInvalidFields(parseStepErrors(errs));
 
                     return;
                 }
             }
 
             setErrores([]);
+            setStepInvalidFields({});
             setPaso(n);
             window.scrollTo(0, 0);
         },
@@ -656,6 +705,7 @@ export default function AdmRendicionGastos() {
                                 idx={idx}
                                 onUpdate={(patch) => updateGasto(g.id, patch)}
                                 onRemove={() => removeGasto(g.id)}
+                                invalidFields={stepInvalidFields[idx]}
                             />
                         ))}
 
@@ -1108,14 +1158,31 @@ function GastoCard({
     idx,
     onUpdate,
     onRemove,
+    invalidFields,
 }: {
     gasto: Gasto;
     idx: number;
     onUpdate: (patch: Partial<Gasto>) => void;
     onRemove: () => void;
+    invalidFields?: string[];
 }) {
     const formaPagoInfo = FORMAS_PAGO.find((f) => f.value === g.forma_pago);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [ocrCamposVacios, setOcrCamposVacios] = useState<string[]>([]);
+
+    const handleOcrResult = useCallback((patchKeys: string[]) => {
+        const OCR_ESPERADOS = [
+            'fecha', 'proveedor', 'cuit', 'letra_factura', 'talonario',
+            'numero_comprobante', 'importe_neto', 'iva_27', 'iva_21',
+            'iva_105', 'percepcion_iva', 'percepcion_iibb_caba',
+            'percepcion_iibb_sc', 'percepcion_iibb_tdf',
+        ];
+        setOcrCamposVacios(OCR_ESPERADOS.filter((k) => !patchKeys.includes(k)));
+    }, []);
+
+    const clearOcrCampo = useCallback((field: string) => {
+        setOcrCamposVacios((prev) => prev.filter((k) => k !== field));
+    }, []);
 
     const cuitEstado: 'vacio' | 'valido' | 'invalido' = g.cuit
         ? cuitCheck(g.cuit)
@@ -1179,7 +1246,7 @@ function GastoCard({
             </div>
 
             <div style={{ display: 'grid', gap: '16px' }}>
-                <ComprobanteInput gasto={g} onUpdate={onUpdate} />
+                <ComprobanteInput gasto={g} onUpdate={onUpdate} onOcrResult={handleOcrResult} />
 
                 <Campo label="¿Es de un file/proyecto específico?" hint="">
                     <select
@@ -1232,35 +1299,63 @@ function GastoCard({
                         <input
                             type="date"
                             value={g.fecha}
-                            onChange={(e) =>
-                                onUpdate({ fecha: e.target.value })
-                            }
+                            onChange={(e) => {
+                                onUpdate({ fecha: e.target.value });
+                                clearOcrCampo?.('fecha');
+                            }}
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderColor: campoBorde(g.fecha, { required: true }),
+                                borderColor: campoBorde(g.fecha, {
+                                    required: true,
+                                    invalid: invalidFields?.includes('fecha'),
+                                    ocrIncomplete: ocrCamposVacios?.includes('fecha'),
+                                }),
                             }}
                         />
+                        {invalidFields?.includes('fecha') ? (
+                            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                                Este campo es obligatorio.
+                            </div>
+                        ) : ocrCamposVacios?.includes('fecha') ? (
+                            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                No reconocido por IA — completar manualmente.
+                            </div>
+                        ) : null}
                     </Campo>
                     <Campo label="Proveedor / Razón social" hint="">
                         <input
                             type="text"
                             value={g.proveedor}
                             placeholder="Tal como figura en el comprobante"
-                            onChange={(e) =>
-                                onUpdate({ proveedor: e.target.value })
-                            }
+                            onChange={(e) => {
+                                onUpdate({ proveedor: e.target.value });
+                                clearOcrCampo?.('proveedor');
+                            }}
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderColor: campoBorde(g.proveedor, { required: true }),
+                                borderColor: campoBorde(g.proveedor, {
+                                    required: true,
+                                    invalid: invalidFields?.includes('proveedor'),
+                                    ocrIncomplete: ocrCamposVacios?.includes('proveedor'),
+                                }),
                             }}
                         />
+                        {invalidFields?.includes('proveedor') ? (
+                            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                                Este campo es obligatorio.
+                            </div>
+                        ) : ocrCamposVacios?.includes('proveedor') ? (
+                            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                No reconocido por IA — completar manualmente.
+                            </div>
+                        ) : null}
                     </Campo>
                 </div>
 
                 {g.monedaTipo === 'EXTRANJERA' ? (
-                    <CamposExtranjera g={g} onUpdate={onUpdate} blockScroll={blockScroll} />
+                    <CamposExtranjera g={g} onUpdate={onUpdate} blockScroll={blockScroll} invalidFields={invalidFields} ocrCamposVacios={ocrCamposVacios} clearOcrCampo={clearOcrCampo} />
                 ) : (
                     <CamposArs
                         g={g}
@@ -1269,6 +1364,9 @@ function GastoCard({
                         setFieldErrors={setFieldErrors}
                         cuitEstado={cuitEstado}
                         blockScroll={blockScroll}
+                        invalidFields={invalidFields}
+                        ocrCamposVacios={ocrCamposVacios}
+                        clearOcrCampo={clearOcrCampo}
                     />
                 )}
 
@@ -1319,6 +1417,9 @@ function CamposArs({
     setFieldErrors,
     cuitEstado,
     blockScroll,
+    invalidFields,
+    ocrCamposVacios,
+    clearOcrCampo,
 }: {
     g: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
@@ -1326,6 +1427,9 @@ function CamposArs({
     setFieldErrors: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     cuitEstado: 'vacio' | 'valido' | 'invalido';
     blockScroll: (e: WheelEvent) => void;
+    invalidFields?: string[];
+    ocrCamposVacios?: string[];
+    clearOcrCampo?: (field: string) => void;
 }) {
     return (
         <>
@@ -1333,10 +1437,17 @@ function CamposArs({
                 <Campo label="Tipo de gasto" hint="">
                     <select
                         value={g.tipo_gasto}
-                        onChange={(e) =>
-                            onUpdate({ tipo_gasto: e.target.value })
-                        }
-                        style={selectStyle}
+                        onChange={(e) => {
+                            onUpdate({ tipo_gasto: e.target.value });
+                            clearOcrCampo?.('tipo_gasto');
+                        }}
+                        style={{
+                            ...selectStyle,
+                            borderColor: campoBorde(g.tipo_gasto, {
+                                required: true,
+                                invalid: invalidFields?.includes('tipo_gasto'),
+                            }),
+                        }}
                     >
                         <option value="">Elegir...</option>
                         {TIPOS_GASTO.map((t) => (
@@ -1345,6 +1456,11 @@ function CamposArs({
                             </option>
                         ))}
                     </select>
+                    {invalidFields?.includes('tipo_gasto') && (
+                        <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                            Este campo es obligatorio.
+                        </div>
+                    )}
                 </Campo>
             )}
 
@@ -1385,6 +1501,7 @@ function CamposArs({
                             onChange={(e) => {
                                 const val = e.target.value.replace(/\D/g, '');
                                 onUpdate({ cuit: val });
+                                clearOcrCampo?.('cuit');
 
                                 if (val && !fieldErrors.cuit) {
                                     setFieldErrors((prev) => {
@@ -1424,17 +1541,19 @@ function CamposArs({
                                     : campoBorde(g.cuit, {
                                           required: true,
                                           invalid:
-                                              g.cuit.length > 0 &&
-                                              cuitEstado === 'invalido',
+                                              (g.cuit.length > 0 &&
+                                                  cuitEstado === 'invalido') ||
+                                              invalidFields?.includes('cuit'),
+                                          ocrIncomplete: ocrCamposVacios?.includes('cuit'),
                                       }),
                             }}
                         />
                     </div>
-                    {fieldErrors.cuit && (
+                    {fieldErrors.cuit ? (
                         <div
                             style={{
                                 fontFamily: "'Archivo', sans-serif",
-                                fontSize: '11px',
+                                fontSize: '12px',
                                 fontWeight: 600,
                                 color: RED,
                                 marginTop: '5px',
@@ -1442,7 +1561,29 @@ function CamposArs({
                         >
                             {fieldErrors.cuit}
                         </div>
-                    )}
+                    ) : ocrCamposVacios?.includes('cuit') && !g.sinComprobante ? (
+                        <div
+                            style={{
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '12px',
+                                color: '#92400e',
+                                marginTop: '5px',
+                            }}
+                        >
+                            No reconocido por IA — completar manualmente.
+                        </div>
+                    ) : invalidFields?.includes('cuit') ? (
+                        <div
+                            style={{
+                                fontFamily: "'Archivo', sans-serif",
+                                fontSize: '12px',
+                                color: '#991b1b',
+                                marginTop: '5px',
+                            }}
+                        >
+                            Este campo es obligatorio.
+                        </div>
+                    ) : null}
                 </Campo>
                 <div
                     style={{
@@ -1504,15 +1645,16 @@ function CamposArs({
                     <select
                         disabled={g.sinComprobante}
                         value={g.letra_factura}
-                        onChange={(e) =>
-                            onUpdate({ letra_factura: e.target.value })
-                        }
+                        onChange={(e) => {
+                            onUpdate({ letra_factura: e.target.value });
+                            clearOcrCampo?.('letra_factura');
+                        }}
                         style={{
                             ...selectStyle,
                             transition: 'border-color 0.2s ease',
                             borderColor: g.sinComprobante
                                 ? '#000'
-                                : campoBorde(g.letra_factura, { required: true }),
+                                : campoBorde(g.letra_factura, { required: true, invalid: invalidFields?.includes('letra_factura'), ocrIncomplete: ocrCamposVacios?.includes('letra_factura') }),
                         }}
                     >
                         <option value="">Elegir...</option>
@@ -1532,40 +1674,60 @@ function CamposArs({
                                 type="text"
                                 maxLength={5}
                                 value={g.talonario}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     onUpdate({
                                         talonario: e.target.value.replace(
                                             /\D/g,
                                             '',
                                         ),
-                                    })
-                                }
+                                    });
+                                    clearOcrCampo?.('talonario');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.talonario, { required: true }),
+                                    borderColor: campoBorde(g.talonario, { required: true, invalid: invalidFields?.includes('talonario'), ocrIncomplete: ocrCamposVacios?.includes('talonario') }),
                                 }}
                             />
+                            {invalidFields?.includes('talonario') ? (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                                    Este campo es obligatorio.
+                                </div>
+                            ) : ocrCamposVacios?.includes('talonario') ? (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            ) : null}
                         </Campo>
                         <Campo label="Número de comprobante" hint="">
                             <input
                                 type="text"
                                 maxLength={8}
                                 value={g.numero_comprobante}
-                                onChange={(e) =>
+                                onChange={(e) => {
                                     onUpdate({
                                         numero_comprobante:
                                             e.target.value.replace(/\D/g, ''),
-                                    })
-                                }
+                                    });
+                                    clearOcrCampo?.('numero_comprobante');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.numero_comprobante, { required: true }),
+                                    borderColor: campoBorde(g.numero_comprobante, { required: true, invalid: invalidFields?.includes('numero_comprobante'), ocrIncomplete: ocrCamposVacios?.includes('numero_comprobante') }),
                                 }}
                             />
+                            {invalidFields?.includes('numero_comprobante') ? (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                                    Este campo es obligatorio.
+                                </div>
+                            ) : ocrCamposVacios?.includes('numero_comprobante') ? (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            ) : null}
                         </Campo>
                     </>
                 )}
@@ -1583,14 +1745,26 @@ function CamposArs({
                     type="number"
                     step="0.01"
                     value={g.importe_neto}
-                    onChange={(e) => onUpdate({ importe_neto: e.target.value })}
+                    onChange={(e) => {
+                        onUpdate({ importe_neto: e.target.value });
+                        clearOcrCampo?.('importe_neto');
+                    }}
                     onWheel={blockScroll}
                     style={{
                         ...inputStyle,
                         transition: 'border-color 0.2s ease',
-                        borderColor: campoBorde(g.importe_neto, { required: true }),
+                        borderColor: campoBorde(g.importe_neto, { required: true, invalid: invalidFields?.includes('importe_neto'), ocrIncomplete: ocrCamposVacios?.includes('importe_neto') }),
                     }}
                 />
+                {invalidFields?.includes('importe_neto') ? (
+                    <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                        Este campo es obligatorio.
+                    </div>
+                ) : ocrCamposVacios?.includes('importe_neto') ? (
+                    <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                        No reconocido por IA — completar manualmente.
+                    </div>
+                ) : null}
             </Campo>
 
             {!g.sinComprobante && (
@@ -1607,48 +1781,66 @@ function CamposArs({
                                 type="number"
                                 step="0.01"
                                 value={g.iva_27}
-                                onChange={(e) =>
-                                    onUpdate({ iva_27: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ iva_27: e.target.value });
+                                    clearOcrCampo?.('iva_27');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.iva_27),
+                                    borderColor: campoBorde(g.iva_27, { invalid: invalidFields?.includes('iva_27'), ocrIncomplete: ocrCamposVacios?.includes('iva_27') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('iva_27') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                         <Campo label="IVA 21%" hint="">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={g.iva_21}
-                                onChange={(e) =>
-                                    onUpdate({ iva_21: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ iva_21: e.target.value });
+                                    clearOcrCampo?.('iva_21');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.iva_21),
+                                    borderColor: campoBorde(g.iva_21, { invalid: invalidFields?.includes('iva_21'), ocrIncomplete: ocrCamposVacios?.includes('iva_21') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('iva_21') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                         <Campo label="IVA 10,5%" hint="">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={g.iva_105}
-                                onChange={(e) =>
-                                    onUpdate({ iva_105: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ iva_105: e.target.value });
+                                    clearOcrCampo?.('iva_105');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.iva_105),
+                                    borderColor: campoBorde(g.iva_105, { invalid: invalidFields?.includes('iva_105'), ocrIncomplete: ocrCamposVacios?.includes('iva_105') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('iva_105') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                     </div>
                     <div
@@ -1663,70 +1855,88 @@ function CamposArs({
                                 type="number"
                                 step="0.01"
                                 value={g.percepcion_iva}
-                                onChange={(e) =>
-                                    onUpdate({ percepcion_iva: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ percepcion_iva: e.target.value });
+                                    clearOcrCampo?.('percepcion_iva');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.percepcion_iva),
+                                    borderColor: campoBorde(g.percepcion_iva, { invalid: invalidFields?.includes('percepcion_iva'), ocrIncomplete: ocrCamposVacios?.includes('percepcion_iva') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('percepcion_iva') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                         <Campo label="Percepción IIBB CABA" hint="">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={g.percepcion_iibb_caba}
-                                onChange={(e) =>
-                                    onUpdate({
-                                        percepcion_iibb_caba: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ percepcion_iibb_caba: e.target.value });
+                                    clearOcrCampo?.('percepcion_iibb_caba');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.percepcion_iibb_caba),
+                                    borderColor: campoBorde(g.percepcion_iibb_caba, { invalid: invalidFields?.includes('percepcion_iibb_caba'), ocrIncomplete: ocrCamposVacios?.includes('percepcion_iibb_caba') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('percepcion_iibb_caba') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                         <Campo label="Percepción IIBB Santa Cruz" hint="">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={g.percepcion_iibb_sc}
-                                onChange={(e) =>
-                                    onUpdate({
-                                        percepcion_iibb_sc: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ percepcion_iibb_sc: e.target.value });
+                                    clearOcrCampo?.('percepcion_iibb_sc');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.percepcion_iibb_sc),
+                                    borderColor: campoBorde(g.percepcion_iibb_sc, { invalid: invalidFields?.includes('percepcion_iibb_sc'), ocrIncomplete: ocrCamposVacios?.includes('percepcion_iibb_sc') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('percepcion_iibb_sc') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                         <Campo label="Percepción IIBB T. de Fuego" hint="">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={g.percepcion_iibb_tdf}
-                                onChange={(e) =>
-                                    onUpdate({
-                                        percepcion_iibb_tdf: e.target.value,
-                                    })
-                                }
+                                onChange={(e) => {
+                                    onUpdate({ percepcion_iibb_tdf: e.target.value });
+                                    clearOcrCampo?.('percepcion_iibb_tdf');
+                                }}
                                 onWheel={blockScroll}
                                 style={{
                                     ...inputStyle,
                                     transition: 'border-color 0.2s ease',
-                                    borderColor: campoBorde(g.percepcion_iibb_tdf),
+                                    borderColor: campoBorde(g.percepcion_iibb_tdf, { invalid: invalidFields?.includes('percepcion_iibb_tdf'), ocrIncomplete: ocrCamposVacios?.includes('percepcion_iibb_tdf') }),
                                 }}
                             />
+                            {ocrCamposVacios?.includes('percepcion_iibb_tdf') && (
+                                <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                    No reconocido por IA — completar manualmente.
+                                </div>
+                            )}
                         </Campo>
                     </div>
                     <Campo
@@ -1737,16 +1947,22 @@ function CamposArs({
                             type="number"
                             step="0.01"
                             value={g.otros_cargos}
-                            onChange={(e) =>
-                                onUpdate({ otros_cargos: e.target.value })
-                            }
+                            onChange={(e) => {
+                                onUpdate({ otros_cargos: e.target.value });
+                                clearOcrCampo?.('otros_cargos');
+                            }}
                             onWheel={blockScroll}
                             style={{
                                 ...inputStyle,
                                 transition: 'border-color 0.2s ease',
-                                borderColor: campoBorde(g.otros_cargos),
+                                borderColor: campoBorde(g.otros_cargos, { invalid: invalidFields?.includes('otros_cargos'), ocrIncomplete: ocrCamposVacios?.includes('otros_cargos') }),
                             }}
                         />
+                        {ocrCamposVacios?.includes('otros_cargos') && (
+                            <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                                No reconocido por IA — completar manualmente.
+                            </div>
+                        )}
                     </Campo>
                 </>
             )}
@@ -1758,10 +1974,16 @@ function CamposExtranjera({
     g,
     onUpdate,
     blockScroll,
+    invalidFields,
+    ocrCamposVacios,
+    clearOcrCampo,
 }: {
     g: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
     blockScroll: (e: WheelEvent) => void;
+    invalidFields?: string[];
+    ocrCamposVacios?: string[];
+    clearOcrCampo?: (field: string) => void;
 }) {
     return (
         <>
@@ -1811,16 +2033,26 @@ function CamposExtranjera({
                         type="number"
                         step="0.01"
                         value={g.importe_original}
-                        onChange={(e) =>
-                            onUpdate({ importe_original: e.target.value })
-                        }
+                        onChange={(e) => {
+                            onUpdate({ importe_original: e.target.value });
+                            clearOcrCampo?.('importe_original');
+                        }}
                         onWheel={blockScroll}
                         style={{
                             ...inputStyle,
                             transition: 'border-color 0.2s ease',
-                            borderColor: campoBorde(g.importe_original, { required: true }),
+                            borderColor: campoBorde(g.importe_original, { required: true, invalid: invalidFields?.includes('importe_original'), ocrIncomplete: ocrCamposVacios?.includes('importe_original') }),
                         }}
                     />
+                    {invalidFields?.includes('importe_original') ? (
+                        <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                            Este campo es obligatorio.
+                        </div>
+                    ) : ocrCamposVacios?.includes('importe_original') ? (
+                        <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                            No reconocido por IA — completar manualmente.
+                        </div>
+                    ) : null}
                 </Campo>
                 <Campo
                     label="Tipo de cambio a dólares"
@@ -1835,18 +2067,28 @@ function CamposExtranjera({
                         step="0.0001"
                         disabled={g.moneda_iso === 'USD'}
                         value={g.tipo_cambio_a_dolares}
-                        onChange={(e) =>
-                            onUpdate({ tipo_cambio_a_dolares: e.target.value })
-                        }
+                        onChange={(e) => {
+                            onUpdate({ tipo_cambio_a_dolares: e.target.value });
+                            clearOcrCampo?.('tipo_cambio_a_dolares');
+                        }}
                         onWheel={blockScroll}
                         style={{
                             ...inputStyle,
                             transition: 'border-color 0.2s ease',
                             borderColor: g.moneda_iso === 'USD'
                                 ? '#000'
-                                : campoBorde(g.tipo_cambio_a_dolares, { required: true }),
+                                : campoBorde(g.tipo_cambio_a_dolares, { required: true, invalid: invalidFields?.includes('tipo_cambio_a_dolares'), ocrIncomplete: ocrCamposVacios?.includes('tipo_cambio_a_dolares') }),
                         }}
                     />
+                    {invalidFields?.includes('tipo_cambio_a_dolares') ? (
+                        <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#991b1b', marginTop: '4px' }}>
+                            Este campo es obligatorio.
+                        </div>
+                    ) : ocrCamposVacios?.includes('tipo_cambio_a_dolares') && g.moneda_iso !== 'USD' ? (
+                        <div style={{ fontFamily: "'Archivo', sans-serif", fontSize: '12px', color: '#92400e', marginTop: '4px' }}>
+                            No reconocido por IA — completar manualmente.
+                        </div>
+                    ) : null}
                 </Campo>
             </div>
         </>
@@ -1856,9 +2098,11 @@ function CamposExtranjera({
 function ComprobanteInput({
     gasto: g,
     onUpdate,
+    onOcrResult,
 }: {
     gasto: Gasto;
     onUpdate: (patch: Partial<Gasto>) => void;
+    onOcrResult?: (patchKeys: string[]) => void;
 }) {
     const [ocrStatus, setOcrStatus] = useState<
         'idle' | 'leyendo' | 'ok' | 'sin-lectura' | 'error'
@@ -1884,6 +2128,7 @@ function ComprobanteInput({
 
             if (Object.keys(patch).length > 0) {
                 onUpdate(patch);
+                onOcrResult?.(Object.keys(patch));
             }
 
             setOcrMensajes(resultado.mensajes);
@@ -1893,7 +2138,7 @@ function ComprobanteInput({
                     : 'ok',
             );
         },
-        [g.monedaTipo, onUpdate],
+        [g.monedaTipo, onUpdate, onOcrResult],
     );
 
     return (
