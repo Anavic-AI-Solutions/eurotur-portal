@@ -46,6 +46,16 @@ return [
         'timeout' => 120,
     ],
 
+    'invoice_loader' => [
+        'url' => env('INVOICE_LOADER_URL', 'http://cargador-facturas:8000'),
+        'api_key' => env('INVOICE_LOADER_API_KEY'),
+        'timeout' => 120,
+    ],
+
+    'prepagos' => [
+        'url' => env('PREPAGOS_URL', 'http://192.168.98.4:8498'),
+    ],
+
     'meeting_room' => [
         'calendar_url' => env('MEETING_ROOM_CALENDAR_URL'),
         'instructivo_url' => env('MEETING_ROOM_INSTRUCTIVO_URL'),

@@ -1,6 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { usePermissions } from '@/hooks/use-permissions';
 import { home } from '@/routes';
+import { index as crmIndex } from '@/routes/admin/crm';
 import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as usersIndex } from '@/routes/admin/users';
 
@@ -23,6 +24,12 @@ const ITEMS: NavEntry[] = [
         href: rolesIndex(),
         permission: 'roles.manage',
         match: '/administracion/roles',
+    },
+    {
+        label: 'Herramientas',
+        href: crmIndex(),
+        permission: 'invoice-loader.manage',
+        match: '/administracion/crm',
     },
 ];
 

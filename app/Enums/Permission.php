@@ -25,6 +25,8 @@ enum Permission: string
 
     case UsersManage = 'users.manage';
     case RolesManage = 'roles.manage';
+    case InvoiceLoaderManage = 'invoice-loader.manage';
+    case PrepagosManage = 'prepagos.manage';
 
     public static function forSector(EditableSector $sector): self
     {
@@ -49,13 +51,15 @@ enum Permission: string
             self::SearchAdmin => 'Administrar el buscador',
             self::UsersManage => 'Gestionar usuarios',
             self::RolesManage => 'Gestionar roles y permisos',
+            self::InvoiceLoaderManage => 'Gestionar el cargador de facturas',
+            self::PrepagosManage => 'Gestionar el panel de prepagos',
         };
     }
 
     public function group(): string
     {
         return match ($this) {
-            self::UsersManage, self::RolesManage => 'administracion',
+            self::UsersManage, self::RolesManage, self::InvoiceLoaderManage, self::PrepagosManage => 'administracion',
             self::InnovacionManage, self::ExchangeRateManage, self::SearchAdmin => 'contenido',
             default => 'sectores',
         };

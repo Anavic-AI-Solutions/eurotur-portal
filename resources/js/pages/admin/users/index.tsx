@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import { PageHeader } from '@/components/backoffice/page-header';
+import { Pagination } from '@/components/backoffice/pagination';
 import { RowActions } from '@/components/backoffice/row-actions';
 import { TableFilter } from '@/components/backoffice/table-filter';
 import { Button } from '@/components/ui/button';
@@ -185,37 +186,5 @@ function DeleteUserDialog({ user }: { user: UserRow }) {
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
-}
-
-function Pagination({ links }: { links: Paginated<UserRow>['links'] }) {
-    if (links.length <= 3) {
-        return null;
-    }
-
-    return (
-        <nav className="mt-4 flex flex-wrap items-center gap-3">
-            {links.map((link) =>
-                link.url ? (
-                    <Link
-                        key={link.label}
-                        href={link.url}
-                        className={
-                            'px-1 bo-label ' +
-                            (link.active
-                                ? 'text-primary'
-                                : 'transition-colors duration-[120ms] hover:text-primary')
-                        }
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                    />
-                ) : (
-                    <span
-                        key={link.label}
-                        className="px-1 bo-label opacity-40"
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                    />
-                ),
-            )}
-        </nav>
     );
 }
