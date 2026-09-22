@@ -5,8 +5,13 @@ namespace App\Http\Requests\Admin;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Enums\Permission;
+use App\Enums\PrepagosRole;
+use App\Models\Role;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreUserRequest extends FormRequest
 {
@@ -26,6 +31,37 @@ class StoreUserRequest extends FormRequest
             ...$this->profileRules(),
             'password' => $this->passwordRules(),
             'role_id' => ['required', 'integer', 'exists:roles,id'],
+            'prepagos_role' => [
+                'nullable',
+                new Enum(PrepagosRole::class),
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if (blank($value)) {
+                        return;
+                    }
+
+                    $role = Role::find((int) $this->input('role_id'));
+
+                    if ($role === null || ! in_array(Permission::PrepagosManage->value, $role->permissionSlugs(), true)) {
+                        $fail('Este usuario no tiene el permiso "Gestionar el panel de prepagos". Asignale el rol Supervisor, Analista, o Admin antes de completar esto.');
+                    }
+                },
+            ],
+            'prepagos_analista_codigo' => [
+                Rule::requiredIf(fn (): bool => $this->input('prepagos_role') === PrepagosRole::Analista->value),
+                'nullable',
+                'integer',
+                'between:1,9',
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'prepagos_analista_codigo.required' => 'El rol Analista necesita un código de analista (1 a 9).',
         ];
     }
 }

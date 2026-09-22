@@ -24,10 +24,10 @@ Route::middleware(['auth', 'verified'])->prefix('administracion')->name('admin.'
 
     Route::middleware('can:prepagos.manage')->get('prepagos', PrepagosRedirectController::class)->name('prepagos');
 
-    Route::middleware('can:invoice-loader.manage')->prefix('crm')->name('crm.')->group(function () {
+    Route::middleware('can:herramientas.view')->prefix('crm')->name('crm.')->group(function () {
         Route::get('/', CrmIndexController::class)->name('index');
 
-        Route::prefix('cargador-facturas')->name('invoice-loader.')->group(function () {
+        Route::middleware('can:invoice-loader.manage')->prefix('cargador-facturas')->name('invoice-loader.')->group(function () {
             Route::get('/', [InvoiceLoaderPageController::class, 'index'])->name('index');
 
             Route::post('propuestas', [InvoiceProposalController::class, 'store'])->name('proposals.store');

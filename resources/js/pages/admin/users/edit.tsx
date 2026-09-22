@@ -2,14 +2,16 @@ import { Head } from '@inertiajs/react';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import { PageHeader } from '@/components/backoffice/page-header';
 import UserForm from './user-form';
-import type { EditableUser, RoleOption } from './user-form';
+import type { EditableUser, PrepagosRoleOption, RoleOption } from './user-form';
 
 export default function EditUser({
     user,
     roles,
+    prepagosRoles,
 }: {
     user: EditableUser;
     roles: RoleOption[];
+    prepagosRoles: PrepagosRoleOption[];
 }) {
     return (
         <>
@@ -25,6 +27,7 @@ export default function EditUser({
                 <UserForm
                     action={UserController.update.form(user.id)}
                     roles={roles}
+                    prepagosRoles={prepagosRoles}
                     user={user}
                     submitLabel="Guardar cambios"
                 />

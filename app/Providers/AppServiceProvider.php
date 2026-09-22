@@ -56,6 +56,9 @@ class AppServiceProvider extends ServiceProvider
         // anyone holding at least one content permission passes it.
         Gate::define('editar-portal', fn (User $user): bool => $user->canEditPortal());
 
+        // Composite gate for the "Herramientas" hub: any one tool permission unlocks it.
+        Gate::define('herramientas.view', fn (User $user): bool => $user->canViewTools());
+
         Password::defaults(fn (): ?Password => app()->isProduction()
             ? Password::min(12)
                 ->mixedCase()

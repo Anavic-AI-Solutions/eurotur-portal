@@ -90,6 +90,20 @@ enum Permission: string
     }
 
     /**
+     * Permissions that unlock at least one card on the "Herramientas" hub,
+     * i.e. the backing set for the `herramientas.view` gate.
+     *
+     * @return list<self>
+     */
+    public static function toolsPermissions(): array
+    {
+        return [
+            self::InvoiceLoaderManage,
+            self::PrepagosManage,
+        ];
+    }
+
+    /**
      * @return list<string>
      */
     public static function values(): array

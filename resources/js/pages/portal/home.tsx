@@ -234,6 +234,7 @@ export default function Home() {
             (sector.id !== 'search-admin' || canEdit) &&
             sector.id !== 'exchange-rate',
     );
+
     return (
         <>
             <Head title="Portal Eurotur" />

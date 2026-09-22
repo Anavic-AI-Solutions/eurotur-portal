@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Admin\Crm;
 
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,5 +51,20 @@ class InvoiceLoaderPermissionTest extends TestCase
             ->get(route('admin.crm.invoice-loader.index'))
             ->assertOk()
             ->assertInertia(fn ($page) => $page->component('admin/crm/invoice-loader/index'));
+    }
+
+    public function test_a_user_with_only_prepagos_permission_sees_the_hub_but_not_invoice_loader(): void
+    {
+        $role = Role::create(['slug' => 'prepagos-only', 'name' => 'Prepagos Only']);
+        $role->permissions()->sync(Permission::whereIn('slug', ['prepagos.manage'])->pluck('id'));
+        $role->flushPermissionCache();
+        $user = User::factory()->withRole($role)->create();
+
+        $this->actingAs($user)
+            ->get(route('admin.crm.index'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('admin/crm/index'));
+
+        $this->actingAs($user)->get(route('admin.crm.invoice-loader.index'))->assertForbidden();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Permission;
+use App\Enums\PrepagosRole;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -18,8 +19,10 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $email
- * @property string|null $role
+ * @property int|null $role_id
  * @property-read Role|null $role
+ * @property PrepagosRole|null $prepagos_role
+ * @property int|null $prepagos_analista_codigo
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $two_factor_secret
@@ -29,7 +32,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'role'])]
+#[Fillable(['name', 'email', 'password', 'role_id', 'prepagos_role', 'prepagos_analista_codigo'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -46,7 +49,7 @@ class User extends Authenticatable
 
     public function roleSlug(): ?string
     {
-        return $this->role;
+        return $this->role?->slug;
     }
 
     public function isAdmin(): bool
@@ -95,6 +98,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Whether the user may see at least one card on the "Herramientas" hub.
+     */
+    public function canViewTools(): bool
+    {
+        foreach (Permission::toolsPermissions() as $permission) {
+            if ($this->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -104,6 +121,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'prepagos_role' => PrepagosRole::class,
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\PrepagosRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
@@ -36,6 +37,7 @@ class UserController extends Controller
     {
         return Inertia::render('admin/users/create', [
             'roles' => $this->roleOptions(),
+            'prepagosRoles' => $this->prepagosRoleOptions(),
         ]);
     }
 
@@ -51,8 +53,12 @@ class UserController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('admin/users/edit', [
-            'user' => $user->only(['id', 'name', 'email', 'role_id']),
+            'user' => [
+                ...$user->only(['id', 'name', 'email', 'role_id', 'prepagos_analista_codigo']),
+                'prepagos_role' => $user->prepagos_role?->value,
+            ],
             'roles' => $this->roleOptions(),
+            'prepagosRoles' => $this->prepagosRoleOptions(),
         ]);
     }
 
@@ -88,5 +94,16 @@ class UserController extends Controller
     private function roleOptions(): Collection
     {
         return Role::query()->orderBy('name')->get(['id', 'name', 'slug']);
+    }
+
+    /**
+     * @return list<array{value: string, label: string}>
+     */
+    private function prepagosRoleOptions(): array
+    {
+        return array_map(
+            fn (PrepagosRole $role): array => ['value' => $role->value, 'label' => $role->label()],
+            PrepagosRole::cases(),
+        );
     }
 }

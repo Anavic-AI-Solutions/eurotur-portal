@@ -208,16 +208,19 @@ export default function ExchangeRate({
 
     function applyFilters(overrides: Record<string, string | null> = {}) {
         const params: Record<string, string> = {};
+
         if (overrides.date_from !== undefined && overrides.date_from !== null) {
             params.date_from = overrides.date_from;
         } else if (dateFrom) {
             params.date_from = dateFrom;
         }
+
         if (overrides.date_to !== undefined && overrides.date_to !== null) {
             params.date_to = overrides.date_to;
         } else if (dateTo) {
             params.date_to = dateTo;
         }
+
         router.get(exchangeRate.url({ query: params }), {}, {
             preserveState: true,
             replace: true,
@@ -226,8 +229,15 @@ export default function ExchangeRate({
 
     function goToPage(page: number) {
         const params: Record<string, string | number> = { page };
-        if (dateFrom) params.date_from = dateFrom;
-        if (dateTo) params.date_to = dateTo;
+
+        if (dateFrom) {
+params.date_from = dateFrom;
+}
+
+        if (dateTo) {
+params.date_to = dateTo;
+}
+
         router.get(exchangeRate.url({ query: params }), {}, {
             preserveState: true,
             replace: true,
@@ -236,8 +246,15 @@ export default function ExchangeRate({
 
     function exportCsv() {
         const params = new URLSearchParams();
-        if (dateFrom) params.set('date_from', dateFrom);
-        if (dateTo) params.set('date_to', dateTo);
+
+        if (dateFrom) {
+params.set('date_from', dateFrom);
+}
+
+        if (dateTo) {
+params.set('date_to', dateTo);
+}
+
         window.location.href = BnaDailyRateExportController.url({
             query: Object.fromEntries(params),
         });

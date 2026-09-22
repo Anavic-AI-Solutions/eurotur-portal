@@ -8,7 +8,8 @@ import { index as usersIndex } from '@/routes/admin/users';
 type NavEntry = {
     label: string;
     href: ReturnType<typeof usersIndex>;
-    permission: string;
+    /** A single permission slug, or several — any one of them unlocks the entry. */
+    permission: string | string[];
     match: string;
 };
 
@@ -28,7 +29,7 @@ const ITEMS: NavEntry[] = [
     {
         label: 'Herramientas',
         href: crmIndex(),
-        permission: 'invoice-loader.manage',
+        permission: ['invoice-loader.manage', 'prepagos.manage'],
         match: '/administracion/crm',
     },
 ];
@@ -40,8 +41,12 @@ const ITEMS: NavEntry[] = [
  */
 export function BackofficeSidebar({ onNavigate }: { onNavigate?: () => void }) {
     const { url } = usePage();
-    const { can } = usePermissions();
-    const items = ITEMS.filter((item) => can(item.permission));
+    const { can, canAny } = usePermissions();
+    const items = ITEMS.filter((item) =>
+        Array.isArray(item.permission)
+            ? canAny(...item.permission)
+            : can(item.permission),
+    );
 
     return (
         <div className="flex h-full w-[216px] shrink-0 flex-col border-r border-border px-[22px] pt-[34px] pb-7">
