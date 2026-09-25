@@ -27,3 +27,11 @@ export function usePermissions() {
 }
 
 export const sectorPermission = (sector: string) => `sector.${sector}.edit`;
+
+/**
+ * Permissions that unlock at least one card on the "Herramientas" hub —
+ * mirrors the backend's `Permission::toolsPermissions()`. Kept as a single
+ * list so every place gating access to it (portal sidebar, backoffice
+ * sidebar) stays in sync when a new tool permission is added.
+ */
+export const TOOLS_PERMISSIONS = ['invoice-loader.manage', 'prepagos.manage'];

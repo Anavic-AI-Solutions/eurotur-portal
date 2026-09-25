@@ -68,9 +68,9 @@ export default function UserForm({
     );
 
     return (
-        <Form<UserFormData> {...action} className="max-w-3xl">
+        <Form<UserFormData> {...action} className="max-w-4xl">
             {({ processing, errors }) => (
-                <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_260px]">
+                <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_260px_260px]">
                     <div className="space-y-6">
                         <div className="grid gap-1">
                             <Label htmlFor="name" className="bo-label">
@@ -155,37 +155,6 @@ export default function UserForm({
                     </div>
 
                     <div className="border border-border p-5">
-                        <SectionHeading label="Rol" />
-
-                        <input type="hidden" name="role_id" value={roleId} />
-                        <Select value={roleId} onValueChange={setRoleId}>
-                            <SelectTrigger
-                                id="role_id"
-                                className="rounded-none"
-                            >
-                                <SelectValue placeholder="Elegí un rol" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {roles.map((role) => (
-                                    <SelectItem
-                                        key={role.id}
-                                        value={String(role.id)}
-                                    >
-                                        {role.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <InputError message={errors.role_id} />
-
-                        {selectedRole && (
-                            <p className="mt-3 bo-label text-muted-foreground normal-case">
-                                Slug: {selectedRole.slug}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="border border-border p-5 md:col-start-2">
                         <SectionHeading label="Panel de Prepagos" />
 
                         <p className="mb-3 bo-label text-muted-foreground normal-case">
@@ -255,6 +224,37 @@ export default function UserForm({
                         </div>
                         <InputError message={errors.prepagos_role} />
                         <InputError message={errors.prepagos_analista_codigo} />
+                    </div>
+
+                    <div className="border border-border p-5">
+                        <SectionHeading label="Rol" />
+
+                        <input type="hidden" name="role_id" value={roleId} />
+                        <Select value={roleId} onValueChange={setRoleId}>
+                            <SelectTrigger
+                                id="role_id"
+                                className="rounded-none"
+                            >
+                                <SelectValue placeholder="Elegí un rol" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {roles.map((role) => (
+                                    <SelectItem
+                                        key={role.id}
+                                        value={String(role.id)}
+                                    >
+                                        {role.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <InputError message={errors.role_id} />
+
+                        {selectedRole && (
+                            <p className="mt-3 bo-label text-muted-foreground normal-case">
+                                Slug: {selectedRole.slug}
+                            </p>
+                        )}
                     </div>
                 </div>
             )}

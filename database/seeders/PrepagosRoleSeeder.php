@@ -8,10 +8,12 @@ use App\Models\Role;
 use Illuminate\Database\Seeder;
 
 /**
- * Two system roles scoped to a single domain permission (prepagos.manage),
+ * Two starter roles scoped to a single domain permission (prepagos.manage),
  * orthogonal to the generic admin/editor/viewer content ladder in
  * RolePermissionSeeder — deliberately not added to the UserRole enum or its
- * matrix(). Idempotent: safe to run on every deploy.
+ * matrix(). Not marked as system roles: admins can delete or repurpose them
+ * like any other custom role once no user holds them. Idempotent: safe to
+ * run on every deploy.
  */
 class PrepagosRoleSeeder extends Seeder
 {
@@ -30,7 +32,7 @@ class PrepagosRoleSeeder extends Seeder
         foreach (self::ROLES as $slug => $name) {
             $role = Role::updateOrCreate(
                 ['slug' => $slug],
-                ['name' => $name, 'is_system' => true],
+                ['name' => $name, 'is_system' => false],
             );
 
             $role->permissions()->sync(

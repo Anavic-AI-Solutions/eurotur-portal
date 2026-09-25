@@ -1,11 +1,12 @@
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { usePermissions } from '@/hooks/use-permissions';
+import { TOOLS_PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { formatDay, isRateStale, lastBusinessDay } from '@/lib/exchange-rates';
 import { SECTORS } from '@/lib/portal-sectors';
 import type { ActiveView } from '@/lib/portal-sectors';
 import { home, logout } from '@/routes';
+import { index as crmIndex } from '@/routes/admin/crm';
 import { index as rolesIndex } from '@/routes/admin/roles';
 import { index as usersIndex } from '@/routes/admin/users';
 import { search, searchResults } from '@/routes/portal';
@@ -246,7 +247,11 @@ function Sidebar({
         (sector) =>
             !sector.requiredPermission || can(sector.requiredPermission),
     );
-    const canAdminister = canAny('users.manage', 'roles.manage');
+    const canAdminister = canAny(
+        'users.manage',
+        'roles.manage',
+        ...TOOLS_PERMISSIONS,
+    );
 
     return (
         <aside
@@ -382,7 +387,13 @@ function Sidebar({
 
                 {canAdminister && (
                     <Link
-                        href={can('users.manage') ? usersIndex() : rolesIndex()}
+                        href={
+                            can('users.manage')
+                                ? usersIndex()
+                                : can('roles.manage')
+                                  ? rolesIndex()
+                                  : crmIndex()
+                        }
                         className="nav-item"
                         style={{
                             all: 'unset',

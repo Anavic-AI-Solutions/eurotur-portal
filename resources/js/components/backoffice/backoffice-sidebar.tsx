@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { usePermissions } from '@/hooks/use-permissions';
+import { TOOLS_PERMISSIONS, usePermissions } from '@/hooks/use-permissions';
 import { home } from '@/routes';
 import { index as crmIndex } from '@/routes/admin/crm';
 import { index as rolesIndex } from '@/routes/admin/roles';
@@ -29,7 +29,7 @@ const ITEMS: NavEntry[] = [
     {
         label: 'Herramientas',
         href: crmIndex(),
-        permission: ['invoice-loader.manage', 'prepagos.manage'],
+        permission: TOOLS_PERMISSIONS,
         match: '/administracion/crm',
     },
 ];

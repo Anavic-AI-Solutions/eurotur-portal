@@ -12,6 +12,7 @@ fi
 
 php artisan storage:link || true
 php artisan migrate --force
+php artisan db:seed --class=RolePermissionSeeder --force
 
 php artisan config:cache
 php artisan route:cache

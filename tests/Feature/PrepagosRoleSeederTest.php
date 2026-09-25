@@ -28,7 +28,7 @@ class PrepagosRoleSeederTest extends TestCase
             $role = Role::where('slug', $slug)->firstOrFail();
 
             $this->assertSame($name, $role->name);
-            $this->assertTrue($role->is_system);
+            $this->assertFalse($role->is_system);
             $this->assertSame([Permission::PrepagosManage->value], $role->permissionSlugs());
         }
     }
