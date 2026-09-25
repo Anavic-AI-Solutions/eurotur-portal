@@ -9,6 +9,7 @@ use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,6 +46,19 @@ class User extends Authenticatable
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Fortify lowercases the login email (lowercase_usernames=true) and
+     * Postgres '=' is case-sensitive, so emails must always be stored
+     * lowercase or login lookup misses. Safety net for every write path
+     * (admin panel, seeders, tinker).
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value): ?string => $value === null ? null : mb_strtolower(trim($value)),
+        );
     }
 
     public function roleSlug(): ?string

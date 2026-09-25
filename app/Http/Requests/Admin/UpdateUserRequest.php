@@ -23,6 +23,13 @@ class UpdateUserRequest extends FormRequest
         return $this->user()?->can(Permission::UsersManage->value) === true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('email'))) {
+            $this->merge(['email' => mb_strtolower(trim($this->input('email') ?? ''))]);
+        }
+    }
+
     /**
      * @return array<string, ValidationRule|array<mixed>|string>
      */
