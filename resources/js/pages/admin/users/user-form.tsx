@@ -16,11 +16,12 @@ import {
 import { index } from '@/routes/admin/users';
 import type { RouteFormDefinition } from '@/wayfinder';
 
-export type RoleOption = { id: number; name: string; slug: string };
-export type PrepagosRoleOption = { value: string; label: string };
-
-const PREPAGOS_ROLE_NONE = '__none__';
-const PREPAGOS_ROLE_ANALISTA = 'ANALISTA';
+export type RoleOption = {
+    id: number;
+    name: string;
+    slug: string;
+    ver_bandeja: boolean;
+};
 
 type UserFormData = {
     name: string;
@@ -28,7 +29,6 @@ type UserFormData = {
     role_id: string;
     password: string;
     password_confirmation: string;
-    prepagos_role: string;
     prepagos_analista_codigo: string;
 };
 
@@ -37,7 +37,6 @@ export type EditableUser = {
     name: string;
     email: string;
     role_id: number | null;
-    prepagos_role: string | null;
     prepagos_analista_codigo: number | null;
 };
 
@@ -48,13 +47,11 @@ export type EditableUser = {
 export default function UserForm({
     action,
     roles,
-    prepagosRoles,
     user,
     submitLabel,
 }: {
     action: RouteFormDefinition<'post'>;
     roles: RoleOption[];
-    prepagosRoles: PrepagosRoleOption[];
     user?: EditableUser;
     submitLabel: string;
 }) {
@@ -62,10 +59,6 @@ export default function UserForm({
         String(user?.role_id ?? roles[0]?.id ?? ''),
     );
     const selectedRole = roles.find((role) => String(role.id) === roleId);
-
-    const [prepagosRole, setPrepagosRole] = useState(
-        user?.prepagos_role ?? PREPAGOS_ROLE_NONE,
-    );
 
     return (
         <Form<UserFormData> {...action} className="max-w-4xl">
@@ -158,71 +151,31 @@ export default function UserForm({
                         <SectionHeading label="Panel de Prepagos" />
 
                         <p className="mb-3 bo-label text-muted-foreground normal-case">
-                            Solo importa si el usuario tiene el rol Analista,
-                            Supervisor, o cualquier otro con el permiso
-                            "Gestionar el panel de prepagos".
+                            Solo importa si el rol elegido tiene habilitada la
+                            vista "Mi Bandeja".
                         </p>
 
-                        <div className="flex items-end gap-2">
-                            {prepagosRole === PREPAGOS_ROLE_ANALISTA && (
-                                <div className="grid w-20 gap-1">
-                                    <Label
-                                        htmlFor="prepagos_analista_codigo"
-                                        className="bo-label"
-                                    >
-                                        Código
-                                    </Label>
-                                    <Input
-                                        id="prepagos_analista_codigo"
-                                        name="prepagos_analista_codigo"
-                                        type="number"
-                                        min={1}
-                                        max={9}
-                                        defaultValue={
-                                            user?.prepagos_analista_codigo ?? ''
-                                        }
-                                        className={boFieldClass}
-                                    />
-                                </div>
-                            )}
-
-                            <div className="flex-1">
-                                <input
-                                    type="hidden"
-                                    name="prepagos_role"
-                                    value={
-                                        prepagosRole === PREPAGOS_ROLE_NONE
-                                            ? ''
-                                            : prepagosRole
-                                    }
-                                />
-                                <Select
-                                    value={prepagosRole}
-                                    onValueChange={setPrepagosRole}
+                        {selectedRole?.ver_bandeja && (
+                            <div className="grid w-20 gap-1">
+                                <Label
+                                    htmlFor="prepagos_analista_codigo"
+                                    className="bo-label"
                                 >
-                                    <SelectTrigger
-                                        id="prepagos_role"
-                                        className="w-full rounded-none"
-                                    >
-                                        <SelectValue placeholder="Sin asignar" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={PREPAGOS_ROLE_NONE}>
-                                            Sin asignar
-                                        </SelectItem>
-                                        {prepagosRoles.map((role) => (
-                                            <SelectItem
-                                                key={role.value}
-                                                value={role.value}
-                                            >
-                                                {role.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                    Código
+                                </Label>
+                                <Input
+                                    id="prepagos_analista_codigo"
+                                    name="prepagos_analista_codigo"
+                                    type="number"
+                                    min={1}
+                                    max={9}
+                                    defaultValue={
+                                        user?.prepagos_analista_codigo ?? ''
+                                    }
+                                    className={boFieldClass}
+                                />
                             </div>
-                        </div>
-                        <InputError message={errors.prepagos_role} />
+                        )}
                         <InputError message={errors.prepagos_analista_codigo} />
                     </div>
 

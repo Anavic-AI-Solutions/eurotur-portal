@@ -2,15 +2,9 @@ import { Head } from '@inertiajs/react';
 import UserController from '@/actions/App/Http/Controllers/Admin/UserController';
 import { PageHeader } from '@/components/backoffice/page-header';
 import UserForm from './user-form';
-import type { PrepagosRoleOption, RoleOption } from './user-form';
+import type { RoleOption } from './user-form';
 
-export default function CreateUser({
-    roles,
-    prepagosRoles,
-}: {
-    roles: RoleOption[];
-    prepagosRoles: PrepagosRoleOption[];
-}) {
+export default function CreateUser({ roles }: { roles: RoleOption[] }) {
     return (
         <>
             <Head title="Nuevo usuario" />
@@ -25,7 +19,6 @@ export default function CreateUser({
                 <UserForm
                     action={UserController.store.form()}
                     roles={roles}
-                    prepagosRoles={prepagosRoles}
                     submitLabel="Crear usuario"
                 />
             </div>

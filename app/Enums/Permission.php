@@ -27,6 +27,9 @@ enum Permission: string
     case RolesManage = 'roles.manage';
     case InvoiceLoaderManage = 'invoice-loader.manage';
     case PrepagosManage = 'prepagos.manage';
+    case PrepagosVerCoordinacion = 'prepagos.ver_coordinacion';
+    case PrepagosVerControl = 'prepagos.ver_control';
+    case PrepagosVerBandeja = 'prepagos.ver_bandeja';
 
     public static function forSector(EditableSector $sector): self
     {
@@ -53,13 +56,17 @@ enum Permission: string
             self::RolesManage => 'Gestionar roles y permisos',
             self::InvoiceLoaderManage => 'Gestionar el cargador de facturas',
             self::PrepagosManage => 'Gestionar el panel de prepagos',
+            self::PrepagosVerCoordinacion => 'Ver Coordinación de Prepagos',
+            self::PrepagosVerControl => 'Ver Control de Prepagos',
+            self::PrepagosVerBandeja => 'Ver Mi Bandeja de Prepagos',
         };
     }
 
     public function group(): string
     {
         return match ($this) {
-            self::UsersManage, self::RolesManage, self::InvoiceLoaderManage, self::PrepagosManage => 'administracion',
+            self::UsersManage, self::RolesManage, self::InvoiceLoaderManage, self::PrepagosManage,
+            self::PrepagosVerCoordinacion, self::PrepagosVerControl, self::PrepagosVerBandeja => 'administracion',
             self::InnovacionManage, self::ExchangeRateManage, self::SearchAdmin => 'contenido',
             default => 'sectores',
         };

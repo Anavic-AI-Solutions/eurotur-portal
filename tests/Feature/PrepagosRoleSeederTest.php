@@ -20,17 +20,36 @@ class PrepagosRoleSeederTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
     }
 
-    public function test_it_creates_both_roles_scoped_to_exactly_prepagos_manage(): void
+    public function test_supervisor_gets_manage_plus_coordinacion_and_control(): void
     {
         $this->seed(PrepagosRoleSeeder::class);
 
-        foreach (['supervisor-prepagos' => 'Supervisor', 'analista-prepagos' => 'Analista'] as $slug => $name) {
-            $role = Role::where('slug', $slug)->firstOrFail();
+        $role = Role::where('slug', 'supervisor-prepagos')->firstOrFail();
 
-            $this->assertSame($name, $role->name);
-            $this->assertFalse($role->is_system);
-            $this->assertSame([Permission::PrepagosManage->value], $role->permissionSlugs());
-        }
+        $this->assertSame('Supervisor', $role->name);
+        $this->assertFalse($role->is_system);
+        $this->assertEqualsCanonicalizing(
+            [
+                Permission::PrepagosManage->value,
+                Permission::PrepagosVerCoordinacion->value,
+                Permission::PrepagosVerControl->value,
+            ],
+            $role->permissionSlugs(),
+        );
+    }
+
+    public function test_analista_gets_manage_plus_bandeja(): void
+    {
+        $this->seed(PrepagosRoleSeeder::class);
+
+        $role = Role::where('slug', 'analista-prepagos')->firstOrFail();
+
+        $this->assertSame('Analista', $role->name);
+        $this->assertFalse($role->is_system);
+        $this->assertEqualsCanonicalizing(
+            [Permission::PrepagosManage->value, Permission::PrepagosVerBandeja->value],
+            $role->permissionSlugs(),
+        );
     }
 
     public function test_it_is_idempotent(): void

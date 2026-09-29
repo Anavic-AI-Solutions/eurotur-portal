@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\PrepagosRole;
+use App\Enums\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
@@ -37,7 +37,6 @@ class UserController extends Controller
     {
         return Inertia::render('admin/users/create', [
             'roles' => $this->roleOptions(),
-            'prepagosRoles' => $this->prepagosRoleOptions(),
         ]);
     }
 
@@ -53,12 +52,8 @@ class UserController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('admin/users/edit', [
-            'user' => [
-                ...$user->only(['id', 'name', 'email', 'role_id', 'prepagos_analista_codigo']),
-                'prepagos_role' => $user->prepagos_role?->value,
-            ],
+            'user' => $user->only(['id', 'name', 'email', 'role_id', 'prepagos_analista_codigo']),
             'roles' => $this->roleOptions(),
-            'prepagosRoles' => $this->prepagosRoleOptions(),
         ]);
     }
 
@@ -89,21 +84,16 @@ class UserController extends Controller
     }
 
     /**
-     * @return Collection<int, Role>
+     * @return Collection<int, array{id: int, name: string, slug: string, ver_bandeja: bool}>
      */
     private function roleOptions(): Collection
     {
-        return Role::query()->orderBy('name')->get(['id', 'name', 'slug']);
-    }
-
-    /**
-     * @return list<array{value: string, label: string}>
-     */
-    private function prepagosRoleOptions(): array
-    {
-        return array_map(
-            fn (PrepagosRole $role): array => ['value' => $role->value, 'label' => $role->label()],
-            PrepagosRole::cases(),
-        );
+        return Role::query()->orderBy('name')->get(['id', 'name', 'slug'])
+            ->map(fn (Role $role): array => [
+                'id' => $role->id,
+                'name' => $role->name,
+                'slug' => $role->slug,
+                'ver_bandeja' => in_array(Permission::PrepagosVerBandeja->value, $role->permissionSlugs(), true),
+            ]);
     }
 }
