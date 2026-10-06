@@ -44,6 +44,15 @@ class ArchiveInvoiceLoaderJobStatus implements ShouldQueue
             : $service->executionStatus($record->job_id);
 
         if ($status === null) {
+            // The microservice's job registry is in-memory — a restart since
+            // this job was created means it's gone for good, not just slow.
+            // Without this, a job whose last known status happened to be
+            // PENDING/RUNNING keeps showing that stale label in "Histórico"
+            // forever, even once it's unrecoverable (found live 2026-09-30:
+            // an 8-day-old job from before a container restart still read
+            // "Procesando" because nothing ever overwrote it once every
+            // subsequent poll started 404ing).
+            $record->update(['status' => 'LOST']);
             $this->reschedule($record);
 
             return;

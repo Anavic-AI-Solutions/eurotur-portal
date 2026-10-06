@@ -42,6 +42,7 @@ const STATUS_LABELS: Record<string, string> = {
     RUNNING: 'Procesando',
     DONE: 'Lista',
     ERROR: 'Con error',
+    LOST: 'No disponible (el cargador de facturas se reinició)',
 };
 
 function formatDate(value: string | null): string {
@@ -115,7 +116,9 @@ export default function InvoiceLoaderHistory({
                                             variant={
                                                 job.status === 'ERROR'
                                                     ? 'destructive'
-                                                    : 'outline'
+                                                    : job.status === 'LOST'
+                                                      ? 'secondary'
+                                                      : 'outline'
                                             }
                                         >
                                             {STATUS_LABELS[job.status] ??

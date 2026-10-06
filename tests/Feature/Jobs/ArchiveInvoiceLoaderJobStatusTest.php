@@ -122,6 +122,26 @@ class ArchiveInvoiceLoaderJobStatusTest extends TestCase
         Queue::assertNotPushed(ArchiveInvoiceLoaderJobStatus::class);
     }
 
+    public function test_a_job_the_microservice_no_longer_knows_about_is_marked_lost_instead_of_keeping_a_stale_status(): void
+    {
+        Queue::fake();
+
+        // Found live 2026-09-30: a job last seen RUNNING before the
+        // microservice restarted kept showing "Procesando" in Histórico
+        // forever, because nothing overwrote `status` once every subsequent
+        // poll started 404ing.
+        $job = $this->createRecord('proposal', ['status' => 'RUNNING']);
+
+        Http::fake([
+            '*/proposals/'.$job->job_id => Http::response(null, 404),
+        ]);
+
+        (new ArchiveInvoiceLoaderJobStatus($job->id))->handle(app(InvoiceLoaderService::class));
+
+        $job->refresh();
+        $this->assertSame('LOST', $job->status);
+    }
+
     public function test_it_does_not_archive_a_job_that_ended_in_error(): void
     {
         Queue::fake();
