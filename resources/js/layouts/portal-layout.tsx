@@ -416,7 +416,7 @@ function Sidebar({
                                 lineHeight: 1.15,
                             }}
                         >
-                            Administración
+                            Backoffice
                         </span>
                     </Link>
                 )}
